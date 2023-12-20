@@ -62,7 +62,14 @@ const AuthenticationProvider = ({ children }) => {
 
   const handleLoginTest = useCallback(async (payload, setSubmitting) => {
     setSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await useToastPromise(
+      () => new Promise((resolve) => setTimeout(resolve, 1500)),
+      {
+        pending: "Logging in...",
+        success: "Logged in successfully",
+        error: "Failed to login",
+      }
+    );
     setIsLogged(true);
     setSubmitting(false);
     httpService.saveTokenToLocalStorage("token");

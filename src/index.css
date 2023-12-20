@@ -1,31 +1,30 @@
-@font-face {
-  font-family: "GilroyBold";
-  src: local("GilroyBold"), url("./fonts/Gilroy-Bold.ttf") format("truetype");
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: "Gilroy";
-  src: local("Gilroy") url("./fonts/Gilroy-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "SuisseIntl";
-  src: local("SuisseIntl"),
-    url("./fonts/SuisseIntl-Regular.ttf") format("truetype");
-}
-
 body {
   margin: 0;
   padding: 0;
-  background-color: #212123;
   overflow: hidden;
 }
 
-html {
-  background-color: #212123;
+.Layout-cell .Label-emptyLabel:last-child {
+  display: none;
 }
 
-.tox-statusbar__branding a {
-  display: none !important;
+/* .Layout-cell .Label-emptyLabel:last-child {
+  height: 48px !important;
+  position: relative;
+} */
+
+.Layout-cell .Label-emptyLabel:last-child::after {
+  content: "";
+}
+
+.Layout-timeScaleContainer tr {
+  vertical-align: baseline;
+}
+
+.first_indicator {
+  height: 10px;
+}
+
+.Cell-shadedPart {
+  background-color: #ffffff !important;
 }

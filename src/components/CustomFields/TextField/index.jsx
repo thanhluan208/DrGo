@@ -67,9 +67,7 @@ const TextField = ({
           borderRadius: "0.5rem",
         },
         "& label": {},
-        "& input": {
-          padding:'10px 15px'
-        },
+        "& input": {},
         ...sx,
       }}
       InputProps={{

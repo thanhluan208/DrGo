@@ -35,6 +35,9 @@ const lightTheme = createTheme({
       xxl: 1920,
     },
   },
+  typography: {
+    fontFamily: "noto-sans",
+  },
   palette: {
     mode: "light",
     primary: {
@@ -43,11 +46,15 @@ const lightTheme = createTheme({
   },
   colors: {
     custom: {
-      backgroundSecondary: "#f5f5f5",
-      background: "#eaeaea",
-      text: "#171717",
-      switchTheme: "#f3d28a",
-      textPrimary: "#6904e9",
+      borderColor: "rgba(224, 224, 224, 1)",
+      background: "#ffffff",
+      primaryText: "#3B3E45",
+      secondaryText: "#666E7D",
+      checkedout: "#12BDB2",
+      checkedin: "#8239BC",
+      confirmed: "#54A0CA",
+      none: "#666E7D",
+      scheduled: "#FBB500",
     },
     client: {
       cardDark: client["cardDark"],
@@ -1019,7 +1026,7 @@ export default function AppThemeProvider(props) {
   }, [save, toggleTheme]);
 
   return (
-    <ThemeProvider theme={switchTheme[theme] || darkTheme}>
+    <ThemeProvider theme={switchTheme[theme] || lightTheme}>
       <CssBaseline />
       <GlobalStyles
         styles={{
