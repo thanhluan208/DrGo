@@ -6,4 +6,6 @@ export default {
   productRecommendEditorKey: "productRecommendEditorKey",
   socket: "socket",
   token: "token",
+  onCommitButtonClick: "onCommitButtonClick",
+  onDeleteButtonClick: "onDeleteButtonClick",
 };

@@ -1,4 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   ViewState,
   GroupingState,
@@ -17,91 +23,56 @@ import {
   AppointmentForm,
   CurrentTimeIndicator,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { teal, indigo } from "@mui/material/colors";
 import { Paper } from "@mui/material";
 import AppointmentsCustom from "./components/AppointmentsCustom";
 import CommonStyles from "..";
-import { PST } from "../../../assets/mockdata";
 import { useTheme } from "@emotion/react";
-import UnknownAvatar from "./components/Unknown.jpg";
 import moment from "moment";
 import TimeScaleLabelComponent from "./components/TimeScaleLabelComponent";
 import TimeTableCellComponent from "./components/TimeTableCellComponent";
+import GroupingCellComponent from "./components/GroupingCellComponent";
+import { appointments } from "../../../assets/mockdata";
 
-const grouping = [
-  {
-    resourceName: "pst",
-  },
-];
-
-const appointments = [
-  {
-    id: 0,
-    customer: "Robert Fox",
-    pst: [1],
-    startDate: moment("2023-12-20 08:30:00"),
-    endDate: moment("2023-12-20 10:30:00"),
-    type: "checked out",
-  },
-  {
-    id: 1,
-    customer: "Cody Fisher",
-    pst: [4],
-    startDate: moment("2023-12-20 11:00:00"),
-    endDate: moment("2023-12-20 12:30:00"),
-    type: "checked in",
-  },
-  {
-    id: 4,
-    customer: "Cameron Williamson",
-    pst: [3],
-    startDate: moment("2023-12-20 13:00:00"),
-    endDate: moment("2023-12-20 14:30:00"),
-    type: "confirmed",
-  },
-  {
-    id: 2,
-    customer: "Daisy Phillips",
-    pst: [2],
-    startDate: moment("2023-12-20 15:00:00"),
-    endDate: moment("2023-12-20 16:30:00"),
-    type: "scheduled",
-  },
-  {
-    id: 3,
-    customer: "Leah Curtis",
-    pst: [2],
-    startDate: moment("2023-12-20 23:00:00"),
-    endDate: moment("2023-12-20 10:30:00"),
-    type: "none",
-  },
-];
-
-const resources = [
-  {
-    fieldName: "pst",
-    title: "pst",
-    instances: PST,
-    allowMultiple: true,
-  },
-];
-
-const Scheduler = () => {
+const Scheduler = ({
+  addedAppointment,
+  resources,
+  grouping,
+  handleChangeScheduler,
+  onCommitButtonClick,
+}) => {
   //! State
-  const [data, setData] = React.useState(appointments);
   const theme = useTheme();
+  const [visible, setVisible] = useState(true);
+  const [data, setData] = useState(appointments);
 
   //! Function
+  const handleAdd = () => {
+    setData((prev) => [
+      ...prev,
+      {
+        id: 1000,
+        customer: "Taeyeon's Husband",
+        pst: [1],
+        startDate: moment("2023-12-20 14:00:00"),
+        endDate: moment("2023-12-20 15:30:00"),
+        type: "checked in",
+      },
+    ]);
+  };
+
   useLayoutEffect(() => {
     const indicator = document.getElementsByClassName("indicator");
-    if (indicator) {
+    if (indicator[0]) {
       const newDiv = document.createElement("div");
       newDiv.classList.add("first_indicator");
       indicator[0].appendChild(newDiv);
     }
+    setVisible(false);
   }, []);
 
   //! Render
+  if (!data || !resources || !grouping) return null;
+
   return (
     <Paper
       sx={{
@@ -128,6 +99,9 @@ const Scheduler = () => {
             fontFamily: "'Noto Sans', sans-serif",
           },
         },
+        // ".OverlayContainer-container": {
+        //   display: "none",
+        // },
         borderBottom: `1px solid ${theme.colors.custom.borderColor}`,
         boxShadow: "none",
         overflow: "hidden",
@@ -136,7 +110,25 @@ const Scheduler = () => {
     >
       <SchedulerComponent data={data} height={800}>
         <ViewState defaultCurrentDate={moment().format("YYYY-MM-DD")} />
-        <EditingState />
+        <EditingState
+          onCommitChanges={handleChangeScheduler}
+          preCommitChanges={(changes, appointment, addAppointment) => {
+            console.log("changes", {
+              changes,
+              appointment,
+              addAppointment,
+            });
+          }}
+          onAppointmentChangesChange={(changes) => {
+            console.log("changes", changes);
+          }}
+          onAddedAppointmentChange={(appointments) => {
+            console.log("asdas", appointments);
+          }}
+          defaultAddedAppointment={{ addedAppointment }}
+          defaultEditingAppointment={{ addedAppointment }}
+          addedAppointment={{ addedAppointment }}
+        />
         <GroupingState grouping={grouping} />
 
         <DayView
@@ -180,7 +172,6 @@ const Scheduler = () => {
         <Resources data={resources} />
 
         <IntegratedGrouping />
-        <IntegratedEditing />
         <DragDropProvider />
 
         <CurrentTimeIndicator
@@ -213,76 +204,12 @@ const Scheduler = () => {
           }}
         />
         <GroupingPanel
-          cellComponent={({ group, ...restProps }) => {
-            const infoPST = JSON.parse(group.text);
-            return (
-              <td
-                {...restProps}
-                key={`${group.fieldName}_${group.id}`}
-                style={{
-                  borderRight:
-                    group.id === 4
-                      ? "none"
-                      : `1px solid ${theme.colors.custom.borderColor}`,
-                }}
-              >
-                <CommonStyles.Box
-                  sx={{
-                    height: "48px",
-                    padding: "0 12px 12px 12px",
-                    display: "flex",
-                    gap: "18px",
-                  }}
-                >
-                  <CommonStyles.Avatar
-                    src={infoPST.avatar}
-                    alt={infoPST.name}
-                  />
-                  <CommonStyles.Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <CommonStyles.Typography
-                      type="bold14"
-                      sx={{
-                        maxWidth: `${
-                          (window.innerWidth - 80) / 4 - 12 - 40 - 18 - 30
-                        }px`,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {infoPST.name}
-                    </CommonStyles.Typography>
-                    <CommonStyles.Typography
-                      type="normal14"
-                      color="secondaryText"
-                      sx={{
-                        maxWidth: `${
-                          (window.innerWidth - 80) / 4 - 12 - 40 - 18 - 30
-                        }px`,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {infoPST.title}
-                    </CommonStyles.Typography>
-                  </CommonStyles.Box>
-                </CommonStyles.Box>
-              </td>
-            );
-          }}
+          cellComponent={(props) => <GroupingCellComponent {...props} />}
         />
-
-        <AppointmentTooltip showOpenButton />
-        <AppointmentForm />
       </SchedulerComponent>
+      <CommonStyles.Button onClick={handleAdd}>add</CommonStyles.Button>
     </Paper>
   );
 };
 
-export default Scheduler;
+export default memo(Scheduler);

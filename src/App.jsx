@@ -30,7 +30,7 @@ const App = () => {
       element: <DefaultLayout />,
       children: [
         {
-          path: "/",
+          path: "*",
           element: <Home />,
         },
       ],

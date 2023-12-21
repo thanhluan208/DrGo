@@ -55,6 +55,7 @@ const lightTheme = createTheme({
       confirmed: "#54A0CA",
       none: "#666E7D",
       scheduled: "#FBB500",
+      sidebarBackground: "#F3F4F6",
     },
     client: {
       cardDark: client["cardDark"],

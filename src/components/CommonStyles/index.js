@@ -5,6 +5,7 @@ import Button from "./Button";
 import Chip from "./Chip";
 import Dialog from "./Dialog";
 import Editor from "./Editor";
+import IconButton from "./IconButton";
 import Scheduler from "./Scheduler";
 import Table from "./Table";
 import Tooltip from "./Tooltip";
@@ -22,6 +23,7 @@ const CommonStyles = {
   Table: Table,
   Tooltip: Tooltip,
   Scheduler: Scheduler,
+  IconButton: IconButton,
 };
 
 export default CommonStyles;

@@ -5,7 +5,7 @@ import moment from "moment";
 
 const TimeTableCellComponent = (props) => {
   //! State
-  const { startDate } = props;
+  const { startDate, onDoubleClick } = props;
   const hasDashedBorder = moment(startDate).format("mm").includes("00");
 
   //! Function
@@ -15,9 +15,10 @@ const TimeTableCellComponent = (props) => {
     // <CommonStyles.Box>
     <DayView.TimeTableCell
       {...props}
-      onDoubleClick={() => {
-        console.log("hehe");
-      }}
+      // onDoubleClick={() => {
+      //   console.log("hehe");
+      // }}
+
       style={{
         borderBottom: hasDashedBorder
           ? "1px dashed #e8e8e8"
