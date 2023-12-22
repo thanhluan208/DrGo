@@ -12,6 +12,7 @@ import Home from "./screen/Home";
 import { useSave } from "./stores/useStores";
 import { useEffect } from "react";
 import cachedKeys from "./constants/cachedKeys";
+import Appointments from "./screen/Appointments";
 
 const App = () => {
   //! State
@@ -29,6 +30,10 @@ const App = () => {
     {
       element: <DefaultLayout />,
       children: [
+        {
+          path: "/appointments",
+          element: <Appointments />,
+        },
         {
           path: "*",
           element: <Home />,

@@ -4,6 +4,8 @@ import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
 import { useTheme } from "@emotion/react";
 import { capitalize, isString } from "lodash";
 import moment from "moment";
+import AppointmentActionDialog from "./AppointmentActionDialog";
+import dayjs from "dayjs";
 
 const AppointmentsCustom = (props) => {
   //! State
@@ -21,7 +23,7 @@ const AppointmentsCustom = (props) => {
   const { type, startDate } = data;
   //! Function
 
-  const isStarted = moment(startDate).isBefore(moment());
+  const isStarted = dayjs(startDate).isBefore(dayjs());
 
   const handleDoubleClick = () => {
     console.log("go here");
@@ -33,6 +35,7 @@ const AppointmentsCustom = (props) => {
   //! Render
   return (
     <Appointments.Appointment
+      className="appointment"
       draggable={!isStarted}
       forwardedRef={!isStarted ? forwardedRef : null}
       resources={resources}
@@ -51,15 +54,25 @@ const AppointmentsCustom = (props) => {
       }}
       onDoubleClick={handleDoubleClick}
     >
-      <CommonStyles.Box>
-        <CommonStyles.Typography type="normal14">
-          {props.data.customer}
-        </CommonStyles.Typography>
-        <CommonStyles.Typography type="normal14" color="secondaryText">
-          {capitalize(props.data.type)}
-        </CommonStyles.Typography>
+      <CommonStyles.Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <CommonStyles.Box>
+          <CommonStyles.Typography type="normal14">
+            {props.data.patientName}
+          </CommonStyles.Typography>
+          <CommonStyles.Typography type="normal14" color="secondaryText">
+            {capitalize(props.data.type)}
+          </CommonStyles.Typography>
+        </CommonStyles.Box>
+
+        <CommonStyles.Box>
+          <AppointmentActionDialog data={data} />
+        </CommonStyles.Box>
       </CommonStyles.Box>
-      {/* {children} */}
     </Appointments.Appointment>
   );
 };

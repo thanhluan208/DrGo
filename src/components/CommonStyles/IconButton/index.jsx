@@ -3,7 +3,13 @@ import MUIIconButton from "@mui/material/IconButton";
 import { useTheme } from "@emotion/react";
 import CommonStyles from "..";
 
-const IconButton = ({ children, hasNoti, ...otherProps }) => {
+const IconButton = ({
+  children,
+  hasNoti,
+  customSx,
+  shouldHasNoti = true,
+  ...otherProps
+}) => {
   //! State
   const theme = useTheme();
 
@@ -15,6 +21,7 @@ const IconButton = ({ children, hasNoti, ...otherProps }) => {
       sx={{
         borderRadius: "4px",
         padding: "8px 12px",
+
         svg: {
           width: "20px",
           height: "20px",
@@ -24,7 +31,9 @@ const IconButton = ({ children, hasNoti, ...otherProps }) => {
           width: "20px",
           height: "20px",
           position: "relative",
-
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           "&:after": {
             content: hasNoti ? '""' : "none",
             position: "absolute",
@@ -36,10 +45,11 @@ const IconButton = ({ children, hasNoti, ...otherProps }) => {
             background: "red",
           },
         },
+        ...customSx,
       }}
       {...otherProps}
     >
-      <div>{children}</div>
+      {shouldHasNoti ? <div>{children}</div> : children}
     </MUIIconButton>
   );
 };

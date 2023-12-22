@@ -1,87 +1,59 @@
-import {
-  Dialog as DialogMui,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
 import * as React from "react";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import CommonIcons from "../../CommonIcons";
+import Button from "@mui/material/Button";
+import MUIDialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
 
-export default function Dialog(props) {
-  // !State
-  const {
-    open,
-    toggle,
-    title,
-    content = <span />,
-    footer,
-    maxWidth,
-    disableClickOutside,
-    className,
-    isDetail,
-    style,
-    styleContent,
-    sx,
-    sxContent,
-    showCloseIcon = false,
-  } = props;
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-  const handleClose = () => {
-    !disableClickOutside && toggle();
-  };
+const Dialog = ({
+  open,
+  handleClose,
+  content,
+  title,
+  Actions,
+  ...otherProps
+}) => {
+  //! State
+
+  //! Function
+
+  //! Render
   return (
-    <>
-      <DialogMui
-        open={open}
-        onClose={() => handleClose()}
-        fullWidth
-        maxWidth={maxWidth}
-        aria-labelledby="responsive-dialog-title"
-        className={className}
-        style={style}
-        sx={sx}
-      >
-        {showCloseIcon && (
-          <IconButton
-            aria-label="close"
-            onClick={() => handleClose()}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CommonIcons.Close />
-          </IconButton>
+    <MUIDialog
+      open={open}
+      TransitionComponent={Transition}
+      onClose={handleClose}
+      aria-describedby="alert-dialog-slide-description"
+      {...otherProps}
+    >
+      <DialogTitle>
+        {title ? title : "Use Google's location service?"}
+      </DialogTitle>
+      <DialogContent>
+        {content ? (
+          content
+        ) : (
+          <DialogContentText id="alert-dialog-slide-description">
+            Let Google help apps determine location. This means sending
+            anonymous location data to Google, even when no apps are running.
+          </DialogContentText>
         )}
-        {title ? (
-          <DialogTitle>
-            {isDetail ? (
-              <IconButton
-                aria-label="close"
-                onClick={() => handleClose()}
-                sx={{
-                  position: "absolute",
-                  right: 8,
-                  top: 8,
-                  color: (theme) => theme.palette.grey[500],
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            ) : null}
-            <div>{title}</div>
-          </DialogTitle>
-        ) : null}
-        <DialogContent style={styleContent} sx={sxContent}>
-          <DialogContentText>{content}</DialogContentText>
-        </DialogContent>
-        {footer ? <DialogActions>{footer}</DialogActions> : null}
-      </DialogMui>
-    </>
+      </DialogContent>
+      <DialogActions>
+        {Actions ? (
+          <Actions handleClose={handleClose} />
+        ) : (
+          <Button onClick={handleClose}>Disagree</Button>
+        )}
+      </DialogActions>
+    </MUIDialog>
   );
-}
+};
+
+export default Dialog;

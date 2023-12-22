@@ -144,6 +144,7 @@ const SelectField = ({
     <CommonStyles.Box
       className="select-field"
       sx={{
+        padding: "10px 0",
         minWidth: 120,
         ...sxContainer,
         width: props?.fullWidth ? "100%" : "auto",

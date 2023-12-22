@@ -32,33 +32,14 @@ import TimeScaleLabelComponent from "./components/TimeScaleLabelComponent";
 import TimeTableCellComponent from "./components/TimeTableCellComponent";
 import GroupingCellComponent from "./components/GroupingCellComponent";
 import { appointments } from "../../../assets/mockdata";
+import Button from "../Button";
+import dayjs from "dayjs";
 
-const Scheduler = ({
-  addedAppointment,
-  resources,
-  grouping,
-  handleChangeScheduler,
-  onCommitButtonClick,
-}) => {
+const Scheduler = ({ data, resources, grouping, handleChangeScheduler }) => {
   //! State
   const theme = useTheme();
-  const [visible, setVisible] = useState(true);
-  const [data, setData] = useState(appointments);
 
   //! Function
-  const handleAdd = () => {
-    setData((prev) => [
-      ...prev,
-      {
-        id: 1000,
-        customer: "Taeyeon's Husband",
-        pst: [1],
-        startDate: moment("2023-12-20 14:00:00"),
-        endDate: moment("2023-12-20 15:30:00"),
-        type: "checked in",
-      },
-    ]);
-  };
 
   useLayoutEffect(() => {
     const indicator = document.getElementsByClassName("indicator");
@@ -67,7 +48,6 @@ const Scheduler = ({
       newDiv.classList.add("first_indicator");
       indicator[0].appendChild(newDiv);
     }
-    setVisible(false);
   }, []);
 
   //! Render
@@ -99,9 +79,28 @@ const Scheduler = ({
             fontFamily: "'Noto Sans', sans-serif",
           },
         },
-        // ".OverlayContainer-container": {
-        //   display: "none",
-        // },
+        "& .MainLayout-dayScaleEmptyCell": {
+          height: "48px !important",
+          minWidth: "41px !important",
+        },
+        "& .Layout-timeScaleContainer": {
+          width: "40px !important",
+        },
+        "& .appointment": {
+          animation: "appear 0.8s ease-in-out forwards",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          "@keyframes appear": {
+            "0%": {
+              opacity: 0,
+              width: "0%",
+            },
+            "100%": {
+              opacity: 1,
+              width: "100%",
+            },
+          },
+        },
         borderBottom: `1px solid ${theme.colors.custom.borderColor}`,
         boxShadow: "none",
         overflow: "hidden",
@@ -110,25 +109,7 @@ const Scheduler = ({
     >
       <SchedulerComponent data={data} height={800}>
         <ViewState defaultCurrentDate={moment().format("YYYY-MM-DD")} />
-        <EditingState
-          onCommitChanges={handleChangeScheduler}
-          preCommitChanges={(changes, appointment, addAppointment) => {
-            console.log("changes", {
-              changes,
-              appointment,
-              addAppointment,
-            });
-          }}
-          onAppointmentChangesChange={(changes) => {
-            console.log("changes", changes);
-          }}
-          onAddedAppointmentChange={(appointments) => {
-            console.log("asdas", appointments);
-          }}
-          defaultAddedAppointment={{ addedAppointment }}
-          defaultEditingAppointment={{ addedAppointment }}
-          addedAppointment={{ addedAppointment }}
-        />
+        <EditingState onCommitChanges={handleChangeScheduler} />
         <GroupingState grouping={grouping} />
 
         <DayView
@@ -142,13 +123,15 @@ const Scheduler = ({
           dayScaleEmptyCellComponent={(props) => {
             return (
               <CommonStyles.Typography
+                type="normal10"
                 sx={{
                   width: "100%",
                   height: "100%",
                   display: "flex",
                   justifyContent: "end",
-                  alignItems: "center",
+                  alignItems: "start",
                   paddingRight: "5px",
+                  textAlign: "start",
                 }}
               >
                 PST
@@ -172,6 +155,7 @@ const Scheduler = ({
         <Resources data={resources} />
 
         <IntegratedGrouping />
+        <IntegratedEditing />
         <DragDropProvider />
 
         <CurrentTimeIndicator
@@ -207,7 +191,6 @@ const Scheduler = ({
           cellComponent={(props) => <GroupingCellComponent {...props} />}
         />
       </SchedulerComponent>
-      <CommonStyles.Button onClick={handleAdd}>add</CommonStyles.Button>
     </Paper>
   );
 };

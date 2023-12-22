@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import Avatar from "./Avatar.jpg";
 
 export const PST = [
@@ -44,42 +44,42 @@ export const grouping = [
 export const appointments = [
   {
     id: 0,
-    customer: "Robert Fox",
+    patientName: "Robert Fox",
     pst: [1],
-    startDate: moment("2023-12-20 08:30:00"),
-    endDate: moment("2023-12-20 10:30:00"),
+    startDate: dayjs("2023-12-22 08:30:00").toDate(),
+    endDate: dayjs("2023-12-22 10:30:00").toDate(),
     type: "checked out",
   },
   {
     id: 1,
-    customer: "Cody Fisher",
+    patientName: "Cody Fisher",
     pst: [4],
-    startDate: moment("2023-12-20 11:00:00"),
-    endDate: moment("2023-12-20 12:30:00"),
+    startDate: dayjs("2023-12-22 11:00:00").toDate(),
+    endDate: dayjs("2023-12-22 12:30:00").toDate(),
     type: "checked in",
   },
   {
     id: 4,
-    customer: "Cameron Williamson",
+    patientName: "Cameron Williamson",
     pst: [3],
-    startDate: moment("2023-12-20 13:00:00"),
-    endDate: moment("2023-12-20 14:30:00"),
+    startDate: dayjs("2023-12-22 13:00:00").toDate(),
+    endDate: dayjs("2023-12-22 14:30:00").toDate(),
     type: "confirmed",
   },
   {
     id: 2,
-    customer: "Daisy Phillips",
+    patientName: "Daisy Phillips",
     pst: [2],
-    startDate: moment("2023-12-20 15:00:00"),
-    endDate: moment("2023-12-20 16:30:00"),
+    startDate: dayjs("2023-12-22 15:00:00").toDate(),
+    endDate: dayjs("2023-12-22 16:30:00").toDate(),
     type: "scheduled",
   },
   {
     id: 3,
-    customer: "Leah Curtis",
+    patientName: "Leah Curtis",
     pst: [2],
-    startDate: moment("2023-12-20 23:00:00"),
-    endDate: moment("2023-12-21 10:30:00"),
+    startDate: dayjs("2023-12-22 23:00:00").toDate(),
+    endDate: dayjs("2023-12-23 00:00:00").toDate(),
     type: "none",
   },
 ];

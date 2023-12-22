@@ -15,6 +15,18 @@ const Typography = (props) => {
       lineHeight: "20px",
     });
 
+    styles.set("bold18", {
+      fontSize: "18px",
+      fontWeight: "600",
+      lineHeight: "24px",
+    });
+
+    styles.set("bold24", {
+      fontSize: "24px",
+      fontWeight: "600",
+      lineHeight: "32px",
+    });
+
     styles.set("normal14", {
       fontSize: "14px",
       fontWeight: "400",

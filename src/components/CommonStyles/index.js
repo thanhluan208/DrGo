@@ -10,6 +10,7 @@ import Scheduler from "./Scheduler";
 import Table from "./Table";
 import Tooltip from "./Tooltip";
 import Typography from "./Typography";
+import Select from "./Select";
 
 const CommonStyles = {
   Box: Box,
@@ -24,6 +25,7 @@ const CommonStyles = {
   Tooltip: Tooltip,
   Scheduler: Scheduler,
   IconButton: IconButton,
+  Select: Select,
 };
 
 export default CommonStyles;

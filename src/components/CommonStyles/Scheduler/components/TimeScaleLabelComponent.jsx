@@ -14,7 +14,7 @@ const TimeScaleLabelComponent = (props) => {
     <CommonStyles.Box
       className={!time && "Label-emptyLabel"}
       sx={{
-        width: "80px",
+        width: "40px",
         height: "48px",
         borderBottom: shouldShow ? "none" : "1px solid #E0E0E0",
       }}

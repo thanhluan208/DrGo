@@ -7,6 +7,7 @@ import MuiTextField from "@mui/material/TextField";
 import { getIn } from "formik";
 import { useMemo } from "react";
 import useToggle from "../../../hooks/useToggle";
+import CommonStyles from "../../CommonStyles";
 
 const TextField = ({
   field,
@@ -40,68 +41,67 @@ const TextField = ({
   };
 
   return (
-    <MuiTextField
-      type={type === "password" ? typePassword : type}
-      name={name}
-      value={value}
-      onBlur={onBlur}
-      onChange={(e) => {
-        if (onChangeCustomize) {
-          onChangeCustomize(e.target.value);
-          return;
-        }
-
-        onChange && onChange(e);
-        afterOnChange && afterOnChange(e.target.value);
-      }}
-      error={isTouched && Boolean(errorMessage)}
-      helperText={isTouched && errorMessage}
-      variant={variant}
-      size={size}
+    <CommonStyles.Box
       sx={{
-        [`input[type='password']::-ms-reveal,input[type='password']::-ms-clear`]:
-          {
-            display: "none",
-          },
-        "& div": {
-          borderRadius: "0.5rem",
+        width: "100%",
+        padding: "10px 0",
+        fieldset: {
+          borderRadius: "8px",
         },
-        "& label": {},
-        "& input": {},
-        ...sx,
       }}
-      InputProps={{
-        startAdornment: iconStartInput ? (
-          <InputAdornment position="start" className="icon-start-input">
-            {iconStartInput}
-          </InputAdornment>
-        ) : undefined,
-        endAdornment: iconEndInput ? (
-          <InputAdornment
-            position="end"
-            sx={sxEndAdornment || {}}
-            onClick={onClickEndAdornment || undefined}
-          >
-            {iconEndInput}
-          </InputAdornment>
-        ) : type === "password" ? (
-          <InputAdornment position="end">
-            <IconButton
-              onClick={togglePassword}
-              onMouseDown={handleMouseDown}
-              edge="end"
+    >
+      <MuiTextField
+        type={type === "password" ? typePassword : type}
+        name={name}
+        value={value}
+        onBlur={onBlur}
+        onChange={(e) => {
+          if (onChangeCustomize) {
+            onChangeCustomize(e.target.value);
+            return;
+          }
+
+          onChange && onChange(e);
+          afterOnChange && afterOnChange(e.target.value);
+        }}
+        error={isTouched && Boolean(errorMessage)}
+        helperText={isTouched && errorMessage}
+        variant={variant}
+        size={size}
+        InputProps={{
+          inputComponent: isFormatNumber ? NumericFormatCustom : undefined,
+          startAdornment: iconStartInput ? (
+            <InputAdornment position="start" className="icon-start-input">
+              {iconStartInput}
+            </InputAdornment>
+          ) : undefined,
+          endAdornment: iconEndInput ? (
+            <InputAdornment
+              position="end"
+              sx={sxEndAdornment || {}}
+              onClick={onClickEndAdornment || undefined}
             >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ) : undefined,
-      }}
-      InputLabelProps={{
-        shrink: true,
-      }}
-      disabled={disabled}
-      {...props}
-    />
+              {iconEndInput}
+            </InputAdornment>
+          ) : type === "password" ? (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={togglePassword}
+                onMouseDown={handleMouseDown}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ) : undefined,
+        }}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        disabled={disabled}
+        {...props}
+      />
+    </CommonStyles.Box>
   );
 };
 

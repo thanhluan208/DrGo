@@ -2,7 +2,6 @@ import CommonStyles from "../CommonStyles";
 import { useTheme } from "@emotion/react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import moment from "moment";
 import CommonIcons from "../CommonIcons";
 import { TextField } from "@mui/material";
 import Avatar from "../../assets/Avatar.jpg";
@@ -10,6 +9,8 @@ import { navigation } from "../../constants/navigation";
 import SidebarItem from "./Components/SidebarItem";
 import Logo from "../../assets/logo";
 import PerfectScrollbar from "react-perfect-scrollbar";
+
+const sidebarWidth = "245px";
 
 const DefaultLayout = (props) => {
   //! State
@@ -97,7 +98,7 @@ const DefaultLayout = (props) => {
       <CommonStyles.Box
         sx={{
           padding: "32px 0 0 0 ",
-          width: open ? "13.75vw" : "0vw",
+          width: open ? sidebarWidth : "0vw",
           transition: "all 0.3s ease",
           display: "flex",
           justifyContent: "space-between",
@@ -138,10 +139,13 @@ const DefaultLayout = (props) => {
           </CommonStyles.Typography>
         </CommonStyles.Button>
       </CommonStyles.Box>
-      <PerfectScrollbar style={{ maxHeight: "calc(100vh - 64px)" }}>
+      <PerfectScrollbar
+        style={{ maxHeight: "calc(100vh - 64px)", width: "100%" }}
+      >
         <CommonStyles.Box
           sx={{
             width: "100%",
+            padding: "32px",
           }}
         >
           <Outlet />
