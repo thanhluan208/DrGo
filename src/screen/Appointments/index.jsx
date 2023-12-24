@@ -4,9 +4,11 @@ import DatePickerGroup from "./components/DatePickerGroup";
 import RightSettings from "./components/RightSettings";
 import { grouping, resources } from "../../assets/mockdata";
 import Scheduler from "./components/Scheduler";
+import { useTranslation } from "react-i18next";
 
 const Appointments = () => {
   //! State
+  const { t } = useTranslation();
 
   //! Function
 
@@ -14,7 +16,7 @@ const Appointments = () => {
   return (
     <CommonStyles.Box sx={{ width: "100%" }}>
       <CommonStyles.Typography type="bold24">
-        Appointments
+        {t("appointments")}
       </CommonStyles.Typography>
       <CommonStyles.Box
         sx={{

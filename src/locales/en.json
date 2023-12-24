@@ -1,0 +1,14 @@
+{
+  "new_appointment": "New Appointment",
+  "patient_name": "Patient name",
+  "required": "{{field}} is required field",
+  "save": "Save",
+  "cancel": "Cancel",
+  "day": "Day",
+  "week": "Week",
+  "appointments": "Appointments",
+  "patients": "Patients",
+  "finances": "Finances",
+  "messages": "Messages",
+  "edit_appointment": "Edit Appointment"
+}

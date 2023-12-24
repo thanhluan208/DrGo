@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo, useState } from "react";
+import React, { Fragment, memo, useCallback, useMemo } from "react";
 import CommonStyles from "../..";
 import CommonIcons from "../../../CommonIcons";
 import dayjs from "dayjs";
@@ -13,148 +13,63 @@ import cachedKeys from "../../../../constants/cachedKeys";
 import { useToastPromise } from "../../../../hooks/useToast";
 import appointmentModel from "../../../../models/appointmentsModel";
 import { cloneDeep } from "lodash";
+import useToggleDialog from "../../../../hooks/useToggleDialog";
+import { useTranslation } from "react-i18next";
 
-const NewAppointmentDialogContent = () => {
+const NewAppointmentDialogContent = React.memo(({ data, toggle }) => {
   //! State
-
-  //! Function
-
-  //! Render
-  return (
-    <CommonStyles.Box>
-      <CommonStyles.Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "50% 50%",
-        }}
-      >
-        <CommonStyles.Box
-          sx={{
-            padding: "0 20px",
-          }}
-        >
-          <FastField
-            name="patientName"
-            label="Patient name"
-            component={CustomFields.TextField}
-            fullWidth
-            placeholder="Patient name"
-          />
-        </CommonStyles.Box>
-        <CommonStyles.Box
-          sx={{
-            padding: "0 20px",
-          }}
-        >
-          <FastField
-            name="type"
-            label="Scheduler type"
-            component={CustomFields.SelectField}
-            options={schedulerTypes}
-            fullWidth
-            placeholder="Scheduler type"
-          />
-        </CommonStyles.Box>
-        <CommonStyles.Box
-          sx={{
-            padding: "0 20px",
-          }}
-        >
-          <FastField
-            name="startDate"
-            component={CustomFields.DateTimePicker}
-            label="Start date"
-            fullWidth
-          />
-        </CommonStyles.Box>
-        <CommonStyles.Box
-          sx={{
-            padding: "0 20px",
-          }}
-        >
-          <FastField
-            name="endDate"
-            component={CustomFields.DateTimePicker}
-            label="End date"
-            fullWidth
-          />
-        </CommonStyles.Box>
-      </CommonStyles.Box>
-      <CommonStyles.Box sx={{ padding: "0 20px", marginTop: "20px" }}>
-        <FastField
-          name="pst"
-          component={CustomFields.SelectField}
-          options={convertPstToOptions(PST)}
-          fullWidth
-          isMultiple
-          label="PST"
-        />
-      </CommonStyles.Box>
-    </CommonStyles.Box>
-  );
-};
-
-const NewAppointmentDialogActions = (props) => {
-  //! State
-  const { handleSubmit, handleClose, isSubmitting } = props;
-
-  //! Function
-
-  //! Render
-  return (
-    <CommonStyles.Box
-      centered
-      sx={{
-        gap: "8px",
-      }}
-    >
-      <CommonStyles.Button variant="text" disabled={isSubmitting}>
-        <CommonStyles.Typography type="normal14" onClick={handleClose}>
-          Cancel
-        </CommonStyles.Typography>
-      </CommonStyles.Button>
-      <CommonStyles.Button onClick={handleSubmit} loading={isSubmitting}>
-        <CommonStyles.Typography type="normal14" color="background">
-          Save
-        </CommonStyles.Typography>
-      </CommonStyles.Button>
-    </CommonStyles.Box>
-  );
-};
-
-const NewAppointmentDialog = ({ data }) => {
-  //! State
-  const [open, setOpen] = useState(false);
-  const save = useSave();
   const appointments = useGet(cachedKeys.APPOINTMENTS) || [];
+  const save = useSave();
+  const { t } = useTranslation();
+
   const initialValue = useMemo(() => {
     if (data) {
       return {
-        id: data.id,
-        patientName: data.patientName,
-        pst: data.pst,
-        startDate: dayjs(data.startDate),
-        endDate: dayjs(data.endDate),
-        type: data.type,
+        id: data?.id || Math.floor(Math.random() * 100),
+        patientName: data?.patientName || "",
+        pst: data?.pst || [],
+        startDate: data?.startDate ? dayjs(data.startDate) : dayjs(),
+        endDate: data?.endDate ? dayjs(data.endDate) : dayjs().add(1, "hour"),
+        type: data.type || "checkedIn",
       };
     }
 
     return {
       patientName: "",
       pst: [],
-      startDate: dayjs(),
+      startDate: dayjs().add(1, "minute"),
       endDate: dayjs().add(1, "hour"),
-      type: "none",
+      type: "checkedIn",
     };
   }, [data]);
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
-      patientName: Yup.string().required("Required"),
-      pst: Yup.array().required("Required"),
-      startDate: Yup.date().required("Required"),
-      endDate: Yup.date()
-        .required("Required")
+      patientName: Yup.string().required(
+        t("required", { field: t("patient_name") })
+      ),
+      pst: Yup.array().test(
+        "is-not-empty",
+        t("required", { field: "PST" }),
+        function (value) {
+          return value.length > 0;
+        }
+      ),
+      startDate: Yup.string()
+        .test("is-date", "Start date must be a valid date", function (value) {
+          return dayjs(value).isValid();
+        })
+        .test(
+          "is-greater",
+          "Start date must be greater than present time",
+          function (value) {
+            return dayjs(value).isAfter(dayjs());
+          }
+        ),
+      endDate: Yup.string()
+        .test("is-date", "End date must be a valid date", function (value) {
+          return dayjs(value).isValid();
+        })
         .test(
           "is-greater",
           "End date must be greater than start date",
@@ -196,7 +111,7 @@ const NewAppointmentDialog = ({ data }) => {
       console.log("error", error);
     }
     setSubmitting(false);
-    setOpen(false);
+    toggle();
   };
 
   const handleCreate = async (values, { setSubmitting }) => {
@@ -220,11 +135,11 @@ const NewAppointmentDialog = ({ data }) => {
       console.log("error", error);
     }
     setSubmitting(false);
-    setOpen(false);
+    toggle();
   };
 
   const handleSubmit = (values, { setSubmitting }) => {
-    if (data) {
+    if (data && data.id) {
       return handleEdit(values, { setSubmitting });
     }
 
@@ -232,10 +147,136 @@ const NewAppointmentDialog = ({ data }) => {
   };
 
   //! Render
+  return (
+    <Formik
+      initialValues={initialValue}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+      validateOnBlur
+      validateOnChange
+      validateOnMount={false}
+    >
+      {({ isSubmitting, handleSubmit }) => {
+        return (
+          <Form>
+            <CommonStyles.Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "50% 50%",
+              }}
+            >
+              <CommonStyles.Box
+                sx={{
+                  padding: "0 20px",
+                }}
+              >
+                <FastField
+                  name="patientName"
+                  label="Patient name"
+                  component={CustomFields.TextField}
+                  fullWidth
+                  placeholder="Patient name"
+                  required
+                />
+              </CommonStyles.Box>
+              <CommonStyles.Box
+                sx={{
+                  padding: "0 20px",
+                }}
+              >
+                <FastField
+                  name="type"
+                  label="Scheduler type"
+                  component={CustomFields.SelectField}
+                  options={schedulerTypes}
+                  fullWidth
+                  placeholder="Scheduler type"
+                />
+              </CommonStyles.Box>
+              <CommonStyles.Box
+                sx={{
+                  padding: "0 20px",
+                }}
+              >
+                <FastField
+                  name="startDate"
+                  component={CustomFields.DateTimePicker}
+                  label="Start date"
+                  minDateTime={dayjs()}
+                  fullWidth
+                  textFieldProps={{
+                    required: true,
+                  }}
+                />
+              </CommonStyles.Box>
+              <CommonStyles.Box
+                sx={{
+                  padding: "0 20px",
+                }}
+              >
+                <FastField
+                  name="endDate"
+                  component={CustomFields.DateTimePicker}
+                  label="End date"
+                  minDateTime={dayjs()}
+                  fullWidth
+                  textFieldProps={{
+                    required: true,
+                  }}
+                />
+              </CommonStyles.Box>
+            </CommonStyles.Box>
+            <CommonStyles.Box sx={{ padding: "0 20px", marginTop: "20px" }}>
+              <FastField
+                name="pst"
+                component={CustomFields.SelectField}
+                options={convertPstToOptions(PST)}
+                fullWidth
+                isMultiple
+                label="PST"
+              />
+            </CommonStyles.Box>
+            <CommonStyles.Box
+              centered
+              sx={{
+                gap: "8px",
+                marginTop: "30px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <CommonStyles.Button variant="text" disabled={isSubmitting}>
+                <CommonStyles.Typography type="normal14" onClick={toggle}>
+                  {t("cancel")}
+                </CommonStyles.Typography>
+              </CommonStyles.Button>
+              <CommonStyles.Button
+                onClick={handleSubmit}
+                loading={isSubmitting}
+              >
+                <CommonStyles.Typography type="normal14" color="background">
+                  {t("save")}
+                </CommonStyles.Typography>
+              </CommonStyles.Button>
+            </CommonStyles.Box>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+});
+
+const AppointmentActionDialog = ({ data, customButton }) => {
+  //! State
+  const { open, shouldRender, toggle } = useToggleDialog();
+  const { t } = useTranslation();
+
+  //! Render
   const renderButton = useCallback(() => {
+    if (customButton) return customButton(toggle);
+
     if (data) {
       return (
-        <CommonStyles.IconButton onClick={() => setOpen(true)}>
+        <CommonStyles.IconButton onClick={toggle}>
           <CommonIcons.Edit />
         </CommonStyles.IconButton>
       );
@@ -248,52 +289,35 @@ const NewAppointmentDialog = ({ data }) => {
           textTransform: "none",
           boxShadow: "none",
         }}
-        onClick={() => setOpen(true)}
+        onClick={toggle}
       >
         <CommonIcons.Add />
         <CommonStyles.Typography type="normal14" color="background">
-          New Appointment
+          {t("new_appointment")}
         </CommonStyles.Typography>
       </CommonStyles.Button>
     );
-  }, [data]);
+  }, [data, customButton]);
 
   return (
     <Fragment>
       {renderButton()}
-      <Formik
-        initialValues={initialValue}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting, handleSubmit }) => {
-          return (
-            <Form>
-              <CommonStyles.Dialog
-                open={open}
-                handleClose={() => setOpen(false)}
-                fullWidth
-                maxWidth="lg"
-                title={
-                  <CommonStyles.Typography type="bold18">
-                    New Appointment
-                  </CommonStyles.Typography>
-                }
-                content={<NewAppointmentDialogContent />}
-                Actions={(props) => (
-                  <NewAppointmentDialogActions
-                    handleSubmit={handleSubmit}
-                    isSubmitting={isSubmitting}
-                    {...props}
-                  />
-                )}
-              />
-            </Form>
-          );
-        }}
-      </Formik>
+      {shouldRender && (
+        <CommonStyles.Dialog
+          open={open}
+          handleClose={toggle}
+          fullWidth
+          maxWidth="lg"
+          title={
+            <CommonStyles.Typography type="bold18">
+              {data && data.id ? t("edit_appointment") : t("new_appointment")}
+            </CommonStyles.Typography>
+          }
+          content={<NewAppointmentDialogContent data={data} toggle={toggle} />}
+        />
+      )}
     </Fragment>
   );
 };
 
-export default NewAppointmentDialog;
+export default memo(AppointmentActionDialog);

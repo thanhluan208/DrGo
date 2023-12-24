@@ -9,9 +9,6 @@ import Login from "./screen/Login";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { useAuthentication } from "./providers/AuthenticationProvider";
 import Home from "./screen/Home";
-import { useSave } from "./stores/useStores";
-import { useEffect } from "react";
-import cachedKeys from "./constants/cachedKeys";
 import Appointments from "./screen/Appointments";
 
 const App = () => {

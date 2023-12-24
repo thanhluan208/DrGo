@@ -31,23 +31,30 @@ import moment from "moment";
 import TimeScaleLabelComponent from "./components/TimeScaleLabelComponent";
 import TimeTableCellComponent from "./components/TimeTableCellComponent";
 import GroupingCellComponent from "./components/GroupingCellComponent";
-import { appointments } from "../../../assets/mockdata";
-import Button from "../Button";
-import dayjs from "dayjs";
 
-const Scheduler = ({ data, resources, grouping, handleChangeScheduler }) => {
+const Scheduler = ({
+  data,
+  resources,
+  grouping,
+  handleChangeScheduler,
+  currentDate,
+}) => {
   //! State
   const theme = useTheme();
 
   //! Function
 
-  useLayoutEffect(() => {
-    const indicator = document.getElementsByClassName("indicator");
-    if (indicator[0]) {
-      const newDiv = document.createElement("div");
-      newDiv.classList.add("first_indicator");
-      indicator[0].appendChild(newDiv);
-    }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const indicator = document.getElementsByClassName("indicator");
+      if (indicator[0]) {
+        console.log("indicator", indicator[0]);
+        const newDiv = document.createElement("div");
+        newDiv.classList.add("first_indicator");
+        indicator[0].appendChild(newDiv);
+        clearInterval(interval);
+      }
+    }, 10);
   }, []);
 
   //! Render
@@ -101,6 +108,9 @@ const Scheduler = ({ data, resources, grouping, handleChangeScheduler }) => {
             },
           },
         },
+        "& .Cell-shadedPart": {
+          backgroundColor: "transparent !important",
+        },
         borderBottom: `1px solid ${theme.colors.custom.borderColor}`,
         boxShadow: "none",
         overflow: "hidden",
@@ -108,7 +118,10 @@ const Scheduler = ({ data, resources, grouping, handleChangeScheduler }) => {
       }}
     >
       <SchedulerComponent data={data} height={800}>
-        <ViewState defaultCurrentDate={moment().format("YYYY-MM-DD")} />
+        <ViewState
+          currentDate={currentDate}
+          defaultCurrentDate={moment().format("YYYY-MM-DD")}
+        />
         <EditingState onCommitChanges={handleChangeScheduler} />
         <GroupingState grouping={grouping} />
 

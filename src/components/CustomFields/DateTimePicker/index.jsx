@@ -17,6 +17,7 @@ const DateTimePicker = (props) => {
     formatCustom,
     afterOnChange,
     onChangeCustomize,
+    textFieldProps,
     ...otherProps
   } = props;
   const { errors, touched, setFieldValue } = form || {};
@@ -60,6 +61,7 @@ const DateTimePicker = (props) => {
               id: name,
               error: isTouched && Boolean(errorMessage),
               helperText: isTouched && errorMessage,
+              ...textFieldProps,
             },
             actionBar: value
               ? {
@@ -67,14 +69,6 @@ const DateTimePicker = (props) => {
                 }
               : undefined,
           }}
-          //   slots={{
-          //     openPickerIcon: icon ? icon : undefined,
-          //   }}
-          //   onAccept={(newDate) => {
-          //     if (isNull(newDate)) {
-          //       setFieldValue(name, undefined);
-          //     }
-          //   }}
           format={formatCustom ? formatCustom : DEFAULT_FORMAT_DATE}
           {...otherProps}
         />

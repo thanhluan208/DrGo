@@ -8,11 +8,16 @@ import {
 import { useGet, useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
 import { cloneDeep } from "lodash";
+import dayjs from "dayjs";
+import useToast from "../../../hooks/useToast";
 
 const Scheduler = () => {
   //! State
   const appointments = useGet(cachedKeys.APPOINTMENTS) || [];
+  const currentDate = useGet(cachedKeys.CURRENT_DATE_APPOINTMENT) || dayjs();
   const save = useSave();
+
+  console.log("currentDate", currentDate.toDate());
 
   //! Function
   const handleChangeScheduler = (value) => {
@@ -20,7 +25,14 @@ const Scheduler = () => {
     const cloneData = cloneDeep(appointments);
 
     if (changed) {
+      console.log("changed", changed);
       const changedId = Object.keys(changed)[0];
+
+      if (dayjs(changed[changedId].startDate).isBefore(dayjs())) {
+        useToast("Cannot change appointment to past ", "error");
+        return;
+      }
+
       const changePlace = cloneData.findIndex((item) => item.id === +changedId);
 
       cloneData[changePlace] = {
@@ -32,10 +44,6 @@ const Scheduler = () => {
     }
   };
 
-  useEffect(() => {
-    save(cachedKeys.APPOINTMENTS, appointmentsMock);
-  }, []);
-
   //! Render
   return (
     <CommonStyles.Box sx={{ marginTop: "24px" }}>
@@ -44,6 +52,7 @@ const Scheduler = () => {
         grouping={grouping}
         resources={resources}
         handleChangeScheduler={handleChangeScheduler}
+        currentDate={currentDate.toDate()}
       />
     </CommonStyles.Box>
   );

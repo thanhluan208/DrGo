@@ -4,6 +4,7 @@ import { useTheme } from "@emotion/react";
 import Calendar from "../../../assets/icons/Calendar";
 import List from "../../../assets/icons/List";
 import AppointmentActionDialog from "../../../components/CommonStyles/Scheduler/components/AppointmentActionDialog";
+import { useTranslation } from "react-i18next";
 
 const options = [
   {
@@ -26,7 +27,7 @@ const options = [
 
 const Switcher = ({ renderLeft, renderRight }) => {
   const theme = useTheme();
-  const [isActive, setIsActive] = React.useState("right");
+  const [isActive, setIsActive] = React.useState("left");
 
   return (
     <CommonStyles.Box
@@ -70,7 +71,7 @@ const Switcher = ({ renderLeft, renderRight }) => {
 
 const RightSettings = () => {
   //! State
-  const theme = useTheme();
+  const { t } = useTranslation();
 
   //! Function
 
@@ -95,14 +96,14 @@ const RightSettings = () => {
         renderLeft={() => {
           return (
             <CommonStyles.Typography type="normal14">
-              Day
+              {t("day")}
             </CommonStyles.Typography>
           );
         }}
         renderRight={() => {
           return (
             <CommonStyles.Typography type="normal14">
-              Week
+              {t("week")}
             </CommonStyles.Typography>
           );
         }}

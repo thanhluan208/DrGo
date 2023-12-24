@@ -45,13 +45,6 @@ const Dialog = ({
           </DialogContentText>
         )}
       </DialogContent>
-      <DialogActions>
-        {Actions ? (
-          <Actions handleClose={handleClose} />
-        ) : (
-          <Button onClick={handleClose}>Disagree</Button>
-        )}
-      </DialogActions>
     </MUIDialog>
   );
 };
