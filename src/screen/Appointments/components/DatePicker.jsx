@@ -12,19 +12,19 @@ import CommonIcons from "../../../components/CommonIcons";
 
 const appointmentDateOptions = [
   {
-    value: "today",
+    value: 0,
     label: "Today",
   },
   {
-    value: "tomorrow",
+    value: 1,
     label: "Tomorrow",
   },
   {
-    value: "nextWeek",
+    value: 7,
     label: "Next week",
   },
   {
-    value: "nextMonth",
+    value: 30,
     label: "Next month",
   },
 ];
@@ -40,7 +40,16 @@ const ButtonField = (props) => {
     inputProps: { "aria-label": ariaLabel } = {},
   } = props;
 
+  const save = useSave();
+
   //! Function
+  const handleChangeCurrenDate = (day) => {
+    if (day === 30) {
+      save(cachedKeys.CURRENT_DATE_APPOINTMENT, dayjs().add(1, "month"));
+      return;
+    }
+    save(cachedKeys.CURRENT_DATE_APPOINTMENT, dayjs().add(day, "day"));
+  };
 
   //! Render
   return (
@@ -59,9 +68,9 @@ const ButtonField = (props) => {
         </CommonStyles.Typography>
       </Button>
       <CommonStyles.Select
-        // onChange={(event) => {
-        //   setAppointmentDateSelect(event.target.value);
-        // }}
+        onChange={(event) => {
+          handleChangeCurrenDate(event.target.value);
+        }}
         renderValue={(label) => {
           return (
             <CommonStyles.Typography type="normal14" color="secondaryText">
@@ -69,7 +78,7 @@ const ButtonField = (props) => {
             </CommonStyles.Typography>
           );
         }}
-        defaultValue="today"
+        defaultValue={0}
         options={appointmentDateOptions}
         sx={{
           width: "auto",

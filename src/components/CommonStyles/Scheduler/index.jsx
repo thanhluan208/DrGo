@@ -48,7 +48,6 @@ const Scheduler = ({
     const interval = setInterval(() => {
       const indicator = document.getElementsByClassName("indicator");
       if (indicator[0]) {
-        console.log("indicator", indicator[0]);
         const newDiv = document.createElement("div");
         newDiv.classList.add("first_indicator");
         indicator[0].appendChild(newDiv);

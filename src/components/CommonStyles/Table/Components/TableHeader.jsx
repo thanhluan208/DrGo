@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import CommonIcons from "../../../CommonIcons";
 import CommonStyles from "../..";
 import { Checkbox } from "@mui/material";
@@ -17,6 +17,8 @@ const TableHeader = ({
   calculateTemplate,
   headerLevel = 1,
   tableWidth,
+  handleSelectAll,
+  selectedRows,
 }) => {
   //! State
   const theme = useTheme();
@@ -60,20 +62,39 @@ const TableHeader = ({
           return <CommonStyles.Box sx={{ padding: "16px" }}></CommonStyles.Box>;
 
         return (
-          <CommonStyles.Box centered sx={{ padding: "0 16px" }}>
-            <Checkbox
-              sx={{
-                padding: "0",
-                height: `${headerLevel * headerHeight}px`,
-                borderBottom: `1px solid ${theme.palette.divider}`,
-                borderRadius: "0",
+          <CommonStyles.Box centered>
+            <CommonStyles.IconButton
+              hasNoti={false}
+              customSx={{
+                width: "18px",
+                height: "18px",
+                background:
+                  selectedRows.length > 0
+                    ? theme.palette.primary.main
+                    : "transparent",
+                border: `1px solid ${theme.palette.primary.main}`,
+                padding: 0,
+                "&:hover": {
+                  background:
+                    selectedRows.length > 0
+                      ? theme.palette.primary.main
+                      : "transparent",
+                  opacity: 0.8,
+                },
               }}
-            />
+              onClick={() => {
+                handleSelectAll(data);
+              }}
+            >
+              <CommonStyles.Typography type="normal12" color="background">
+                {selectedRows.length > 0 ? selectedRows.length : ""}
+              </CommonStyles.Typography>
+            </CommonStyles.IconButton>
           </CommonStyles.Box>
         );
       }
     },
-    [hasCheckbox, disabledCheckboxHeader, headerLevel]
+    [hasCheckbox, disabledCheckboxHeader, headerLevel, selectedRows, data]
   );
 
   return (
@@ -87,6 +108,7 @@ const TableHeader = ({
         boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
         border: `1px solid ${theme.palette.divider}`,
         background: theme.colors.custom.background,
+        minWidth: "100%",
         width: !!tableWidth ? tableWidth : "100%",
       }}
     >
@@ -131,7 +153,7 @@ const TableHeader = ({
                   gap: "10px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "start",
                   borderBottom: item?.childrens
                     ? `1px solid ${theme.palette.divider}`
                     : " ",

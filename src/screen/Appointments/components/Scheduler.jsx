@@ -17,15 +17,12 @@ const Scheduler = () => {
   const currentDate = useGet(cachedKeys.CURRENT_DATE_APPOINTMENT) || dayjs();
   const save = useSave();
 
-  console.log("currentDate", currentDate.toDate());
-
   //! Function
   const handleChangeScheduler = (value) => {
     const { changed } = value;
     const cloneData = cloneDeep(appointments);
 
     if (changed) {
-      console.log("changed", changed);
       const changedId = Object.keys(changed)[0];
 
       if (dayjs(changed[changedId].startDate).isBefore(dayjs())) {

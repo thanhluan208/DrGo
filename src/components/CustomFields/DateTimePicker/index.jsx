@@ -28,7 +28,6 @@ const DateTimePicker = (props) => {
 
   //! Function
   const handleChange = (date, context) => {
-    console.log("data", date, context);
     if (onChangeCustomize) {
       onChangeCustomize(date);
       return;

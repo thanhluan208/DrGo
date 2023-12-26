@@ -26,7 +26,6 @@ const AppointmentsCustom = (props) => {
   const isStarted = dayjs(startDate).isBefore(dayjs());
 
   const handleDoubleClick = () => {
-    console.log("go here");
     if (isStarted) return;
 
     onDoubleClick && onDoubleClick();

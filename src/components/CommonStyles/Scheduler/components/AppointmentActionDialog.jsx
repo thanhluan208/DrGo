@@ -93,7 +93,6 @@ const NewAppointmentDialogContent = React.memo(({ data, toggle }) => {
       cloneAppointment[foundAppointmentIndex] =
         appointmentModel.parseCreateAppointment(values);
 
-      console.log("cloneApp", cloneAppointment);
       const promise = () =>
         new Promise((res) => {
           setTimeout(() => {

@@ -4,6 +4,8 @@ import CommonStyles from "../..";
 import { isArray } from "lodash";
 import TableContentItem from "./TableContentItem";
 import { useTheme } from "@emotion/react";
+import CommonIcons from "../../../CommonIcons";
+import Check from "../../../../assets/icons/Check";
 
 const TableContent = ({
   rowData,
@@ -74,11 +76,27 @@ const TableContent = ({
               : theme.colors.custom.background,
           }}
         >
-          <Checkbox
-            sx={{ padding: "0" }}
-            checked={isSelected}
+          <CommonStyles.IconButton
+            hasNoti={false}
+            customSx={{
+              width: "18px",
+              height: "18px",
+              background: isSelected
+                ? theme.palette.primary.main
+                : "transparent",
+              border: `1px solid ${theme.palette.primary.main}`,
+              padding: 0,
+              "&:hover": {
+                background: isSelected
+                  ? theme.palette.primary.main
+                  : "transparent",
+                opacity: 0.8,
+              },
+            }}
             onClick={onSelectRow}
-          />
+          >
+            {isSelected ? <Check /> : ""}
+          </CommonStyles.IconButton>
         </CommonStyles.Box>
       )}
       {renderContent()}

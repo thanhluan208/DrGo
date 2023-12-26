@@ -78,7 +78,6 @@ const AuthenticationProvider = ({ children }) => {
   const handleLoginGoogle = useCallback(async (token) => {
     try {
       const response = await AuthenticationServices.loginGoolge();
-      console.log("response", response);
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +86,6 @@ const AuthenticationProvider = ({ children }) => {
   const handleLoginFacebook = useCallback(async () => {
     try {
       const response = await FirebaseServices.logInWithFacebook();
-      console.log("response", response);
     } catch (error) {
       console.log("err", error);
     }

@@ -58,6 +58,7 @@ const lightTheme = createTheme({
       sidebarBackground: "#F3F4F6",
       switcherActive: "#DCDFE3",
       textRedErrors: "#d32f2f",
+      timerColor: "#FD4848",
     },
     client: {
       cardDark: client["cardDark"],

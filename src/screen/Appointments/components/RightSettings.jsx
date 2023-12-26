@@ -5,6 +5,9 @@ import Calendar from "../../../assets/icons/Calendar";
 import List from "../../../assets/icons/List";
 import AppointmentActionDialog from "../../../components/CommonStyles/Scheduler/components/AppointmentActionDialog";
 import { useTranslation } from "react-i18next";
+import { useSave } from "../../../stores/useStores";
+import cachedKeys from "../../../constants/cachedKeys";
+import { layoutTypes } from "..";
 
 const options = [
   {
@@ -25,10 +28,14 @@ const options = [
   },
 ];
 
-const Switcher = ({ renderLeft, renderRight }) => {
+const Switcher = ({ renderLeft, renderRight, onClickRight, onClickLeft }) => {
+  //! State
   const theme = useTheme();
   const [isActive, setIsActive] = React.useState("left");
 
+  //! Function
+
+  //! Render
   return (
     <CommonStyles.Box
       sx={{
@@ -48,7 +55,10 @@ const Switcher = ({ renderLeft, renderRight }) => {
               ? theme.colors.custom.switcherActive
               : "transparent",
         }}
-        onClick={() => setIsActive("left")}
+        onClick={() => {
+          setIsActive("left");
+          onClickLeft && onClickLeft();
+        }}
       >
         {renderLeft && renderLeft()}
       </CommonStyles.IconButton>
@@ -61,7 +71,10 @@ const Switcher = ({ renderLeft, renderRight }) => {
               ? theme.colors.custom.switcherActive
               : "transparent",
         }}
-        onClick={() => setIsActive("right")}
+        onClick={() => {
+          setIsActive("right");
+          onClickRight && onClickRight();
+        }}
       >
         {renderRight && renderRight()}
       </CommonStyles.IconButton>
@@ -72,6 +85,7 @@ const Switcher = ({ renderLeft, renderRight }) => {
 const RightSettings = () => {
   //! State
   const { t } = useTranslation();
+  const save = useSave();
 
   //! Function
 
@@ -89,6 +103,12 @@ const RightSettings = () => {
         }}
         renderRight={() => {
           return <List />;
+        }}
+        onClickLeft={() => {
+          save(cachedKeys.LAYOUT_TYPE_APPOINTMENT, layoutTypes.SCHEDULER);
+        }}
+        onClickRight={() => {
+          save(cachedKeys.LAYOUT_TYPE_APPOINTMENT, layoutTypes.TABLE);
         }}
       />
 

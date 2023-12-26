@@ -30,22 +30,12 @@ const useFilter = (initialFilter) => {
     [filters]
   );
 
-  const handleChangePage = useCallback((newPage) => {
-    setFilters((prev) => {
-      return {
-        ...prev,
-        page: newPage,
-      };
-    });
-  }, []);
-
   const handleSelectRow = useCallback((row) => {
     setFilters((prev) => {
       const prevSelectedRows = prev?.selectedRows;
       if (!prevSelectedRows || !isArray(prevSelectedRows)) {
         throw new Error("selectedRows must be an array");
       } else {
-        console.log("prevSelectedRows", prevSelectedRows);
         const index = prevSelectedRows.findIndex(
           (item) => item?.id === row?.id
         );
@@ -67,12 +57,56 @@ const useFilter = (initialFilter) => {
     });
   }, []);
 
+  const handleSelectAll = useCallback((data) => {
+    setFilters((prev) => {
+      const prevSelectedRows = prev?.selectedRows;
+      if (!prevSelectedRows || !isArray(prevSelectedRows)) {
+        throw new Error("selectedRows must be an array");
+      } else {
+        if (prevSelectedRows.length === 0) {
+          return {
+            ...prev,
+            selectedRows: data,
+          };
+        } else {
+          return {
+            ...prev,
+            selectedRows: [],
+          };
+        }
+      }
+    });
+  }, []);
+
+  const handleChangePage = useCallback((field = "page", newPage) => {
+    setFilters((prev) => {
+      return {
+        ...prev,
+        [field]: newPage,
+      };
+    });
+  }, []);
+
+  const handleChangePageSize = useCallback(
+    (field = "pageSize", newPageSize) => {
+      setFilters((prev) => {
+        return {
+          ...prev,
+          [field]: newPageSize,
+        };
+      });
+    },
+    []
+  );
+
   return {
     handleChangeSort,
     handleChangePage,
     filters,
     setFilters,
     handleSelectRow,
+    handleSelectAll,
+    handleChangePageSize,
   };
 };
 

@@ -23,7 +23,6 @@ const Login = () => {
   });
   //! Function
   const handleSubmit = (values, { setSubmitting }) => {
-    console.log("handleSubmit", values);
     handleLoginTest(values, setSubmitting);
   };
 

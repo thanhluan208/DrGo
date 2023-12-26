@@ -4,6 +4,7 @@ import PerfectScrollBar from "react-perfect-scrollbar";
 import TableHeader from "./Components/TableHeader";
 import TableContent from "./Components/TableContent";
 import { useTheme } from "@emotion/react";
+import Pagination from "./Components/Pagination";
 
 const Table = ({
   data,
@@ -17,9 +18,15 @@ const Table = ({
   maxWidth,
   handleSelectRow,
   headerLevel = 1,
+  handleSelectAll,
+  totalPage,
+  handleChangePage,
+  handleChangePageSize,
 }) => {
   //! State
-  const { sortBy, sortDirection, selectedRows } = filters || {};
+  const { sortBy, sortDirection, selectedRows, currentPage, pageSize } =
+    filters || {};
+
   const theme = useTheme();
   const calculateTemplate = useMemo(() => {
     let template = hasCheckbox ? "80px" : "";
@@ -40,74 +47,87 @@ const Table = ({
   //! Render
 
   return (
-    <PerfectScrollBar
-      style={{ maxWidth: maxWidth, overflow: "unset !important" }}
-    >
-      <TableHeader
-        columns={columns}
-        data={data}
-        handleChangeSort={handleChangeSort}
-        hasCheckbox={hasCheckbox}
-        sortBy={sortBy}
-        sortDirection={sortDirection}
-        calculateTemplate={calculateTemplate}
-        headerLevel={headerLevel}
-        tableWidth={tableWidth}
-        disabledCheckboxHeader={disabledCheckboxHeader}
-      />
-
-      <CommonStyles.Box
-        sx={{
-          width: !!tableWidth ? tableWidth : "100%",
-          borderRadius: "12px",
-        }}
+    <CommonStyles.Box>
+      <PerfectScrollBar
+        style={{ maxWidth: maxWidth, overflow: "unset !important" }}
       >
+        <TableHeader
+          columns={columns}
+          data={data}
+          handleChangeSort={handleChangeSort}
+          hasCheckbox={hasCheckbox}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          calculateTemplate={calculateTemplate}
+          headerLevel={headerLevel}
+          tableWidth={tableWidth}
+          disabledCheckboxHeader={disabledCheckboxHeader}
+          selectedRows={selectedRows}
+          handleSelectAll={handleSelectAll}
+        />
+
         <CommonStyles.Box
           sx={{
-            ".scrollbar-container": {
-              overflow: "unset !important",
-            },
-            ".ps__thumb-y": {
-              display: "none !important",
-            },
+            minWidth: "100%",
+            width: !!tableWidth ? tableWidth : "100%",
             borderRadius: "12px",
           }}
         >
-          <PerfectScrollBar
-            style={{
-              maxHeight: `${maxHeight} `,
-              overflow: "unset !important",
+          <CommonStyles.Box
+            sx={{
+              // ".scrollbar-container": {
+              //   overflow: "unset !important",
+              // },
+              // ".ps__thumb-y": {
+              //   display: "none !important",
+              // },
               borderRadius: "12px",
+              boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
+              border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <CommonStyles.Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
-                border: `1px solid ${theme.palette.divider}`,
+            <PerfectScrollBar
+              style={{
+                maxHeight: `${maxHeight} `,
+                // overflow: "unset !important",
                 borderRadius: "12px",
               }}
             >
-              {data.map((rowData, index) => {
-                return (
-                  <TableContent
-                    rowData={rowData}
-                    calculateTemplate={calculateTemplate}
-                    key={rowData.id}
-                    columns={columns}
-                    hasCheckbox={hasCheckbox}
-                    isOdd={index % 2 === 1}
-                    selectedRows={selectedRows}
-                    handleSelectRow={handleSelectRow}
-                  />
-                );
-              })}
-            </CommonStyles.Box>
-          </PerfectScrollBar>
+              <CommonStyles.Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+
+                  borderRadius: "12px",
+                }}
+              >
+                {data.map((rowData, index) => {
+                  return (
+                    <TableContent
+                      rowData={rowData}
+                      calculateTemplate={calculateTemplate}
+                      key={rowData.id}
+                      columns={columns}
+                      hasCheckbox={hasCheckbox}
+                      isOdd={index % 2 === 1}
+                      selectedRows={selectedRows}
+                      handleSelectRow={handleSelectRow}
+                    />
+                  );
+                })}
+              </CommonStyles.Box>
+            </PerfectScrollBar>
+          </CommonStyles.Box>
         </CommonStyles.Box>
-      </CommonStyles.Box>
-    </PerfectScrollBar>
+      </PerfectScrollBar>
+      <Pagination
+        totalPage={totalPage}
+        currentPage={currentPage}
+        handleChangePage={handleChangePage}
+        pageSize={pageSize}
+        handleChangePageSize={handleChangePageSize}
+      />
+    </CommonStyles.Box>
   );
 };
 

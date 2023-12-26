@@ -5,10 +5,20 @@ import RightSettings from "./components/RightSettings";
 import { grouping, resources } from "../../assets/mockdata";
 import Scheduler from "./components/Scheduler";
 import { useTranslation } from "react-i18next";
+import { useGet } from "../../stores/useStores";
+import cachedKeys from "../../constants/cachedKeys";
+import TableAppointment from "./components/TableAppointment";
+
+export const layoutTypes = {
+  SCHEDULER: "SCHEDULER",
+  TABLE: "TABLE",
+};
 
 const Appointments = () => {
   //! State
   const { t } = useTranslation();
+  const layoutType =
+    useGet(cachedKeys.LAYOUT_TYPE_APPOINTMENT) || layoutTypes.SCHEDULER;
 
   //! Function
 
@@ -31,7 +41,11 @@ const Appointments = () => {
         <RightSettings />
       </CommonStyles.Box>
 
-      <Scheduler />
+      {layoutType === layoutTypes.SCHEDULER ? (
+        <Scheduler />
+      ) : (
+        <TableAppointment />
+      )}
     </CommonStyles.Box>
   );
 };
