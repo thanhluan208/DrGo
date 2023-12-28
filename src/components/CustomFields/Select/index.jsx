@@ -50,7 +50,7 @@ const SelectField = ({
   //! Render
   if (isMultiple) {
     return (
-      <CommonStyles.Box sx={{ minWidth: 120, ...sxContainer }}>
+      <CommonStyles.Box centered sx={{ minWidth: 120, ...sxContainer }}>
         <FormControl
           fullWidth={props.fullWidth}
           error={isTouched && Boolean(errorMessage)}
@@ -142,6 +142,7 @@ const SelectField = ({
   }
   return (
     <CommonStyles.Box
+      centered
       className="select-field"
       sx={{
         padding: "10px 0",

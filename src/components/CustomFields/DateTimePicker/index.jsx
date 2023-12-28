@@ -46,12 +46,16 @@ const DateTimePicker = (props) => {
         fieldset: {
           borderRadius: "8px",
         },
+        label: {
+          color: !isTouched ? "rgba(0, 0, 0, 0.38) !important" : "",
+        },
       }}
     >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <MUIDateTimePicker
           value={value}
           onChange={handleChange}
+          closeOnSelect={false}
           slotProps={{
             textField: {
               fullWidth: fullWidth,

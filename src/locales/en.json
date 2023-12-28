@@ -12,5 +12,8 @@
   "messages": "Messages",
   "edit_appointment": "Edit Appointment",
   "page": "Page",
-  "showOnPage": "Show on page"
+  "showOnPage": "Show on page",
+  "insurance": "Insurance",
+  "symptoms": "Symptoms",
+  "duplicate": "Duplicate"
 }

@@ -1,26 +1,19 @@
-import React, {
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { memo } from "react";
 import {
   ViewState,
   GroupingState,
   IntegratedGrouping,
   IntegratedEditing,
   EditingState,
+  WeekView,
 } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler as SchedulerComponent,
   Resources,
   Appointments,
-  AppointmentTooltip,
   GroupingPanel,
   DayView,
   DragDropProvider,
-  AppointmentForm,
   CurrentTimeIndicator,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { Paper } from "@mui/material";
@@ -41,23 +34,22 @@ const Scheduler = ({
 }) => {
   //! State
   const theme = useTheme();
+  const interval = setInterval(() => {
+    const indicator = document.getElementsByClassName("indicator");
+    if (indicator[0]) {
+      const newDiv = document.createElement("div");
+      newDiv.classList.add("first_indicator");
+      indicator[0].appendChild(newDiv);
+      clearInterval(interval);
+    }
+  }, 10);
 
   //! Function
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const indicator = document.getElementsByClassName("indicator");
-      if (indicator[0]) {
-        const newDiv = document.createElement("div");
-        newDiv.classList.add("first_indicator");
-        indicator[0].appendChild(newDiv);
-        clearInterval(interval);
-      }
-    }, 10);
-  }, []);
-
   //! Render
   if (!data || !resources || !grouping) return null;
+
+  console.log("current", currentDate);
 
   return (
     <Paper
@@ -93,9 +85,11 @@ const Scheduler = ({
           width: "40px !important",
         },
         "& .appointment": {
-          animation: "appear 0.8s ease-in-out forwards",
+          animation: "appear 0.8s ease-in-out ",
           overflow: "hidden",
           whiteSpace: "nowrap",
+          opacity: 1,
+          width: "100%",
           "@keyframes appear": {
             "0%": {
               opacity: 0,
@@ -146,17 +140,13 @@ const Scheduler = ({
                   textAlign: "start",
                 }}
               >
-                PST
+                Dr
               </CommonStyles.Typography>
             );
           }}
           timeScaleLabelComponent={(props) => (
             <TimeScaleLabelComponent {...props} />
           )}
-          // timeTableCellComponent={(props) => {
-          //   console.log("props", props);
-          //   return null;
-          // }}
           timeTableCellComponent={(props) => (
             <TimeTableCellComponent {...props} />
           )}
@@ -184,7 +174,7 @@ const Scheduler = ({
                   top: props.top,
                   height: "1px",
                   width: "100%",
-                  zIndex: "100",
+                  zIndex: "1",
                   ".first_indicator": {
                     position: "absolute",
                     height: "10px",

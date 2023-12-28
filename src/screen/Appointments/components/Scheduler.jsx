@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import CommonStyles from "../../../components/CommonStyles";
 import {
   grouping,
@@ -7,37 +7,72 @@ import {
 } from "../../../assets/mockdata";
 import { useGet, useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
-import { cloneDeep } from "lodash";
+import { cloneDeep, filter } from "lodash";
 import dayjs from "dayjs";
 import useToast from "../../../hooks/useToast";
+import FirebaseServices from "../../../services/firebaseServices";
+import { toast } from "react-toastify";
 
-const Scheduler = () => {
+const Scheduler = ({ appointments = [], filters }) => {
   //! State
-  const appointments = useGet(cachedKeys.APPOINTMENTS) || [];
-  const currentDate = useGet(cachedKeys.CURRENT_DATE_APPOINTMENT) || dayjs();
+  const refetchListAppointment = useGet(cachedKeys.REFETCH_LIST_APPOINTMENT);
   const save = useSave();
 
+  const currentDate = useMemo(() => {
+    return filters.currentDate.toDate();
+  }, [filters]);
+
   //! Function
-  const handleChangeScheduler = (value) => {
+  const handleChangeScheduler = async (value) => {
     const { changed } = value;
-    const cloneData = cloneDeep(appointments);
+    const changedId = Object.keys(changed)[0];
 
-    if (changed) {
-      const changedId = Object.keys(changed)[0];
+    save(cachedKeys.CURRENT_EDITING_APPOINTMENT, changedId);
+    const toastId = toast.loading("Editing appointment...", {
+      autoClose: false,
+    });
 
-      if (dayjs(changed[changedId].startDate).isBefore(dayjs())) {
-        useToast("Cannot change appointment to past ", "error");
-        return;
+    try {
+      if (changed) {
+        const { doctor, startDate, endDate } = changed[changedId];
+
+        if (dayjs(changed[changedId].startDate).isBefore(dayjs())) {
+          toast.update(toastId, {
+            render: "Cannot change appointment to past ",
+            type: "error",
+            autoClose: 1000,
+            isLoading: false,
+          });
+          save(cachedKeys.CURRENT_EDITING_APPOINTMENT, null);
+
+          return;
+        }
+
+        await FirebaseServices.updateAppointment(changedId, {
+          doctor,
+          startDate: startDate.valueOf(),
+          endDate: endDate.valueOf(),
+        });
+
+        await refetchListAppointment();
+
+        save(cachedKeys.CURRENT_EDITING_APPOINTMENT, null);
+
+        toast.update(toastId, {
+          render: "Edit appointment successfully!",
+          type: "success",
+          autoClose: 1000,
+          isLoading: false,
+        });
       }
-
-      const changePlace = cloneData.findIndex((item) => item.id === +changedId);
-
-      cloneData[changePlace] = {
-        ...cloneData[changePlace],
-        ...changed[changedId],
-      };
-
-      save(cachedKeys.APPOINTMENTS, cloneData);
+    } catch (error) {
+      console.log("error", error);
+      toast.update(toastId, {
+        render: "Edit appointment failed!",
+        type: "error",
+        autoClose: 1000,
+        isLoading: false,
+      });
     }
   };
 
@@ -49,7 +84,7 @@ const Scheduler = () => {
         grouping={grouping}
         resources={resources}
         handleChangeScheduler={handleChangeScheduler}
-        currentDate={currentDate.toDate()}
+        currentDate={currentDate}
       />
     </CommonStyles.Box>
   );

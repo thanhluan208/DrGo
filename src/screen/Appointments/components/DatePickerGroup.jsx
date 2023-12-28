@@ -7,22 +7,30 @@ import cachedKeys from "../../../constants/cachedKeys";
 import dayjs from "dayjs";
 import { useGet, useSave } from "../../../stores/useStores";
 
-const DatePickerGroup = () => {
+const DatePickerGroup = ({ currentDate, setFilters }) => {
   //! State
   const theme = useTheme();
-  const currentDate = useGet(cachedKeys.CURRENT_DATE_APPOINTMENT) || dayjs();
-  const save = useSave();
 
   //! Function
-  const handlePrev = useCallback(() => {
-    const newDate = currentDate.subtract(1, "day");
-    save(cachedKeys.CURRENT_DATE_APPOINTMENT, newDate);
-  }, [save, currentDate]);
 
-  const handleNext = useCallback(() => {
-    const newDate = currentDate.add(1, "day");
-    save(cachedKeys.CURRENT_DATE_APPOINTMENT, newDate);
-  }, [save, currentDate]);
+  const handleChangeDate = useCallback(
+    (value) => {
+      if (value === "next") {
+        return setFilters((prev) => {
+          return { ...prev, currentDate: prev?.currentDate.add(1, "day") };
+        });
+      }
+      if (value === "prev") {
+        return setFilters((prev) => {
+          return { ...prev, currentDate: prev?.currentDate.subtract(1, "day") };
+        });
+      }
+      return setFilters((prev) => {
+        return { ...prev, currentDate: value };
+      });
+    },
+    [setFilters]
+  );
 
   //! Render
   return (
@@ -36,17 +44,17 @@ const DatePickerGroup = () => {
         customSx={{
           border: `1px solid ${theme.colors.custom.borderColor}`,
         }}
-        onClick={handlePrev}
+        onClick={() => handleChangeDate("prev")}
       >
         <CommonIcons.SingleArrowLeft />
       </CommonStyles.IconButton>
-      <DatePicker />
+      <DatePicker currentDate={currentDate} handleChange={handleChangeDate} />
 
       <CommonStyles.IconButton
         customSx={{
           border: `1px solid ${theme.colors.custom.borderColor}`,
         }}
-        onClick={handleNext}
+        onClick={() => handleChangeDate("next")}
       >
         <CommonIcons.SingleArrowLeft
           style={{

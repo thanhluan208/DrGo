@@ -3,7 +3,8 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 function SwitchField(props) {
-  const { field, form, label, afterOnChange, ...restProps } = props;
+  const { field, form, label, afterOnChange, sxContainer, ...restProps } =
+    props;
   const { name, value } = field;
   const { setFieldValue } = form;
 
@@ -15,7 +16,7 @@ function SwitchField(props) {
   return (
     <FormControlLabel
       labelPlacement="start"
-      sx={{ ml: 0 }}
+      sx={{ ml: 0, ...sxContainer }}
       control={
         <Switch
           name={name}

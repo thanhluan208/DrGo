@@ -5,266 +5,362 @@ import dayjs from "dayjs";
 import { FastField, Form, Formik } from "formik";
 import * as Yup from "yup";
 import CustomFields from "../../../CustomFields";
-import { schedulerTypes } from "../../../../constants/options";
-import { convertPstToOptions } from "../../../../helpers/common";
-import { PST } from "../../../../assets/mockdata";
-import { useGet, useSave } from "../../../../stores/useStores";
+import {
+  createdByOptions,
+  schedulerTypes,
+  statusOptions,
+} from "../../../../constants/options";
+import { convertdoctorToOptions } from "../../../../helpers/common";
+import { doctor } from "../../../../assets/mockdata";
+import { useGet } from "../../../../stores/useStores";
 import cachedKeys from "../../../../constants/cachedKeys";
-import { useToastPromise } from "../../../../hooks/useToast";
 import appointmentModel from "../../../../models/appointmentsModel";
-import { cloneDeep } from "lodash";
 import useToggleDialog from "../../../../hooks/useToggleDialog";
 import { useTranslation } from "react-i18next";
+import FirebaseServices from "../../../../services/firebaseServices";
+import { toast } from "react-toastify";
+import Eyes from "../../../../assets/icons/Eyes";
+import DuplicateButton from "./DuplicateButton";
 
-const NewAppointmentDialogContent = React.memo(({ data, toggle }) => {
-  //! State
-  const appointments = useGet(cachedKeys.APPOINTMENTS) || [];
-  const save = useSave();
-  const { t } = useTranslation();
+const NewAppointmentDialogContent = React.memo(
+  ({ data, toggle, readOnly, isDuplicate }) => {
+    //! State
+    const refetchListAppointment = useGet(cachedKeys.REFETCH_LIST_APPOINTMENT);
 
-  const initialValue = useMemo(() => {
-    if (data) {
+    const { t } = useTranslation();
+
+    const initialValue = useMemo(() => {
+      if (data) {
+        return {
+          id: data?.id || Math.floor(Math.random() * 100),
+          patientName: data?.patientName || "",
+          doctor: data?.doctor?.[0] || "",
+          startDate: data?.startDate ? dayjs(data.startDate) : dayjs(),
+          endDate: data?.endDate ? dayjs(data.endDate) : dayjs().add(1, "hour"),
+          type: data.type || "checkedIn",
+          insurance: data?.insurance || "",
+          visitedBefore: !!data?.visitedBefore,
+          symptoms: data?.symptoms || "",
+          createdBy: data?.createdBy || 1,
+          status: data?.status || 1,
+        };
+      }
+
       return {
-        id: data?.id || Math.floor(Math.random() * 100),
-        patientName: data?.patientName || "",
-        pst: data?.pst || [],
-        startDate: data?.startDate ? dayjs(data.startDate) : dayjs(),
-        endDate: data?.endDate ? dayjs(data.endDate) : dayjs().add(1, "hour"),
-        type: data.type || "checkedIn",
+        patientName: "",
+        doctor: "",
+        startDate: dayjs().add(1, "minute"),
+        endDate: dayjs().add(1, "hour"),
+        type: "checkedIn",
+        insurance: "",
+        visitedBefore: false,
+        symptoms: "",
+        createdBy: 1,
+        status: 1,
       };
-    }
+    }, [data]);
 
-    return {
-      patientName: "",
-      pst: [],
-      startDate: dayjs().add(1, "minute"),
-      endDate: dayjs().add(1, "hour"),
-      type: "checkedIn",
+    const validationSchema = useMemo(() => {
+      return Yup.object().shape({
+        patientName: Yup.string().required(
+          t("required", { field: t("patient_name") })
+        ),
+        insurance: Yup.string().required(
+          t("required", { field: t("insurance") })
+        ),
+        symptoms: Yup.string().required(
+          t("required", { field: t("symptoms") })
+        ),
+        doctor: Yup.string().required(t("required", { field: t("doctor") })),
+        startDate: Yup.string()
+          .test("is-date", "Start date must be a valid date", function (value) {
+            return dayjs(value).isValid();
+          })
+          .test(
+            "is-greater",
+            "Start date must be greater than present time",
+            function (value) {
+              return dayjs(value).isAfter(dayjs());
+            }
+          ),
+        endDate: Yup.string()
+          .test("is-date", "End date must be a valid date", function (value) {
+            return dayjs(value).isValid();
+          })
+          .test(
+            "is-greater",
+            "End date must be greater than start date",
+            function (value) {
+              return dayjs(value).isAfter(dayjs(this.parent.startDate));
+            }
+          ),
+        type: Yup.string().required("Required"),
+      });
+    }, []);
+
+    //! Function
+    const handleEdit = async (values, { setSubmitting }) => {
+      setSubmitting(true);
+      const toastId = toast.loading("Updating appointment...", {
+        autoClose: false,
+      });
+      try {
+        await FirebaseServices.updateAppointment(values.id, {
+          ...values,
+          startDate: values.startDate?.valueOf(),
+          endDate: values.endDate?.valueOf(),
+          doctor: [values.doctor],
+        });
+
+        await refetchListAppointment();
+
+        toast.update(toastId, {
+          render: "Update appointment successfully",
+          isLoading: false,
+          type: toast.TYPE.SUCCESS,
+          autoClose: 1000,
+        });
+      } catch (error) {
+        console.log("err", error);
+        toast.update(toastId, {
+          render: "Update appointment failed: " + error.message || "",
+          isLoading: false,
+          type: toast.TYPE.ERROR,
+          autoClose: 1000,
+        });
+      }
+      setSubmitting(false);
+      toggle();
     };
-  }, [data]);
 
-  const validationSchema = useMemo(() => {
-    return Yup.object().shape({
-      patientName: Yup.string().required(
-        t("required", { field: t("patient_name") })
-      ),
-      pst: Yup.array().test(
-        "is-not-empty",
-        t("required", { field: "PST" }),
-        function (value) {
-          return value.length > 0;
-        }
-      ),
-      startDate: Yup.string()
-        .test("is-date", "Start date must be a valid date", function (value) {
-          return dayjs(value).isValid();
-        })
-        .test(
-          "is-greater",
-          "Start date must be greater than present time",
-          function (value) {
-            return dayjs(value).isAfter(dayjs());
-          }
-        ),
-      endDate: Yup.string()
-        .test("is-date", "End date must be a valid date", function (value) {
-          return dayjs(value).isValid();
-        })
-        .test(
-          "is-greater",
-          "End date must be greater than start date",
-          function (value) {
-            return dayjs(value).isAfter(dayjs(this.parent.startDate));
-          }
-        ),
-      type: Yup.string().required("Required"),
-    });
-  }, []);
+    const handleCreate = async (values, { setSubmitting }) => {
+      setSubmitting(true);
+      const loadingText = isDuplicate ? "Duplicating" : "Creating";
+      const statusText = isDuplicate ? "Duplicate" : "Create";
 
-  //! Function
-  const handleEdit = async (values, { setSubmitting }) => {
-    setSubmitting(true);
-
-    const cloneAppointment = cloneDeep(appointments);
-    try {
-      const foundAppointmentIndex = cloneAppointment.findIndex(
-        (item) => item.id === values.id
-      );
-      cloneAppointment[foundAppointmentIndex] =
-        appointmentModel.parseCreateAppointment(values);
-
-      const promise = () =>
-        new Promise((res) => {
-          setTimeout(() => {
-            save(cachedKeys.APPOINTMENTS, cloneAppointment);
-            res();
-          }, 1500);
-        });
-
-      await useToastPromise(promise, {
-        pending: "Editing...",
-        success: "Edit successfully",
-        error: "Edit failed",
+      const toastId = toast.loading(`${loadingText} appointment...`, {
+        autoClose: false,
       });
-    } catch (error) {
-      console.log("error", error);
-    }
-    setSubmitting(false);
-    toggle();
-  };
 
-  const handleCreate = async (values, { setSubmitting }) => {
-    setSubmitting(true);
-    try {
-      const promise = () =>
-        new Promise((resolve) => {
-          const parsedValues = appointmentModel.parseCreateAppointment(values);
-          setTimeout(() => {
-            save(cachedKeys.APPOINTMENTS, [...appointments, parsedValues]);
-            resolve();
-          }, 1500);
+      try {
+        const bodyRequest =
+          appointmentModel.parseRequestCreateAppointment(values);
+        await FirebaseServices.createAppointment(bodyRequest);
+
+        await refetchListAppointment();
+
+        toast.update(toastId, {
+          render: `${statusText} appointment successfully`,
+          isLoading: false,
+          type: toast.TYPE.SUCCESS,
+          autoClose: 1000,
         });
+      } catch (error) {
+        console.log("error", error);
+        toast.update(toastId, {
+          render: `${statusText} appointment failed: ` + error.message || "",
+          isLoading: false,
+          type: toast.TYPE.ERROR,
+          autoClose: 1000,
+        });
+      }
+      setSubmitting(false);
+      toggle();
+    };
 
-      await useToastPromise(promise, {
-        pending: "Saving...",
-        success: "Save successfully",
-        error: "Save failed",
-      });
-    } catch (error) {
-      console.log("error", error);
-    }
-    setSubmitting(false);
-    toggle();
-  };
+    const handleSubmit = (values, { setSubmitting }) => {
+      if (data && data.id && !isDuplicate) {
+        return handleEdit(values, { setSubmitting });
+      }
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    if (data && data.id) {
-      return handleEdit(values, { setSubmitting });
-    }
+      return handleCreate(values, { setSubmitting });
+    };
 
-    return handleCreate(values, { setSubmitting });
-  };
-
-  //! Render
-  return (
-    <Formik
-      initialValues={initialValue}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      validateOnBlur
-      validateOnChange
-      validateOnMount={false}
-    >
-      {({ isSubmitting, handleSubmit }) => {
-        return (
-          <Form>
-            <CommonStyles.Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "50% 50%",
-              }}
-            >
+    //! Render
+    return (
+      <Formik
+        initialValues={initialValue}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnBlur
+        validateOnChange
+        validateOnMount={false}
+      >
+        {({ isSubmitting, handleSubmit, setSubmitting, values }) => {
+          return (
+            <Form>
+              <CommonStyles.Box
+                sx={{ padding: "0 20px", marginBottom: "20px" }}
+              >
+                <FastField
+                  name="visitedBefore"
+                  component={CustomFields.SwitchField}
+                  label="Visited before"
+                  disabled={readOnly}
+                />
+              </CommonStyles.Box>
               <CommonStyles.Box
                 sx={{
+                  display: "grid",
+                  gridTemplateColumns: "50% 50%",
+                }}
+              >
+                <CommonStyles.Box
+                  sx={{
+                    padding: "0 20px",
+                  }}
+                >
+                  <FastField
+                    name="patientName"
+                    label="Patient name"
+                    component={CustomFields.TextField}
+                    fullWidth
+                    placeholder="Patient name"
+                    required
+                    disabled={readOnly}
+                  />
+                </CommonStyles.Box>
+                <CommonStyles.Box
+                  sx={{
+                    padding: "0 20px",
+                  }}
+                >
+                  <FastField
+                    name="type"
+                    label="Scheduler type"
+                    component={CustomFields.SelectField}
+                    options={schedulerTypes}
+                    fullWidth
+                    placeholder="Scheduler type"
+                    disabled={readOnly}
+                  />
+                </CommonStyles.Box>
+                <CommonStyles.Box
+                  sx={{
+                    padding: "0 20px",
+                  }}
+                >
+                  <FastField
+                    name="startDate"
+                    component={CustomFields.DateTimePicker}
+                    label="Start date"
+                    minDateTime={dayjs()}
+                    fullWidth
+                    disabled={readOnly}
+                  />
+                </CommonStyles.Box>
+                <CommonStyles.Box
+                  sx={{
+                    padding: "0 20px",
+                  }}
+                >
+                  <FastField
+                    name="endDate"
+                    component={CustomFields.DateTimePicker}
+                    label="End date"
+                    minDateTime={dayjs()}
+                    fullWidth
+                    disabled={readOnly}
+                  />
+                </CommonStyles.Box>
+              </CommonStyles.Box>
+              <CommonStyles.Box
+                centered
+                sx={{
                   padding: "0 20px",
+                  marginTop: "20px",
+                  gap: "12px",
                 }}
               >
                 <FastField
-                  name="patientName"
-                  label="Patient name"
+                  name="doctor"
+                  component={CustomFields.SelectField}
+                  options={convertdoctorToOptions(doctor)}
+                  fullWidth
+                  disabled={readOnly}
+                  label="Doctor"
+                  required
+                />
+                <FastField
+                  name="insurance"
+                  label="Insurance"
                   component={CustomFields.TextField}
                   fullWidth
-                  placeholder="Patient name"
+                  disabled={readOnly}
+                  required
+                />
+                <FastField
+                  name="status"
+                  label="Status"
+                  component={CustomFields.SelectField}
+                  options={statusOptions}
+                  fullWidth
+                  disabled={readOnly}
+                />
+                <FastField
+                  name="createdBy"
+                  label="Created by"
+                  component={CustomFields.SelectField}
+                  options={createdByOptions}
+                  fullWidth
+                  disabled={readOnly}
+                />
+              </CommonStyles.Box>
+
+              <CommonStyles.Box
+                sx={{
+                  padding: "0 20px",
+                  marginTop: "20px",
+                }}
+              >
+                <FastField
+                  name="symptoms"
+                  label="Symptoms"
+                  fullWidth
+                  component={CustomFields.TextField}
+                  multiline
+                  rows={4}
+                  disabled={readOnly}
                   required
                 />
               </CommonStyles.Box>
               <CommonStyles.Box
+                centered
                 sx={{
-                  padding: "0 20px",
+                  gap: "8px",
+                  marginTop: "30px",
+                  justifyContent: "flex-end",
                 }}
               >
-                <FastField
-                  name="type"
-                  label="Scheduler type"
-                  component={CustomFields.SelectField}
-                  options={schedulerTypes}
-                  fullWidth
-                  placeholder="Scheduler type"
-                />
+                <CommonStyles.Button variant="text" disabled={isSubmitting}>
+                  <CommonStyles.Typography type="normal14" onClick={toggle}>
+                    {t("cancel")}
+                  </CommonStyles.Typography>
+                </CommonStyles.Button>
+                {!isDuplicate && <DuplicateButton data={values} />}
+                <CommonStyles.Button
+                  onClick={handleSubmit}
+                  loading={isSubmitting}
+                >
+                  <CommonStyles.Typography type="normal14" color="background">
+                    {t("save")}
+                  </CommonStyles.Typography>
+                </CommonStyles.Button>
               </CommonStyles.Box>
-              <CommonStyles.Box
-                sx={{
-                  padding: "0 20px",
-                }}
-              >
-                <FastField
-                  name="startDate"
-                  component={CustomFields.DateTimePicker}
-                  label="Start date"
-                  minDateTime={dayjs()}
-                  fullWidth
-                  textFieldProps={{
-                    required: true,
-                  }}
-                />
-              </CommonStyles.Box>
-              <CommonStyles.Box
-                sx={{
-                  padding: "0 20px",
-                }}
-              >
-                <FastField
-                  name="endDate"
-                  component={CustomFields.DateTimePicker}
-                  label="End date"
-                  minDateTime={dayjs()}
-                  fullWidth
-                  textFieldProps={{
-                    required: true,
-                  }}
-                />
-              </CommonStyles.Box>
-            </CommonStyles.Box>
-            <CommonStyles.Box sx={{ padding: "0 20px", marginTop: "20px" }}>
-              <FastField
-                name="pst"
-                component={CustomFields.SelectField}
-                options={convertPstToOptions(PST)}
-                fullWidth
-                isMultiple
-                label="PST"
-              />
-            </CommonStyles.Box>
-            <CommonStyles.Box
-              centered
-              sx={{
-                gap: "8px",
-                marginTop: "30px",
-                justifyContent: "flex-end",
-              }}
-            >
-              <CommonStyles.Button variant="text" disabled={isSubmitting}>
-                <CommonStyles.Typography type="normal14" onClick={toggle}>
-                  {t("cancel")}
-                </CommonStyles.Typography>
-              </CommonStyles.Button>
-              <CommonStyles.Button
-                onClick={handleSubmit}
-                loading={isSubmitting}
-              >
-                <CommonStyles.Typography type="normal14" color="background">
-                  {t("save")}
-                </CommonStyles.Typography>
-              </CommonStyles.Button>
-            </CommonStyles.Box>
-          </Form>
-        );
-      }}
-    </Formik>
-  );
-});
+            </Form>
+          );
+        }}
+      </Formik>
+    );
+  }
+);
 
-const AppointmentActionDialog = ({ data, customButton }) => {
+const AppointmentActionDialog = ({
+  data,
+  customButton,
+  readOnly,
+  isDuplicate,
+}) => {
   //! State
   const { open, shouldRender, toggle } = useToggleDialog();
   const { t } = useTranslation();
@@ -272,6 +368,13 @@ const AppointmentActionDialog = ({ data, customButton }) => {
   //! Render
   const renderButton = useCallback(() => {
     if (customButton) return customButton(toggle);
+
+    if (readOnly)
+      return (
+        <CommonStyles.IconButton onClick={toggle}>
+          <Eyes color="#000000" />
+        </CommonStyles.IconButton>
+      );
 
     if (data) {
       return (
@@ -309,10 +412,19 @@ const AppointmentActionDialog = ({ data, customButton }) => {
           maxWidth="lg"
           title={
             <CommonStyles.Typography type="bold18">
-              {data && data.id ? t("edit_appointment") : t("new_appointment")}
+              {data && data.id && !isDuplicate
+                ? t("edit_appointment")
+                : t("new_appointment")}
             </CommonStyles.Typography>
           }
-          content={<NewAppointmentDialogContent data={data} toggle={toggle} />}
+          content={
+            <NewAppointmentDialogContent
+              data={data}
+              toggle={toggle}
+              readOnly={readOnly}
+              isDuplicate={isDuplicate}
+            />
+          }
         />
       )}
     </Fragment>

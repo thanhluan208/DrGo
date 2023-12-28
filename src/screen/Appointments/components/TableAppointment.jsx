@@ -7,17 +7,11 @@ import TimerComponent from "./TimerComponent";
 import useFilter from "../../../hooks/useFilter";
 import CellActions from "./CellActions";
 import { appointmentActionTypes } from "../../../constants/type";
-
-const createByType = {
-  1: <Phone />,
-  2: <Monitor />,
-};
-
-const statusType = {
-  1: "Visited",
-  2: "Scheduled",
-  3: "Waiting",
-};
+import { createdByType, statusType } from "../../../constants/options";
+import { useGet } from "../../../stores/useStores";
+import cachedKeys from "../../../constants/cachedKeys";
+import dayjs from "dayjs";
+import useGetListAppointment from "../../../hooks/appointments/useGetListAppointment";
 
 const mockdata = [
   {
@@ -27,10 +21,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -39,10 +33,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -51,10 +45,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -63,10 +57,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -75,10 +69,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -87,10 +81,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -99,10 +93,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -111,10 +105,10 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -127,11 +121,11 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[3],
     timer: 320,
     action: appointmentActionTypes.EDIT,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
   {
     id: Math.random() * 100000,
@@ -140,28 +134,22 @@ const mockdata = [
     insurance: "AIA",
     visitedBefore: "Yes",
     doctor: "Dr. John Doe",
-    sysptom: "Headache",
+    Symptoms: "Headache",
     status: statusType[Math.floor(Math.random() * 2) + 1],
     timer: 0,
-    createdBy: createByType[Math.floor(Math.random() * 2) + 1],
+    createdBy: createdByType[Math.floor(Math.random() * 2) + 1],
   },
 ];
 
-const TableAppointment = () => {
+const TableAppointment = ({
+  filters,
+  handleSelectRow,
+  handleChangeSort,
+  handleSelectAll,
+  handleChangePage,
+  handleChangePageSize,
+}) => {
   //! State
-  const {
-    filters,
-    handleSelectRow,
-    handleChangeSort,
-    handleSelectAll,
-    handleChangePage,
-    handleChangePageSize,
-  } = useFilter({
-    sortBy: "time",
-    currentPage: 1,
-    sortDirection: "asc",
-    selectedRows: [],
-  });
 
   const columns = useMemo(() => {
     return [
@@ -190,8 +178,8 @@ const TableAppointment = () => {
         title: "Doctor",
       },
       {
-        id: "sysptom",
-        title: "Sysptom",
+        id: "Symptoms",
+        title: "Symptoms",
         width: 300,
       },
       {

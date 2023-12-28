@@ -106,20 +106,18 @@ const ButtonDatePicker = (props) => {
   );
 };
 
-const PickerWithButtonField = () => {
+const PickerWithButtonField = ({ currentDate, handleChange }) => {
   //! State
-  const value = useGet(cachedKeys.CURRENT_DATE_APPOINTMENT);
-  const save = useSave();
 
   //! Function
-  const handleChange = (newValue) => {
-    save(cachedKeys.CURRENT_DATE_APPOINTMENT, newValue);
-  };
 
   //! Render
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ButtonDatePicker value={value || dayjs()} onChange={handleChange} />
+      <ButtonDatePicker
+        value={currentDate || dayjs()}
+        onChange={handleChange}
+      />
     </LocalizationProvider>
   );
 };

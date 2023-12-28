@@ -20,7 +20,7 @@ const TimeTableCellComponent = (props) => {
     return {
       endDate,
       startDate,
-      pst: [id],
+      doctor: [id],
     };
   }, [startDate, endDate, groupingInfo]);
 

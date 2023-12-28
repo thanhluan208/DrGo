@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import Avatar from "./Avatar.jpg";
 
-export const PST = [
+export const doctor = [
   {
     text: JSON.stringify({
       name: "Abril Lewis",
@@ -37,7 +37,7 @@ export const PST = [
 
 export const grouping = [
   {
-    resourceName: "pst",
+    resourceName: "doctor",
   },
 ];
 
@@ -45,7 +45,7 @@ export const appointments = [
   {
     id: 0,
     patientName: "Robert Fox",
-    pst: [1],
+    doctor: [1],
     startDate: dayjs("2023-12-22 08:30:00").toDate(),
     endDate: dayjs("2023-12-22 10:30:00").toDate(),
     type: "checked out",
@@ -53,7 +53,7 @@ export const appointments = [
   {
     id: 1,
     patientName: "Cody Fisher",
-    pst: [4],
+    doctor: [4],
     startDate: dayjs("2023-12-22 11:00:00").toDate(),
     endDate: dayjs("2023-12-22 12:30:00").toDate(),
     type: "checked in",
@@ -61,7 +61,7 @@ export const appointments = [
   {
     id: 4,
     patientName: "Cameron Williamson",
-    pst: [3],
+    doctor: [3],
     startDate: dayjs("2023-12-22 13:00:00").toDate(),
     endDate: dayjs("2023-12-22 14:30:00").toDate(),
     type: "confirmed",
@@ -69,7 +69,7 @@ export const appointments = [
   {
     id: 2,
     patientName: "Daisy Phillips",
-    pst: [2],
+    doctor: [2],
     startDate: dayjs("2023-12-22 15:00:00").toDate(),
     endDate: dayjs("2023-12-22 16:30:00").toDate(),
     type: "scheduled",
@@ -77,7 +77,7 @@ export const appointments = [
   {
     id: 3,
     patientName: "Leah Curtis",
-    pst: [2],
+    doctor: [2],
     startDate: dayjs("2023-12-22 23:00:00").toDate(),
     endDate: dayjs("2023-12-23 00:00:00").toDate(),
     type: "none",
@@ -86,9 +86,9 @@ export const appointments = [
 
 export const resources = [
   {
-    fieldName: "pst",
-    title: "pst",
-    instances: PST,
+    fieldName: "doctor",
+    title: "doctor",
+    instances: doctor,
     allowMultiple: true,
   },
 ];
