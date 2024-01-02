@@ -53,7 +53,7 @@ const AuthenticationProvider = ({ children }) => {
         httpService.saveTokenToLocalStorage(idToken);
         httpService.attachTokenToHeader(idToken);
         httpService.saveItemToLocalStorage(
-          cachedKey.AUTHENTICATION.REFRESH_KEY,
+          cachedKey.AUTHENTICATION.REFRESH_TOKEN,
           refreshToken
         );
       }

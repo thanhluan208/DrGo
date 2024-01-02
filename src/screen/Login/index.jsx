@@ -50,6 +50,13 @@ const Login = () => {
               <CommonStyles.Button type="submit" loading={isSubmitting}>
                 login
               </CommonStyles.Button>
+
+              <CommonStyles.Typography>
+                email: thanhluan20880@gmail.com
+              </CommonStyles.Typography>
+              <CommonStyles.Typography>
+                password: Hihihi1234
+              </CommonStyles.Typography>
             </Form>
           );
         }}
