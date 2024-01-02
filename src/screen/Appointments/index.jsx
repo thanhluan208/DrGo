@@ -40,7 +40,8 @@ const Appointments = () => {
     selectedRows: [],
   });
   const layoutType =
-    useGet(cachedKeys.LAYOUT_TYPE_APPOINTMENT) || layoutTypes.SCHEDULER;
+    useGet(cachedKeys.APPOINTMENTS.LAYOUT_TYPE_APPOINTMENT) ||
+    layoutTypes.SCHEDULER;
 
   const {
     data: dataAppointments,
@@ -52,7 +53,10 @@ const Appointments = () => {
 
   //! Function
   useEffect(() => {
-    save(cachedKeys.REFETCH_LIST_APPOINTMENT, refetchListAppointment);
+    save(
+      cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT,
+      refetchListAppointment
+    );
   }, []);
 
   //! Render

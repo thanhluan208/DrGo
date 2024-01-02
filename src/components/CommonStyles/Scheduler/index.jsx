@@ -49,8 +49,6 @@ const Scheduler = ({
   //! Render
   if (!data || !resources || !grouping) return null;
 
-  console.log("current", currentDate);
-
   return (
     <Paper
       sx={{

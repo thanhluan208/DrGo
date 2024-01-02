@@ -12,22 +12,38 @@ import dayjs from "dayjs";
 import useToast from "../../../hooks/useToast";
 import FirebaseServices from "../../../services/firebaseServices";
 import { toast } from "react-toastify";
+import useGetListDoctor from "../../../hooks/appointments/useGetListDoctor";
 
 const Scheduler = ({ appointments = [], filters }) => {
   //! State
-  const refetchListAppointment = useGet(cachedKeys.REFETCH_LIST_APPOINTMENT);
+  const refetchListAppointment = useGet(
+    cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
+  );
   const save = useSave();
 
   const currentDate = useMemo(() => {
     return filters.currentDate.toDate();
   }, [filters]);
 
+  const { data: listDoctor, isLoading: isLoadingListDoctor } =
+    useGetListDoctor();
+
+  const resources = useMemo(() => {
+    return [
+      {
+        fieldName: "doctor",
+        title: "doctor",
+        instances: listDoctor,
+      },
+    ];
+  }, listDoctor);
+
   //! Function
   const handleChangeScheduler = async (value) => {
     const { changed } = value;
     const changedId = Object.keys(changed)[0];
 
-    save(cachedKeys.CURRENT_EDITING_APPOINTMENT, changedId);
+    save(cachedKeys.APPOINTMENTS.CURRENT_EDITING_APPOINTMENT, changedId);
     const toastId = toast.loading("Editing appointment...", {
       autoClose: false,
     });
@@ -43,7 +59,7 @@ const Scheduler = ({ appointments = [], filters }) => {
             autoClose: 1000,
             isLoading: false,
           });
-          save(cachedKeys.CURRENT_EDITING_APPOINTMENT, null);
+          save(cachedKeys.APPOINTMENTS.CURRENT_EDITING_APPOINTMENT, null);
 
           return;
         }
@@ -56,7 +72,7 @@ const Scheduler = ({ appointments = [], filters }) => {
 
         await refetchListAppointment();
 
-        save(cachedKeys.CURRENT_EDITING_APPOINTMENT, null);
+        save(cachedKeys.APPOINTMENTS.CURRENT_EDITING_APPOINTMENT, null);
 
         toast.update(toastId, {
           render: "Edit appointment successfully!",
@@ -76,7 +92,12 @@ const Scheduler = ({ appointments = [], filters }) => {
     }
   };
 
+  useEffect(() => {
+    save(cachedKeys.APPOINTMENTS.LIST_DOCTOR, listDoctor);
+  }, [listDoctor, save]);
   //! Render
+  if (!listDoctor) return null;
+
   return (
     <CommonStyles.Box sx={{ marginTop: "24px" }}>
       <CommonStyles.Scheduler
@@ -85,6 +106,7 @@ const Scheduler = ({ appointments = [], filters }) => {
         resources={resources}
         handleChangeScheduler={handleChangeScheduler}
         currentDate={currentDate}
+        loadingResource={isLoadingListDoctor}
       />
     </CommonStyles.Box>
   );

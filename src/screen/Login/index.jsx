@@ -4,27 +4,25 @@ import CustomFields from "../../components/CustomFields";
 import CommonStyles from "../../components/CommonStyles";
 import { useAuthentication } from "../../providers/AuthenticationProvider";
 import * as Yup from "yup";
+import FirebaseServices from "../../services/firebaseServices";
 
 const Login = () => {
   //! State
-  const { handleLoginTest } = useAuthentication();
+  const { handleLogin } = useAuthentication();
   const initialValue = useMemo(() => {
     return {
-      username: "",
+      email: "",
       password: "",
     };
   }, []);
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
-      username: Yup.string().required("Username is required"),
+      email: Yup.string().email().required("Email is required"),
       password: Yup.string().required("Password is required"),
     });
   });
   //! Function
-  const handleSubmit = (values, { setSubmitting }) => {
-    handleLoginTest(values, setSubmitting);
-  };
 
   //! Render
   return (
@@ -33,14 +31,14 @@ const Login = () => {
         initialValues={initialValue}
         validationSchema={validationSchema}
         validateOnChange
-        onSubmit={handleSubmit}
+        onSubmit={handleLogin}
       >
         {({ isSubmitting }) => {
           return (
             <Form>
               <FastField
-                name="username"
-                label="User name"
+                name="email"
+                label="Email"
                 component={CustomFields.TextField}
               />
               <FastField

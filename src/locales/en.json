@@ -1,4 +1,10 @@
 {
+  "authentication": {
+    "loggingIn": "Logging in...",
+    "loginSuccess": "Login successful",
+    "loginError": "Login error"
+  },
+
   "new_appointment": "New Appointment",
   "patient_name": "Patient name",
   "required": "{{field}} is required field",

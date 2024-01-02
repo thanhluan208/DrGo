@@ -43,13 +43,6 @@ const ButtonField = (props) => {
   const save = useSave();
 
   //! Function
-  const handleChangeCurrenDate = (day) => {
-    if (day === 30) {
-      save(cachedKeys.CURRENT_DATE_APPOINTMENT, dayjs().add(1, "month"));
-      return;
-    }
-    save(cachedKeys.CURRENT_DATE_APPOINTMENT, dayjs().add(day, "day"));
-  };
 
   //! Render
   return (
@@ -68,9 +61,9 @@ const ButtonField = (props) => {
         </CommonStyles.Typography>
       </Button>
       <CommonStyles.Select
-        onChange={(event) => {
-          handleChangeCurrenDate(event.target.value);
-        }}
+        // onChange={(event) => {
+        //   handleChangeCurrenDate(event.target.value);
+        // }}
         renderValue={(label) => {
           return (
             <CommonStyles.Typography type="normal14" color="secondaryText">

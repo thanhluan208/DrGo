@@ -97,6 +97,20 @@ class HttpService {
   removeTokenFromLocalStorage() {
     localStorageFunc?.removeItem(KEY_TOKEN);
   }
+
+  saveItemToLocalStorage(key, value) {
+    localStorageFunc.setItem(key, value);
+  }
+  getItemFromLocalStorage(key) {
+    return localStorageFunc.getItem(key);
+  }
+  removeItemFromLocalStorage(key) {
+    localStorageFunc.removeItem(key);
+  }
+
+  clearLocalStorage() {
+    localStorageFunc.clear();
+  }
 }
 
 const httpService = new HttpService();

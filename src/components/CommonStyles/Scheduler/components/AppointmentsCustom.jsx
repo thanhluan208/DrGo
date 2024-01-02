@@ -24,9 +24,11 @@ const AppointmentsCustom = (props) => {
 
   const { type, startDate, id } = data;
   const currentEditingAppointment = useGet(
-    cachedKeys.CURRENT_EDITING_APPOINTMENT
+    cachedKeys.APPOINTMENTS.CURRENT_EDITING_APPOINTMENT
   );
-  const refetchListAppointment = useGet(cachedKeys.REFETCH_LIST_APPOINTMENT);
+  const refetchListAppointment = useGet(
+    cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
+  );
 
   const isEditing = currentEditingAppointment === id;
   //! Function
@@ -67,8 +69,6 @@ const AppointmentsCustom = (props) => {
       toggleConfirmDialog();
     }
   }, []);
-
-  console.log("toggleConfirmDialog", open);
 
   //! Render
   const customButton = (toggle) => {

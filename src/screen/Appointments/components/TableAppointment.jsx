@@ -1,18 +1,9 @@
 import React, { useMemo } from "react";
 import CommonStyles from "../../../components/CommonStyles";
-import Phone from "../../../assets/icons/Phone";
-import Monitor from "../../../assets/icons/Monitor";
-import Timer from "../../../assets/icons/Timer";
 import TimerComponent from "./TimerComponent";
-import useFilter from "../../../hooks/useFilter";
 import CellActions from "./CellActions";
 import { appointmentActionTypes } from "../../../constants/type";
 import { createdByType, statusType } from "../../../constants/options";
-import { useGet } from "../../../stores/useStores";
-import cachedKeys from "../../../constants/cachedKeys";
-import dayjs from "dayjs";
-import useGetListAppointment from "../../../hooks/appointments/useGetListAppointment";
-
 const mockdata = [
   {
     id: Math.random() * 100000,

@@ -105,10 +105,16 @@ const RightSettings = () => {
           return <List />;
         }}
         onClickLeft={() => {
-          save(cachedKeys.LAYOUT_TYPE_APPOINTMENT, layoutTypes.SCHEDULER);
+          save(
+            cachedKeys.APPOINTMENTS.LAYOUT_TYPE_APPOINTMENT,
+            layoutTypes.SCHEDULER
+          );
         }}
         onClickRight={() => {
-          save(cachedKeys.LAYOUT_TYPE_APPOINTMENT, layoutTypes.TABLE);
+          save(
+            cachedKeys.APPOINTMENTS.LAYOUT_TYPE_APPOINTMENT,
+            layoutTypes.TABLE
+          );
         }}
       />
 

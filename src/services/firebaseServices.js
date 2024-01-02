@@ -5,6 +5,7 @@ import {
   getAuth,
   signInWithPopup,
   FacebookAuthProvider,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 
 import {
@@ -24,12 +25,13 @@ import {
 class firebaseService {
   constructor() {
     this.firebaseConfig = {
-      apiKey: "AIzaSyBZsBG4gzgzX-195H0tL7NHrpK3wN0COk8",
-      authDomain: "dr-go-84189.firebaseapp.com",
-      projectId: "dr-go-84189",
-      storageBucket: "dr-go-84189.appspot.com",
-      messagingSenderId: "369956554223",
-      appId: "1:369956554223:web:e06a4e38801eb83be1e21a",
+      apiKey: "AIzaSyAEOglmJy2QnccVcwyUf8lZUSts4zfzG-4",
+      authDomain: "drgo-aa24d.firebaseapp.com",
+      projectId: "drgo-aa24d",
+      storageBucket: "drgo-aa24d.appspot.com",
+      messagingSenderId: "490035669777",
+      appId: "1:490035669777:web:3c23f2dc9b473975f23ab0",
+      measurementId: "G-Y5DY0ZXBQK",
     };
 
     this.app = initializeApp(this.firebaseConfig);
@@ -38,6 +40,10 @@ class firebaseService {
     // this.facebookProvider = new FacebookAuthProvider();
     this.db = getFirestore(this.app);
   }
+
+  login = (email, password) => {
+    return signInWithEmailAndPassword(this.auth, email, password);
+  };
 
   logInWithGoogle = async () => {
     const res = await signInWithPopup(this.auth, this.googleProvider);
@@ -102,6 +108,23 @@ class firebaseService {
       if (appointmentRef) {
         await deleteDoc(appointmentRef);
       }
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
+
+  getListDoctors = async () => {
+    try {
+      const q = query(collection(this.db, "doctor"));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => {
+        return {
+          ...doc.data(),
+          id: doc.id,
+        };
+      });
+
+      return data;
     } catch (error) {
       console.log("err", error);
     }

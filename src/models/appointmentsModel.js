@@ -23,7 +23,7 @@ class appointmentModel {
       insurance: payload.insurance,
       visitedBefore: payload.visitedBefore,
       type: payload.type || schedulerTypes[0].value,
-      doctor: [payload.doctor],
+      doctor: payload.doctor,
       symptoms: payload.symptoms,
       createdBy: payload.createdBy,
       status: payload.status,

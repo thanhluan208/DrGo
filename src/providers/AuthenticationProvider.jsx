@@ -10,6 +10,9 @@ import AuthenticationServices from "../services/authenticationServices";
 import useToast, { useToastPromise } from "../hooks/useToast";
 import cachedKey from "../constants/cachedKeys";
 import FirebaseServices from "../services/firebaseServices";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useSave } from "../stores/useStores";
 
 const AuthenticationContext = createContext({
   islogged: false,
@@ -27,37 +30,60 @@ export const useAuthentication = () => {
 
 const AuthenticationProvider = ({ children }) => {
   //! State
+  const { t } = useTranslation();
   const token = httpService.getTokenFromLocalStorage(cachedKey.token);
   const [islogged, setIsLogged] = useState(!!token);
+  const save = useSave();
 
   //! Function
-  const handleLogin = useCallback(async (payload, setSubmitting) => {
-    const onSuccess = (response, toast) => {
-      if (response?.data?.token) {
-        setIsLogged(true);
-        httpService.saveTokenToLocalStorage(response.data.token);
-        httpService.attachTokenToHeader(response.data.token);
-        toast();
-      } else {
-        useToast("Login failed", "error");
+  const handleLogin = useCallback(async (payload, { setSubmitting }) => {
+    setSubmitting(true);
+    const toastId = toast.loading(t("authentication.loggingIn"), {
+      autoClose: false,
+    });
+    try {
+      const { email, password } = payload;
+      const response = await FirebaseServices.login(email, password);
+      console.log("response", response._tokenResponse);
+      const user = response?.user;
+      const tokenResponse = response?._tokenResponse;
+
+      const { idToken, refreshToken } = tokenResponse;
+      if (idToken && refreshToken) {
+        httpService.saveTokenToLocalStorage(idToken);
+        httpService.attachTokenToHeader(idToken);
+        httpService.saveItemToLocalStorage(
+          cachedKey.AUTHENTICATION.REFRESH_KEY,
+          refreshToken
+        );
       }
-    };
 
-    const onFail = (err, toast) => {
+      const userInfo = {
+        id: user?.uid,
+        email: user?.email,
+        name: user?.displayName,
+        avatar: user?.photoURL,
+      };
+
+      save(cachedKey.AUTHENTICATION.USER_INFOS, userInfo);
+      setIsLogged(true);
+
+      toast.update(toastId, {
+        render: t("authentication.loginSuccess"),
+        type: toast.TYPE.SUCCESS,
+        autoClose: 2000,
+        isLoading: false,
+      });
       setSubmitting(false);
-      toast();
-    };
-
-    useToastPromise(
-      () => AuthenticationServices.login(payload),
-      {
-        pending: "Logging in...",
-        success: "Logged in successfully",
-        error: "Failed to login",
-      },
-      onSuccess,
-      onFail
-    );
+    } catch (error) {
+      toast.update(toastId, {
+        render: `${t("authentication.loginError")} \n ${error?.message}}`,
+        type: toast.TYPE.ERROR,
+        autoClose: 2000,
+        isLoading: false,
+      });
+      setSubmitting(false);
+    }
   }, []);
 
   const handleLoginTest = useCallback(async (payload, setSubmitting) => {

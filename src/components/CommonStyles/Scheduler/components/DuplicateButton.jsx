@@ -6,12 +6,6 @@ import { useTranslation } from "react-i18next";
 const DuplicateButton = ({ data }) => {
   //! State
   const { t } = useTranslation();
-  const parseData = useMemo(() => {
-    return {
-      ...data,
-      doctor: [data.doctor],
-    };
-  }, [data]);
 
   //! Function
 
@@ -30,7 +24,7 @@ const DuplicateButton = ({ data }) => {
     <AppointmentActionDialog
       customButton={renderButton}
       isDuplicate
-      data={parseData}
+      data={data}
     />
   );
 };

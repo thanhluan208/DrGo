@@ -11,7 +11,6 @@ import {
   statusOptions,
 } from "../../../../constants/options";
 import { convertdoctorToOptions } from "../../../../helpers/common";
-import { doctor } from "../../../../assets/mockdata";
 import { useGet } from "../../../../stores/useStores";
 import cachedKeys from "../../../../constants/cachedKeys";
 import appointmentModel from "../../../../models/appointmentsModel";
@@ -25,7 +24,10 @@ import DuplicateButton from "./DuplicateButton";
 const NewAppointmentDialogContent = React.memo(
   ({ data, toggle, readOnly, isDuplicate }) => {
     //! State
-    const refetchListAppointment = useGet(cachedKeys.REFETCH_LIST_APPOINTMENT);
+    const refetchListAppointment = useGet(
+      cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
+    );
+    const listDoctor = useGet(cachedKeys.APPOINTMENTS.LIST_DOCTOR);
 
     const { t } = useTranslation();
 
@@ -34,7 +36,7 @@ const NewAppointmentDialogContent = React.memo(
         return {
           id: data?.id || Math.floor(Math.random() * 100),
           patientName: data?.patientName || "",
-          doctor: data?.doctor?.[0] || "",
+          doctor: data?.doctor || "",
           startDate: data?.startDate ? dayjs(data.startDate) : dayjs(),
           endDate: data?.endDate ? dayjs(data.endDate) : dayjs().add(1, "hour"),
           type: data.type || "checkedIn",
@@ -275,7 +277,7 @@ const NewAppointmentDialogContent = React.memo(
                 <FastField
                   name="doctor"
                   component={CustomFields.SelectField}
-                  options={convertdoctorToOptions(doctor)}
+                  options={convertdoctorToOptions(listDoctor)}
                   fullWidth
                   disabled={readOnly}
                   label="Doctor"
