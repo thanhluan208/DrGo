@@ -60,41 +60,55 @@ class firebaseService {
   };
 
   createAppointment = async (payload) => {
-    await addDoc(collection(this.db, "appointments"), payload);
+    const doctorRef = doc(this.db, "doctor", payload.doctor);
+
+    await addDoc(collection(this.db, "appointments"), {
+      ...payload,
+      doctor: doctorRef,
+    });
   };
 
   getAppointmentByDate = async (date, pageSize) => {
     const startDate = date?.startOf("day")?.toDate().valueOf();
     const endDate = date?.endOf("day")?.toDate().valueOf();
     if (!startDate || !endDate) return;
-    try {
-      const q = query(
-        collection(this.db, "appointments"),
-        where("startDate", ">=", startDate),
-        where("startDate", "<=", endDate),
-        limit(pageSize)
-      );
+    const q = query(
+      collection(this.db, "appointments"),
+      where("startDate", ">=", startDate),
+      where("startDate", "<=", endDate),
+      limit(pageSize)
+    );
 
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map((doc) => {
-        return {
-          ...doc.data(),
-          id: doc.id,
-        };
+    const querySnapshot = await getDocs(q);
+
+    const data = [];
+
+    for (const doc of querySnapshot.docs) {
+      const docData = doc.data();
+
+      const doctor = await getDoc(docData.doctor);
+
+      data.push({
+        ...docData,
+        doctor: doctor.id,
+        id: doc.id,
       });
-
-      return data;
-    } catch (error) {
-      console.log("err", error);
     }
+
+    console.log("data", data);
+    return data;
   };
 
   updateAppointment = async (id, payload) => {
     try {
       const appointmentRef = doc(this.db, "appointments", id);
+      const doctorRef = doc(this.db, "doctor", payload.doctor);
 
       if (appointmentRef) {
-        await updateDoc(appointmentRef, payload);
+        await updateDoc(appointmentRef, {
+          ...payload,
+          doctor: doctorRef,
+        });
       }
     } catch (error) {
       console.log("err", error);

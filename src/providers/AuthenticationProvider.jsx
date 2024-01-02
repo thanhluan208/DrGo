@@ -44,7 +44,6 @@ const AuthenticationProvider = ({ children }) => {
     try {
       const { email, password } = payload;
       const response = await FirebaseServices.login(email, password);
-      console.log("response", response._tokenResponse);
       const user = response?.user;
       const tokenResponse = response?._tokenResponse;
 

@@ -1,3 +1,5 @@
+import { isArray } from "lodash";
+
 export const localStorageFunc =
   typeof window !== "undefined" ? window.localStorage : undefined;
 
@@ -6,6 +8,7 @@ export const capitalize = (str) => {
 };
 
 export const convertdoctorToOptions = (doctor) => {
+  if (!isArray(doctor)) return [];
   const options = [];
   doctor.forEach((item) => {
     const parsedItem = JSON.parse(item.text);

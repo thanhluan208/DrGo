@@ -57,7 +57,7 @@ const Appointments = () => {
       cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT,
       refetchListAppointment
     );
-  }, []);
+  }, [refetchListAppointment]);
 
   //! Render
   if (error)
@@ -73,12 +73,11 @@ const Appointments = () => {
         <CommonStyles.Typography type="bold24">
           {t("appointments")}
         </CommonStyles.Typography>
-        {isLoading ||
-          (isFetchingListAppointment && (
-            <CommonStyles.Box>
-              <CircularProgress />
-            </CommonStyles.Box>
-          ))}
+        {(isLoading || isFetchingListAppointment) && (
+          <CommonStyles.Box>
+            <CircularProgress />
+          </CommonStyles.Box>
+        )}
       </CommonStyles.Box>
       <CommonStyles.Box
         sx={{

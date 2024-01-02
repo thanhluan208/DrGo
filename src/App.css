@@ -4,3 +4,7 @@
 .MainLayout-header {
   z-index: 1099 !important;
 }
+
+.indicator {
+  z-index: 1001 !important;
+}

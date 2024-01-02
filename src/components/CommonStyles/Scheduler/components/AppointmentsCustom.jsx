@@ -140,6 +140,8 @@ const AppointmentsCustom = (props) => {
               cursor: "pointer",
               width: "100%",
               transform: "translateY(-5px)",
+              height: "100%",
+
               "&:hover": {
                 button: {
                   opacity: 1,

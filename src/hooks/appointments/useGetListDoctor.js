@@ -32,7 +32,6 @@ const useGetDetailBookingTour = (isTrigger = true) => {
   const refetch = useCallback(async () => {
     try {
       const response = await callApi();
-      console.log("asdasd", response);
       transformResponse(response);
     } catch (error) {
       setError(error);
@@ -42,7 +41,6 @@ const useGetDetailBookingTour = (isTrigger = true) => {
   useEffect(() => {
     let shouldSetData = true;
 
-    console.log("go here");
     if (isTrigger) {
       (async () => {
         try {
