@@ -7,7 +7,7 @@ const Home = () => {
   //! Function
 
   //! Render
-  return <CommonStyles.Box>hehe</CommonStyles.Box>;
+  return <CommonStyles.Box>Drgo</CommonStyles.Box>;
 };
 
 export default Home;
