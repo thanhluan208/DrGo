@@ -1,21 +1,27 @@
 import React, { useEffect, useMemo } from "react";
 import CommonStyles from "../../../components/CommonStyles";
-import {
-  grouping,
-  resources,
-  appointments as appointmentsMock,
-} from "../../../assets/mockdata";
+import { grouping } from "../../../assets/mockdata";
 import { useGet, useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
-import { cloneDeep, filter } from "lodash";
 import dayjs from "dayjs";
-import useToast from "../../../hooks/useToast";
 import FirebaseServices from "../../../services/firebaseServices";
 import { toast } from "react-toastify";
 import useGetListDoctor from "../../../hooks/appointments/useGetListDoctor";
+import { cloneDeep } from "lodash";
 
 const Scheduler = ({ appointments = [], filters }) => {
   //! State
+  const parsedAppointments = useMemo(() => {
+    const nextAppointments = cloneDeep(appointments);
+
+    return nextAppointments.map((item) => {
+      return {
+        ...item,
+        doctor: item?.doctor?.id,
+      };
+    });
+  }, [appointments]);
+
   const refetchListAppointment = useGet(
     cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
   );
@@ -36,7 +42,7 @@ const Scheduler = ({ appointments = [], filters }) => {
         instances: listDoctor,
       },
     ];
-  }, listDoctor);
+  }, [listDoctor]);
 
   //! Function
   const handleChangeScheduler = async (value) => {
@@ -98,10 +104,12 @@ const Scheduler = ({ appointments = [], filters }) => {
   //! Render
   if (!listDoctor) return null;
 
+  if (!parsedAppointments) return null;
+
   return (
     <CommonStyles.Box sx={{ marginTop: "24px" }}>
       <CommonStyles.Scheduler
-        data={appointments}
+        data={parsedAppointments}
         grouping={grouping}
         resources={resources}
         handleChangeScheduler={handleChangeScheduler}

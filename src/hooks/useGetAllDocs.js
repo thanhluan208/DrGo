@@ -1,36 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
-import FirebaseServices from "../../services/firebaseServices";
-import appointmentModel from "../../models/appointmentsModel";
+import FirebaseServices from "../services/firebaseServices";
 
-const useGetListAppointment = (filters, isTrigger = true) => {
+const useGetAllDocs = (collection, transformResponse, isTrigger = true) => {
   const [data, setData] = useState();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   const callApi = useCallback(() => {
-    return FirebaseServices.getAppointmentByDate(
-      filters?.currentDate,
-      filters?.pageSize
-    );
-  }, [filters?.currentDate, filters?.pageSize]);
-
-  const transformResponse = useCallback((response) => {
-    if (response) {
-      const transformedData =
-        appointmentModel.parseResponseAppointment(response);
-
-      setData(transformedData);
-    }
-  }, []);
+    if (!collection) return;
+    return FirebaseServices.getAllDocs(collection);
+  }, [collection]);
 
   const refetch = useCallback(async () => {
     try {
       const response = await callApi();
-      transformResponse(response);
+      const transformedResponse = transformResponse
+        ? transformResponse(response)
+        : response;
+      setData(transformedResponse);
     } catch (error) {
       setError(error);
     }
-  }, [callApi]);
+  }, [callApi, transformResponse]);
 
   useEffect(() => {
     let shouldSetData = true;
@@ -42,7 +33,10 @@ const useGetListAppointment = (filters, isTrigger = true) => {
           const response = await callApi();
 
           if (shouldSetData) {
-            transformResponse(response);
+            const transformedResponse = transformResponse
+              ? transformResponse(response)
+              : response;
+            setData(transformedResponse);
           }
         } catch (error) {
           setError(error);
@@ -55,7 +49,7 @@ const useGetListAppointment = (filters, isTrigger = true) => {
         shouldSetData = false;
       };
     }
-  }, [isTrigger, callApi]);
+  }, [callApi, isTrigger, transformResponse]);
 
   return {
     data,
@@ -65,4 +59,4 @@ const useGetListAppointment = (filters, isTrigger = true) => {
   };
 };
 
-export default useGetListAppointment;
+export default useGetAllDocs;

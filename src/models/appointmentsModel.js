@@ -2,24 +2,11 @@ import dayjs from "dayjs";
 import { schedulerTypes } from "../constants/options";
 
 class appointmentModel {
-  static parseCreateAppointment(payload) {
-    const { endDate, startDate } = payload;
-
-    if (!endDate || !startDate) throw new Error("Missing required fields");
-
-    return {
-      id: Math.floor(Math.random() * 1000),
-      ...payload,
-      endDate: endDate.toDate(),
-      startDate: startDate.toDate(),
-    };
-  }
-
   static parseRequestCreateAppointment(payload) {
     return {
-      startDate: payload.startDate.valueOf(),
-      endDate: payload.endDate.valueOf(),
-      patientName: payload.patientName,
+      startDate: payload.startDate.toDate(),
+      endDate: payload.endDate.toDate(),
+      patient: payload.patient.id,
       insurance: payload.insurance,
       visitedBefore: payload.visitedBefore,
       type: payload.type || schedulerTypes[0].value,
@@ -33,22 +20,21 @@ class appointmentModel {
   static parseResponseAppointment(response) {
     const parseResponse = response.map((item) => {
       return {
-        createdBy: item.createdBy,
-        doctor: item.doctor,
-        endDate: dayjs(item.endDate).toDate(),
-        id: item.id,
-        insurance: item.insurance,
-        patientName: item.patientName,
-        startDate: dayjs(item.startDate).toDate(),
-        type: item.type || schedulerTypes[0].value,
-        status: item.status,
-        symptoms: item.symptoms,
-        visitedBefore: item.visitedBefore,
+        createdBy: item?.createdBy,
+        doctor: item?.doctor,
+        endDate: item?.endDate.toDate(),
+        id: item?.id,
+        insurance: item?.insurance,
+        patient: item?.patient,
+        startDate: item?.startDate.toDate(),
+        type: item?.type || schedulerTypes[0].value,
+        status: item?.status,
+        symptoms: item?.symptoms,
+        visitedBefore: item?.visitedBefore,
       };
     });
 
     return parseResponse;
-    m;
   }
 }
 

@@ -8,7 +8,7 @@ import FirebaseServices from "../../services/firebaseServices";
 
 const Login = () => {
   //! State
-  const { handleLogin } = useAuthentication();
+  const { handleLogin, handleSignUp, signingUp } = useAuthentication();
   const initialValue = useMemo(() => {
     return {
       email: "",
@@ -47,8 +47,22 @@ const Login = () => {
                 type="password"
                 component={CustomFields.TextField}
               />
-              <CommonStyles.Button type="submit" loading={isSubmitting}>
+              <CommonStyles.Button
+                type="submit"
+                loading={isSubmitting}
+                disabled={signingUp}
+              >
                 login
+              </CommonStyles.Button>
+
+              <CommonStyles.Button
+                type="button"
+                loading={signingUp}
+                variant="outlined"
+                onClick={handleSignUp}
+                disabled={isSubmitting}
+              >
+                sign up
               </CommonStyles.Button>
 
               <CommonStyles.Typography>

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import CommonStyles from "../..";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
 import { useTheme } from "@emotion/react";
@@ -13,6 +13,7 @@ import CommonIcons from "../../../CommonIcons";
 import FirebaseServices from "../../../../services/firebaseServices";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
+import { convertPatientToOptions } from "../../../../helpers/common";
 
 const AppointmentsCustom = (props) => {
   //! State
@@ -22,13 +23,28 @@ const AppointmentsCustom = (props) => {
     props;
   const { open, shouldRender, toggle: toggleConfirmDialog } = useToggleDialog();
 
-  const { type, startDate, id } = data;
+  const { type, startDate, id, patient } = data;
+  const patientName = useMemo(() => {
+    return patient?.name || `Patient ${id}`;
+  }, [patient]);
+
   const currentEditingAppointment = useGet(
     cachedKeys.APPOINTMENTS.CURRENT_EDITING_APPOINTMENT
   );
   const refetchListAppointment = useGet(
     cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
   );
+
+  const dialogData = useMemo(() => {
+    return {
+      ...data,
+      insurance: data?.insurance?.id,
+      patient: {
+        value: data?.patient?.id,
+        label: data?.patient?.name || data?.patient?.id,
+      },
+    };
+  }, [data]);
 
   const isEditing = currentEditingAppointment === id;
   //! Function
@@ -152,7 +168,7 @@ const AppointmentsCustom = (props) => {
             <CommonStyles.Box>
               <CommonStyles.Box sx={{ display: "flex", gap: "8px" }}>
                 <CommonStyles.Typography type="normal14">
-                  {props.data.patientName}
+                  {patientName}
                 </CommonStyles.Typography>
                 {isDeleting && <CircularProgress />}
               </CommonStyles.Box>
@@ -223,7 +239,7 @@ const AppointmentsCustom = (props) => {
 
   return (
     <AppointmentActionDialog
-      data={data}
+      data={dialogData}
       customButton={customButton}
       readOnly={isStarted}
     />

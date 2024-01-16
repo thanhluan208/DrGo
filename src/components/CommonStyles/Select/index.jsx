@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import MUISelect from "@mui/material/Select";
 import { MenuItem } from "@mui/material";
 import CommonStyles from "..";
@@ -67,4 +67,4 @@ const Select = ({ options, renderValue, sx, ...otherProps }) => {
   );
 };
 
-export default Select;
+export default memo(Select);

@@ -10,7 +10,6 @@ import {
   schedulerTypes,
   statusOptions,
 } from "../../../../constants/options";
-import { convertdoctorToOptions } from "../../../../helpers/common";
 import { useGet } from "../../../../stores/useStores";
 import cachedKeys from "../../../../constants/cachedKeys";
 import appointmentModel from "../../../../models/appointmentsModel";
@@ -20,6 +19,9 @@ import FirebaseServices from "../../../../services/firebaseServices";
 import { toast } from "react-toastify";
 import Eyes from "../../../../assets/icons/Eyes";
 import DuplicateButton from "./DuplicateButton";
+import SelectPatient from "./SelectPatient";
+import SelectInsurance from "./SelectInsurance";
+import SelectDoctor from "./SelectDoctor";
 
 const NewAppointmentDialogContent = React.memo(
   ({ data, toggle, readOnly, isDuplicate }) => {
@@ -27,7 +29,6 @@ const NewAppointmentDialogContent = React.memo(
     const refetchListAppointment = useGet(
       cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
     );
-    const listDoctor = useGet(cachedKeys.APPOINTMENTS.LIST_DOCTOR);
 
     const { t } = useTranslation();
 
@@ -35,10 +36,12 @@ const NewAppointmentDialogContent = React.memo(
       if (data) {
         return {
           id: data?.id || Math.floor(Math.random() * 100),
-          patientName: data?.patientName || "",
+          patient: data?.patient || undefined,
           doctor: data?.doctor || "",
-          startDate: data?.startDate ? dayjs(data.startDate) : dayjs(),
-          endDate: data?.endDate ? dayjs(data.endDate) : dayjs().add(1, "hour"),
+          startDate: data?.startDate ? dayjs(data?.startDate) : dayjs(),
+          endDate: data?.endDate
+            ? dayjs(data?.endDate)
+            : dayjs().add(1, "hour"),
           type: data.type || "checkedIn",
           insurance: data?.insurance || "",
           visitedBefore: !!data?.visitedBefore,
@@ -49,7 +52,7 @@ const NewAppointmentDialogContent = React.memo(
       }
 
       return {
-        patientName: "",
+        patient: undefined,
         doctor: "",
         startDate: dayjs().add(1, "minute"),
         endDate: dayjs().add(1, "hour"),
@@ -64,15 +67,19 @@ const NewAppointmentDialogContent = React.memo(
 
     const validationSchema = useMemo(() => {
       return Yup.object().shape({
-        patientName: Yup.string().required(
-          t("required", { field: t("patient_name") })
+        patient: Yup.object().test(
+          "required",
+          t("required", { field: t("patients") }),
+          function (patient) {
+            return !!patient?.value;
+          }
         ),
-        insurance: Yup.string().required(
-          t("required", { field: t("insurance") })
-        ),
-        symptoms: Yup.string().required(
-          t("required", { field: t("symptoms") })
-        ),
+        // insurance: Yup.string().required(
+        //   t("required", { field: t("insurance") })
+        // ),
+        // symptoms: Yup.string().required(
+        //   t("required", { field: t("symptoms") })
+        // ),
         doctor: Yup.string().required(t("required", { field: t("doctor") })),
         startDate: Yup.string()
           .test("is-date", "Start date must be a valid date", function (value) {
@@ -109,8 +116,7 @@ const NewAppointmentDialogContent = React.memo(
       try {
         await FirebaseServices.updateAppointment(values.id, {
           ...values,
-          startDate: values.startDate?.valueOf(),
-          endDate: values.endDate?.valueOf(),
+
           doctor: [values.doctor],
         });
 
@@ -187,8 +193,9 @@ const NewAppointmentDialogContent = React.memo(
         validateOnBlur
         validateOnChange
         validateOnMount={false}
+        enableReinitialize
       >
-        {({ isSubmitting, handleSubmit, setSubmitting, values }) => {
+        {({ isSubmitting, handleSubmit, values }) => {
           return (
             <Form>
               <CommonStyles.Box
@@ -207,21 +214,7 @@ const NewAppointmentDialogContent = React.memo(
                   gridTemplateColumns: "50% 50%",
                 }}
               >
-                <CommonStyles.Box
-                  sx={{
-                    padding: "0 20px",
-                  }}
-                >
-                  <FastField
-                    name="patientName"
-                    label="Patient name"
-                    component={CustomFields.TextField}
-                    fullWidth
-                    placeholder="Patient name"
-                    required
-                    disabled={readOnly}
-                  />
-                </CommonStyles.Box>
+                <SelectPatient readOnly={readOnly} />
                 <CommonStyles.Box
                   sx={{
                     padding: "0 20px",
@@ -274,23 +267,8 @@ const NewAppointmentDialogContent = React.memo(
                   gap: "12px",
                 }}
               >
-                <FastField
-                  name="doctor"
-                  component={CustomFields.SelectField}
-                  options={convertdoctorToOptions(listDoctor)}
-                  fullWidth
-                  disabled={readOnly}
-                  label="Doctor"
-                  required
-                />
-                <FastField
-                  name="insurance"
-                  label="Insurance"
-                  component={CustomFields.TextField}
-                  fullWidth
-                  disabled={readOnly}
-                  required
-                />
+                <SelectDoctor readOnly={readOnly} />
+                {/* <SelectInsurance readOnly={readOnly} /> */}
                 <FastField
                   name="status"
                   label="Status"
@@ -323,7 +301,6 @@ const NewAppointmentDialogContent = React.memo(
                   multiline
                   rows={4}
                   disabled={readOnly}
-                  required
                 />
               </CommonStyles.Box>
               <CommonStyles.Box

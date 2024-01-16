@@ -1,34 +1,35 @@
-import React from "react";
+import React, { memo, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { getIn } from "formik";
 import Select from "@mui/material/Select";
 import { find, isArray } from "lodash";
-import { useTheme } from "@mui/material";
+import { Box, CircularProgress, useTheme } from "@mui/material";
 import CommonStyles from "../../CommonStyles";
 
-const SelectField = ({
-  field,
-  form,
-  options,
-  label,
-  sxContainer,
-  placeholder,
-  sxSelect,
-  text,
-  onChangeCustomize,
-  loading,
-  disabled,
-  isMultiple = false,
-  afterOnChange,
-  ...props
-}) => {
+const SelectField = (props) => {
   //! State
+  const {
+    field,
+    form,
+    options,
+    label,
+    sxContainer,
+    placeholder,
+    sxSelect,
+    text,
+    onChangeCustomize,
+    loading,
+    disabled,
+    isMultiple = false,
+    afterOnChange,
+    renderOptions,
+    ...otherProps
+  } = props;
   const { name, value, onBlur, onChange } = field || {};
 
   const { errors, touched, setFieldValue, setFieldTouched } = form || {};
-
   const theme = useTheme();
   const valueMultiple = value || [];
 
@@ -52,9 +53,9 @@ const SelectField = ({
     return (
       <CommonStyles.Box centered sx={{ minWidth: 120, ...sxContainer }}>
         <FormControl
-          fullWidth={props.fullWidth}
+          fullWidth={otherProps.fullWidth}
           error={isTouched && Boolean(errorMessage)}
-          size={props.size}
+          size={otherProps.size}
         >
           <InputLabel id={`${name}`}>{label}</InputLabel>
           {/* Only for Customize */}
@@ -80,7 +81,7 @@ const SelectField = ({
                     alignItems: "center",
                   }}
                 >
-                  <CommonStyles.Loading size={20} />
+                  <CircularProgress size={20} />
                 </CommonStyles.Box>
               ) : undefined
             }
@@ -107,20 +108,26 @@ const SelectField = ({
               }
             }}
             disabled={loading || disabled}
-            {...props}
+            {...otherProps}
           >
-            {placeholder && (
-              <MenuItem disabled value="">
-                <em> {placeholder}</em>
-              </MenuItem>
+            {renderOptions ? (
+              renderOptions(options)
+            ) : (
+              <Box>
+                {placeholder && (
+                  <MenuItem disabled value="">
+                    <em> {placeholder}</em>
+                  </MenuItem>
+                )}
+                {options?.map((el) => {
+                  return (
+                    <MenuItem key={el.value} value={el.value}>
+                      {el.label}
+                    </MenuItem>
+                  );
+                })}
+              </Box>
             )}
-            {options?.map((el) => {
-              return (
-                <MenuItem key={el.value} value={el.value}>
-                  {el.label}
-                </MenuItem>
-              );
-            })}
           </Select>
           {isTouched && errorMessage && (
             <CommonStyles.Box
@@ -148,13 +155,13 @@ const SelectField = ({
         padding: "10px 0",
         minWidth: 120,
         ...sxContainer,
-        width: props?.fullWidth ? "100%" : "auto",
+        width: otherProps?.fullWidth ? "100%" : "auto",
       }}
     >
       <FormControl
-        fullWidth={props.fullWidth}
+        fullWidth={otherProps.fullWidth}
         error={isTouched && Boolean(errorMessage)}
-        size={props.size}
+        size={otherProps.size}
       >
         {/* Only for Customize */}
         {text}
@@ -171,10 +178,8 @@ const SelectField = ({
               onChangeCustomize(e.target.value);
               return;
             }
-
             onChange && onChange(e);
             afterOnChange && afterOnChange(e);
-            setFieldTouched && setFieldTouched(name || "", true);
           }}
           onBlur={onBlur}
           sx={{ borderRadius: "0.5rem", ...sxSelect }}
@@ -189,7 +194,7 @@ const SelectField = ({
                   alignItems: "center",
                 }}
               >
-                <CommonStyles.Loading size={20} />
+                <CircularProgress size={20} />
               </CommonStyles.Box>
             ) : undefined
           }
@@ -212,21 +217,27 @@ const SelectField = ({
             return selectedOption?.label;
           }}
           disabled={loading || disabled}
-          {...props}
+          {...otherProps}
           fullWidth
         >
-          {placeholder && (
-            <MenuItem disabled value="">
-              <em> {placeholder}</em>
-            </MenuItem>
+          {renderOptions ? (
+            renderOptions(options)
+          ) : (
+            <Box>
+              {placeholder && (
+                <MenuItem disabled value="">
+                  <em> {placeholder}</em>
+                </MenuItem>
+              )}
+              {options?.map((el) => {
+                return (
+                  <MenuItem key={el.value} value={el.value}>
+                    {el.label}
+                  </MenuItem>
+                );
+              })}
+            </Box>
           )}
-          {options?.map((el) => {
-            return (
-              <MenuItem key={el.value} value={el.value}>
-                {el.label}
-              </MenuItem>
-            );
-          })}
         </Select>
         {isTouched && errorMessage && (
           <CommonStyles.Box
@@ -247,4 +258,4 @@ const SelectField = ({
   );
 };
 
-export default SelectField;
+export default memo(SelectField);

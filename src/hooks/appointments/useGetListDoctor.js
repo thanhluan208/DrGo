@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import FirebaseServices from "../../services/firebaseServices";
 import { cloneDeep } from "lodash";
 
-const useGetDetailBookingTour = (isTrigger = true) => {
+const useGetListDoctor = (isTrigger = true) => {
   const [data, setData] = useState();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -46,7 +46,6 @@ const useGetDetailBookingTour = (isTrigger = true) => {
         try {
           setLoading(true);
           const response = await callApi();
-          console.log("go here", response);
 
           if (shouldSetData) {
             transformResponse(response);
@@ -72,4 +71,4 @@ const useGetDetailBookingTour = (isTrigger = true) => {
   };
 };
 
-export default useGetDetailBookingTour;
+export default useGetListDoctor;

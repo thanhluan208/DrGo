@@ -1,3 +1,4 @@
+import AutoComplete from "./Autocomplete";
 import DateTimePicker from "./DateTimePicker";
 import SelectField from "./Select";
 import SwitchField from "./Switch";
@@ -8,4 +9,5 @@ export default {
   SelectField: SelectField,
   SwitchField: SwitchField,
   DateTimePicker: DateTimePicker,
+  AutoComplete: AutoComplete,
 };

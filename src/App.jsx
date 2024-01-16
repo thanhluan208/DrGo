@@ -1,15 +1,23 @@
 import "./App.css";
+import React from "react";
 import {
   RouterProvider,
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
-import DefaultLayout from "./components/DefaultLayout";
-import Login from "./screen/Login";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { useAuthentication } from "./providers/AuthenticationProvider";
+import { Suspense } from "react";
+import withErrorBoundary from "./HOCs/withErrorBoundary";
 import Home from "./screen/Home";
+import Login from "./screen/Login";
 import Appointments from "./screen/Appointments";
+import DefaultLayout from "./components/DefaultLayout";
+
+const HomeWithErrorBoundary = withErrorBoundary(Home);
+const LoginWithErrorBoundary = withErrorBoundary(Login);
+const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
+const DefaultLayoutWithErrorBoundary = withErrorBoundary(DefaultLayout);
 
 const App = () => {
   //! State
@@ -18,7 +26,7 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/login",
-      element: <Login />,
+      element: <LoginWithErrorBoundary />,
       loader: () => {
         if (islogged) return redirect("/");
         return null;

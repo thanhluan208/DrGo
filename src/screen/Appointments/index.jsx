@@ -2,13 +2,11 @@ import React, { useEffect } from "react";
 import CommonStyles from "../../components/CommonStyles";
 import DatePickerGroup from "./components/DatePickerGroup";
 import RightSettings from "./components/RightSettings";
-import { grouping, resources } from "../../assets/mockdata";
 import Scheduler from "./components/Scheduler";
 import { useTranslation } from "react-i18next";
 import { useGet, useSave } from "../../stores/useStores";
 import cachedKeys from "../../constants/cachedKeys";
 import TableAppointment from "./components/TableAppointment";
-import FirebaseServices from "../../services/firebaseServices";
 import dayjs from "dayjs";
 import useFilter from "../../hooks/useFilter";
 import useGetListAppointment from "../../hooks/appointments/useGetListAppointment";
@@ -60,12 +58,14 @@ const Appointments = () => {
   }, [refetchListAppointment]);
 
   //! Render
-  if (error)
+  if (error) {
+    console.log("error", error);
     return (
       <CommonStyles.Typography type="bold24">
         Something went wrong
       </CommonStyles.Typography>
     );
+  }
 
   return (
     <CommonStyles.Box sx={{ width: "100%" }}>

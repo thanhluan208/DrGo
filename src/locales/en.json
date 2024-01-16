@@ -2,7 +2,10 @@
   "authentication": {
     "loggingIn": "Logging in...",
     "loginSuccess": "Login successful",
-    "loginError": "Login error"
+    "loginError": "Login error",
+    "signingUp": "Signing up...",
+    "signupSuccess": "Signup successful",
+    "signupError": "Signup error"
   },
 
   "new_appointment": "New Appointment",

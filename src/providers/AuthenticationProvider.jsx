@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import httpService from "../services/httpServices";
 import AuthenticationServices from "../services/authenticationServices";
-import useToast, { useToastPromise } from "../hooks/useToast";
+import { useToastPromise } from "../hooks/useToast";
 import cachedKey from "../constants/cachedKeys";
 import FirebaseServices from "../services/firebaseServices";
 import { toast } from "react-toastify";
@@ -22,6 +22,8 @@ const AuthenticationContext = createContext({
   handleLoginGoogle: () => {},
   handleLoginFacebook: () => {},
   handleLoginTest: () => {},
+  handleSignUp: () => {},
+  signingUp: false,
 });
 
 export const useAuthentication = () => {
@@ -32,6 +34,7 @@ const AuthenticationProvider = ({ children }) => {
   //! State
   const { t } = useTranslation();
   const token = httpService.getTokenFromLocalStorage(cachedKey.token);
+  const [signingUp, setSigningUp] = useState(false);
   const [islogged, setIsLogged] = useState(!!token);
   const save = useSave();
 
@@ -121,25 +124,56 @@ const AuthenticationProvider = ({ children }) => {
     httpService.removeTokenFromLocalStorage(cachedKey.token);
   }, []);
 
+  const handleSignUp = useCallback(async (payload) => {
+    setSigningUp(true);
+    const toastId = toast.loading(t("authentication.signingUp"), {
+      autoClose: false,
+    });
+    try {
+      const { email, password } = payload;
+      const response = await FirebaseServices.signUp(email, password);
+
+      toast.update(toastId, {
+        render: t("authentication.signUpSuccess"),
+        type: toast.TYPE.SUCCESS,
+        autoClose: 2000,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.log("err", error);
+      toast.update(toastId, {
+        render: `${t("authentication.signUpError")} \n ${error?.message}}`,
+        type: toast.TYPE.ERROR,
+        autoClose: 2000,
+        isLoading: false,
+      });
+    }
+    setSigningUp(false);
+  }, []);
+
   //! Render
   const value = useMemo(() => {
     return {
       islogged,
+      signingUp,
       setIsLogged,
       handleLogin,
       handleLogout,
       handleLoginGoogle,
       handleLoginFacebook,
       handleLoginTest,
+      handleSignUp,
     };
   }, [
     islogged,
+    signingUp,
     setIsLogged,
     handleLogin,
     handleLogout,
     handleLoginGoogle,
     handleLoginFacebook,
     handleLoginTest,
+    handleSignUp,
   ]);
 
   return (

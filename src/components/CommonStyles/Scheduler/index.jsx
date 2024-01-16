@@ -20,10 +20,10 @@ import { Paper } from "@mui/material";
 import AppointmentsCustom from "./components/AppointmentsCustom";
 import CommonStyles from "..";
 import { useTheme } from "@emotion/react";
-import moment from "moment";
 import TimeScaleLabelComponent from "./components/TimeScaleLabelComponent";
 import TimeTableCellComponent from "./components/TimeTableCellComponent";
 import GroupingCellComponent from "./components/GroupingCellComponent";
+import dayjs from "dayjs";
 
 const Scheduler = ({
   data,
@@ -110,8 +110,8 @@ const Scheduler = ({
     >
       <SchedulerComponent data={data} height={800}>
         <ViewState
-          currentDate={currentDate}
-          defaultCurrentDate={moment().format("YYYY-MM-DD")}
+          currentDate={currentDate || dayjs().format("YYYY-MM-DD")}
+          defaultCurrentDate={dayjs().format("YYYY-MM-DD")}
         />
         <EditingState onCommitChanges={handleChangeScheduler} />
         <GroupingState grouping={grouping} />
