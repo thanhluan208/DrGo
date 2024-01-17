@@ -12,6 +12,7 @@ import Tooltip from "./Tooltip";
 import Typography from "./Typography";
 import Select from "./Select";
 import ConfirmDialog from "./ConfirmDialog";
+import CustomerScheduler from "./CustomScheduler";
 
 const CommonStyles = {
   Box: Box,
@@ -28,6 +29,7 @@ const CommonStyles = {
   IconButton: IconButton,
   Select: Select,
   ConfirmDialog: ConfirmDialog,
+  CustomScheduler: CustomerScheduler,
 };
 
 export default CommonStyles;
