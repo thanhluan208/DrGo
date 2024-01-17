@@ -63,6 +63,7 @@ export const statusType = {
   1: "Visited",
   2: "Scheduled",
   3: "Waiting",
+  4: "Confirmed    ",
 };
 
 export const statusOptions = [

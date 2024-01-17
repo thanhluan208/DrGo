@@ -9,7 +9,7 @@ const Home = () => {
 
   return (
     <CommonStyles.Box>
-      <CommonStyles.CustomScheduler />
+      {/* <CommonStyles.CustomScheduler /> */}
     </CommonStyles.Box>
   );
 };
