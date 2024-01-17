@@ -1,19 +1,28 @@
-import React, { memo, useCallback, useMemo } from "react";
-import { convertdoctorToOptions } from "../../../../helpers/common";
+import React, { memo, useCallback } from "react";
 import CustomFields from "../../../CustomFields";
-import { Field } from "formik";
+import { FastField } from "formik";
 import cachedKeys from "../../../../constants/cachedKeys";
-import { useGet } from "../../../../stores/useStores";
 import { MenuItem } from "@mui/material";
+import { cloneDeep } from "lodash";
 
 const SelectDoctor = ({ readOnly }) => {
   //! State
-  const listDoctor = useGet(cachedKeys.APPOINTMENTS.LIST_DOCTOR);
-  const doctorOptions = useMemo(() => {
-    return convertdoctorToOptions(listDoctor);
-  }, [listDoctor]);
 
   //! Function
+
+  const convertDoctorToOptions = useCallback((doctorList) => {
+    const nextDoctorList =
+      cloneDeep(doctorList).map((elm) => {
+        const parsedInfo = JSON.parse(elm.text);
+        return {
+          ...elm,
+          label: parsedInfo.name,
+          value: elm.id,
+        };
+      }) || [];
+
+    return nextDoctorList;
+  }, []);
 
   //! Render
   const renderOptions = useCallback((options) => {
@@ -28,10 +37,11 @@ const SelectDoctor = ({ readOnly }) => {
   }, []);
 
   return (
-    <Field
+    <FastField
       name="doctor"
       component={CustomFields.SelectField}
-      options={doctorOptions}
+      optionsKey={cachedKeys.APPOINTMENTS.LIST_DOCTOR}
+      convertOptionCallback={convertDoctorToOptions}
       fullWidth
       disabled={readOnly}
       label="Doctor"

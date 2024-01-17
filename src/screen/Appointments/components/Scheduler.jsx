@@ -70,10 +70,10 @@ const Scheduler = ({ appointments = [], filters }) => {
           return;
         }
 
-        await FirebaseServices.updateAppointment(changedId, {
+        await FirebaseServices.updateAppointmentByDrag(changedId, {
           doctor,
-          startDate: startDate.valueOf(),
-          endDate: endDate.valueOf(),
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
         });
 
         await refetchListAppointment();

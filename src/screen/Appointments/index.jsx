@@ -49,6 +49,8 @@ const Appointments = () => {
     error,
   } = useGetListAppointment(filters);
 
+  console.log("isLoading", isLoading);
+
   //! Function
   useEffect(() => {
     save(

@@ -51,20 +51,20 @@ class firebaseService {
     this.realtimeDB = getDatabase(this.app);
   }
 
-  writeUserData(userId, name, email) {
-    set(ref(this.realtimeDB, "users/" + userId), {
-      username: name,
-      email: email,
+  updateStatus(appointmentId, status) {
+    console.log("update status");
+    set(ref(this.realtimeDB, "appointments/" + appointmentId), {
+      status: status,
     });
   }
 
-  readUserData(userId, setUserInfo) {
-    const userInfoRef = ref(this.realtimeDB, "users/" + userId);
-
-    onValue(userInfoRef, (snapshot) => {
+  readStatus(appointmentId, setAppointmentStatus) {
+    const statusRef = ref(this.realtimeDB, "appointments/" + appointmentId);
+    console.log("appointmentId", appointmentId);
+    onValue(statusRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        setUserInfo(data);
+        setAppointmentStatus(data.status);
       } else {
         console.log("No data available");
       }
@@ -94,15 +94,17 @@ class firebaseService {
   };
 
   createAppointment = async (payload) => {
-    console.log("payload", payload);
     const doctorRef = doc(this.db, "doctor", payload.doctor);
-    const insuranceRef = doc(this.db, "insurance", payload.insurance);
+    // const insuranceRef = doc(this.db, "insurance", payload.insurance);
     const patientRef = doc(this.db, "patient", payload.patient);
 
     await addDoc(collection(this.db, "appointments"), {
       ...payload,
+      startDate: Timestamp.fromDate(payload.startDate),
+      endDate: Timestamp.fromDate(payload.endDate),
       doctor: doctorRef,
-      insurance: insuranceRef,
+      // insurance: insuranceRef,
+      insurance: "",
       patient: patientRef,
     });
   };
@@ -152,18 +154,28 @@ class firebaseService {
   };
 
   updateAppointment = async (id, payload) => {
-    try {
-      const appointmentRef = doc(this.db, "appointments", id);
-      const doctorRef = doc(this.db, "doctor", payload.doctor);
+    const appointmentRef = doc(this.db, "appointments", id);
+    const doctorRef = doc(this.db, "doctor", payload.doctor);
+    const patientRef = doc(this.db, "patient", payload.patient);
 
-      if (appointmentRef) {
-        await updateDoc(appointmentRef, {
-          ...payload,
-          doctor: doctorRef,
-        });
-      }
-    } catch (error) {
-      console.log("err", error);
+    if (appointmentRef) {
+      await updateDoc(appointmentRef, {
+        ...payload,
+        doctor: doctorRef,
+        patient: patientRef,
+      });
+    }
+  };
+
+  updateAppointmentByDrag = async (id, payload) => {
+    const appointmentRef = doc(this.db, "appointments", id);
+    const doctorRef = doc(this.db, "doctor", payload.doctor);
+
+    if (appointmentRef) {
+      await updateDoc(appointmentRef, {
+        ...payload,
+        doctor: doctorRef,
+      });
     }
   };
 

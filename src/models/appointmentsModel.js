@@ -7,7 +7,7 @@ class appointmentModel {
       startDate: payload.startDate.toDate(),
       endDate: payload.endDate.toDate(),
       patient: payload.patient.id,
-      insurance: payload.insurance,
+      insurance: payload?.insurance || null,
       visitedBefore: payload.visitedBefore,
       type: payload.type || schedulerTypes[0].value,
       doctor: payload.doctor,

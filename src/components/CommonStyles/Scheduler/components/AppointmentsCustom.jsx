@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import CommonStyles from "../..";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
 import { useTheme } from "@emotion/react";
@@ -14,16 +14,17 @@ import FirebaseServices from "../../../../services/firebaseServices";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import { convertPatientToOptions } from "../../../../helpers/common";
+import { statusType } from "../../../../constants/options";
 
 const AppointmentsCustom = (props) => {
   //! State
   const theme = useTheme();
+  const [statusAppointment, setStatusAppointment] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { style, data, onDoubleClick, forwardedRef, onClick, resources } =
-    props;
+  const { style, data, onDoubleClick, forwardedRef, resources } = props;
   const { open, shouldRender, toggle: toggleConfirmDialog } = useToggleDialog();
+  const { type, startDate, id, patient, status: initialStatus } = data;
 
-  const { type, startDate, id, patient } = data;
   const patientName = useMemo(() => {
     return patient?.name || `Patient ${id}`;
   }, [patient]);
@@ -40,12 +41,23 @@ const AppointmentsCustom = (props) => {
       ...data,
       insurance: data?.insurance?.id,
       patient: {
+        ...data?.patient,
         value: data?.patient?.id,
         label: data?.patient?.name || data?.patient?.id,
       },
     };
   }, [data]);
 
+  const statusText = useMemo(() => {
+    if (statusAppointment) {
+      return statusType[statusAppointment];
+    }
+    if (initialStatus) {
+      return statusType[initialStatus];
+    }
+
+    return "";
+  }, [statusAppointment, initialStatus]);
   const isEditing = currentEditingAppointment === id;
   //! Function
 
@@ -84,8 +96,13 @@ const AppointmentsCustom = (props) => {
       });
       toggleConfirmDialog();
     }
+  }, [refetchListAppointment]);
+
+  useEffect(() => {
+    FirebaseServices.readStatus(id, setStatusAppointment);
   }, []);
 
+  console.log("statusAppointment", statusAppointment);
   //! Render
   const customButton = (toggle) => {
     return (
@@ -174,6 +191,9 @@ const AppointmentsCustom = (props) => {
               </CommonStyles.Box>
               <CommonStyles.Typography type="normal14" color="secondaryText">
                 {capitalize(props.data.type)}
+              </CommonStyles.Typography>
+              <CommonStyles.Typography type="normal14" color="secondaryText">
+                {capitalize(statusText)}
               </CommonStyles.Typography>
             </CommonStyles.Box>
 

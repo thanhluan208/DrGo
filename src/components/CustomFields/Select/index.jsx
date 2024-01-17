@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -7,6 +7,7 @@ import Select from "@mui/material/Select";
 import { find, isArray } from "lodash";
 import { Box, CircularProgress, useTheme } from "@mui/material";
 import CommonStyles from "../../CommonStyles";
+import { useGet } from "../../../stores/useStores";
 
 const SelectField = (props) => {
   //! State
@@ -14,6 +15,8 @@ const SelectField = (props) => {
     field,
     form,
     options,
+    optionsKey,
+    convertOptionCallback,
     label,
     sxContainer,
     placeholder,
@@ -29,124 +32,42 @@ const SelectField = (props) => {
   } = props;
   const { name, value, onBlur, onChange } = field || {};
 
-  const { errors, touched, setFieldValue, setFieldTouched } = form || {};
+  const optionGetByKey = useGet(optionsKey) || [];
+
+  const selectOptions = useMemo(() => {
+    if (optionsKey) {
+      if (convertOptionCallback) return convertOptionCallback(optionGetByKey);
+      return optionGetByKey;
+    }
+
+    return options;
+  }, [optionsKey, optionGetByKey, options, convertOptionCallback]);
+
+  const { errors, touched, setFieldValue } = form || {};
   const theme = useTheme();
-  const valueMultiple = value || [];
 
   const isTouched = getIn(touched, name);
   const errorMessage = getIn(errors, name);
 
   //! Function
-  const handleChangeMultiple = (event) => {
-    const {
-      target: { value },
-    } = event;
-    if (setFieldValue && name) {
-      setFieldValue(name, typeof value === "string" ? value.split(",") : value);
-    }
-    afterOnChange && afterOnChange(event);
-    setFieldTouched && setFieldTouched(name || "", true);
-  };
+  const handleChange = useCallback(
+    (e) => {
+      const value = e.target.value;
+      if (onChangeCustomize) {
+        onChangeCustomize();
+        return;
+      }
+
+      setFieldValue(name, value);
+
+      if (afterOnChange) {
+        afterOnChange(e);
+      }
+    },
+    [name, setFieldValue, onChangeCustomize]
+  );
 
   //! Render
-  if (isMultiple) {
-    return (
-      <CommonStyles.Box centered sx={{ minWidth: 120, ...sxContainer }}>
-        <FormControl
-          fullWidth={otherProps.fullWidth}
-          error={isTouched && Boolean(errorMessage)}
-          size={otherProps.size}
-        >
-          <InputLabel id={`${name}`}>{label}</InputLabel>
-          {/* Only for Customize */}
-          {text}
-          <Select
-            multiple
-            id={`${name}`}
-            label={label}
-            labelId={`${name}`}
-            value={valueMultiple}
-            name={name}
-            onChange={handleChangeMultiple}
-            onBlur={onBlur}
-            sx={{ borderRadius: "0.5rem", ...sxSelect }}
-            displayEmpty={!!placeholder}
-            endAdornment={
-              loading ? (
-                <CommonStyles.Box
-                  sx={{
-                    paddingRight: "1.25rem",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <CircularProgress size={20} />
-                </CommonStyles.Box>
-              ) : undefined
-            }
-            renderValue={(selected) => {
-              if (isArray(selected)) {
-                const labelByValue = selected
-                  ?.map((el) => options?.find((item) => item?.value === el))
-                  ?.map((labelItem) => labelItem?.label);
-                if (selected.length === 0) {
-                  return (
-                    <CommonStyles.Typography
-                      variant="subtitle1"
-                      sx={{
-                        color: theme.colors?.bgneutral400,
-                        fontSize: "0.875rem",
-                      }}
-                    >
-                      {placeholder}
-                    </CommonStyles.Typography>
-                  );
-                }
-
-                return labelByValue.join(", ");
-              }
-            }}
-            disabled={loading || disabled}
-            {...otherProps}
-          >
-            {renderOptions ? (
-              renderOptions(options)
-            ) : (
-              <Box>
-                {placeholder && (
-                  <MenuItem disabled value="">
-                    <em> {placeholder}</em>
-                  </MenuItem>
-                )}
-                {options?.map((el) => {
-                  return (
-                    <MenuItem key={el.value} value={el.value}>
-                      {el.label}
-                    </MenuItem>
-                  );
-                })}
-              </Box>
-            )}
-          </Select>
-          {isTouched && errorMessage && (
-            <CommonStyles.Box
-              sx={{
-                fontWeight: 400,
-                fontSize: "0.75rem",
-                lineHeight: 1.66,
-                textAlign: "left",
-                margin: "0.25rem 0.875rem 0 0.875rem",
-                color: theme.colors?.custom?.textRedErrors,
-              }}
-            >
-              {errorMessage}
-            </CommonStyles.Box>
-          )}
-        </FormControl>
-      </CommonStyles.Box>
-    );
-  }
   return (
     <CommonStyles.Box
       centered
@@ -166,24 +87,14 @@ const SelectField = (props) => {
         {/* Only for Customize */}
         {text}
         <InputLabel id={`${name}`}>{label}</InputLabel>
-
         <Select
-          id={`${name}`}
-          label={label}
-          labelId={`${name}`}
+          labelId={name}
+          id={name}
           value={value}
+          label={label}
           name={name}
-          onChange={(e) => {
-            if (onChangeCustomize) {
-              onChangeCustomize(e.target.value);
-              return;
-            }
-            onChange && onChange(e);
-            afterOnChange && afterOnChange(e);
-          }}
-          onBlur={onBlur}
+          onChange={handleChange}
           sx={{ borderRadius: "0.5rem", ...sxSelect }}
-          displayEmpty={!!placeholder}
           endAdornment={
             loading ? (
               <CommonStyles.Box
@@ -198,47 +109,17 @@ const SelectField = (props) => {
               </CommonStyles.Box>
             ) : undefined
           }
-          renderValue={(selected) => {
-            const selectedOption = find(options, { value: selected });
-            if (!selected && selected !== 0 && placeholder) {
-              return (
-                <CommonStyles.Typography
-                  variant="subtitle1"
-                  sx={{
-                    color: theme.colors?.bgneutral400,
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {placeholder}
-                </CommonStyles.Typography>
-              );
-            }
-
-            return selectedOption?.label;
-          }}
-          disabled={loading || disabled}
-          {...otherProps}
-          fullWidth
         >
-          {renderOptions ? (
-            renderOptions(options)
-          ) : (
-            <Box>
-              {placeholder && (
-                <MenuItem disabled value="">
-                  <em> {placeholder}</em>
-                </MenuItem>
-              )}
-              {options?.map((el) => {
-                return (
-                  <MenuItem key={el.value} value={el.value}>
-                    {el.label}
-                  </MenuItem>
-                );
-              })}
-            </Box>
-          )}
+          {selectOptions?.map((option) => {
+            const { value, label } = option || {};
+            return (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            );
+          })}
         </Select>
+
         {isTouched && errorMessage && (
           <CommonStyles.Box
             sx={{

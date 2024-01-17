@@ -114,11 +114,9 @@ const NewAppointmentDialogContent = React.memo(
         autoClose: false,
       });
       try {
-        await FirebaseServices.updateAppointment(values.id, {
-          ...values,
-
-          doctor: [values.doctor],
-        });
+        const bodyRequest =
+          appointmentModel.parseRequestCreateAppointment(values);
+        await FirebaseServices.updateAppointment(values.id, bodyRequest);
 
         await refetchListAppointment();
 
@@ -183,6 +181,25 @@ const NewAppointmentDialogContent = React.memo(
 
       return handleCreate(values, { setSubmitting });
     };
+
+    const handleUpdateStatus = useCallback(
+      (event) => {
+        const value = event.target.value;
+
+        if (data?.id && !isDuplicate) {
+          const bodyRequest = appointmentModel.parseRequestCreateAppointment({
+            ...initialValue,
+            status: value,
+          });
+          FirebaseServices.updateAppointment(data.id, bodyRequest);
+
+          FirebaseServices.updateStatus(data.id, value);
+          toast.success("Update status successfully");
+        }
+        // FirebaseServices.updateAppointment
+      },
+      [initialValue, data, isDuplicate]
+    );
 
     //! Render
     return (
@@ -276,6 +293,7 @@ const NewAppointmentDialogContent = React.memo(
                   options={statusOptions}
                   fullWidth
                   disabled={readOnly}
+                  afterOnChange={handleUpdateStatus}
                 />
                 <FastField
                   name="createdBy"

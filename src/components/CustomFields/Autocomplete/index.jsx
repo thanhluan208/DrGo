@@ -22,11 +22,8 @@ const AutoComplete = ({
   const errorMessage = getIn(errors, name);
   const options = useGet(optionsKey) || [];
 
-  console.log("options", value);
-
   //! Function
   const handleChange = (event, newValue) => {
-    console.log("newValue", newValue);
     setFieldValue(name, newValue);
   };
 
