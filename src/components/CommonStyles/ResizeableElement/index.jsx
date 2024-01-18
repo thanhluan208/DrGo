@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import CommonStyles from "..";
 
 const ResizeableElement = ({
@@ -11,6 +11,8 @@ const ResizeableElement = ({
   lowerLimitHeight,
   upperLimitWidth,
   lowerLimitWidth,
+  callbackMouseOver,
+  callbackMouseLeave,
 }) => {
   //! State
   const resizeableElmRef = useRef();
@@ -118,37 +120,63 @@ const ResizeableElement = ({
       document.addEventListener("mouseup", onMouseUpLeftResize);
     };
 
-    bottomRef.current.addEventListener("mousedown", onMouseDownBottomResize);
-    topRef.current.addEventListener("mousedown", onMouseDownTopResize);
-    rightRef.current.addEventListener("mousedown", onMouseDownRightResize);
-    leftRef.current.addEventListener("mousedown", onMouseDownLeftResize);
-
-    return () => {
-      bottomRef.current.removeEventListener(
+    !disabledBottom &&
+      resizeBottomRef.current.addEventListener(
         "mousedown",
         onMouseDownBottomResize
       );
-      topRef.current.removeEventListener("mousedown", onMouseDownTopResize);
-      rightRef.current.removeEventListener("mousedown", onMouseDownRightResize);
-      leftRef.current.removeEventListener("mousedown", onMouseDownLeftResize);
+    !disabledTop &&
+      resizeTopRef.current.addEventListener("mousedown", onMouseDownTopResize);
+    !disabledRight &&
+      resizeRightRef.current.addEventListener(
+        "mousedown",
+        onMouseDownRightResize
+      );
+    !disabledLeft &&
+      resizeLeftRef.current.addEventListener(
+        "mousedown",
+        onMouseDownLeftResize
+      );
+
+    return () => {
+      !disabledBottom &&
+        resizeBottomRef?.current?.removeEventListener(
+          "mousedown",
+          onMouseDownBottomResize
+        );
+      !disabledTop &&
+        resizeTopRef?.current?.removeEventListener(
+          "mousedown",
+          onMouseDownTopResize
+        );
+      !disabledRight &&
+        resizeRightRef?.current?.removeEventListener(
+          "mousedown",
+          onMouseDownRightResize
+        );
+      !disabledLeft &&
+        resizeLeftRef?.current?.removeEventListener(
+          "mousedown",
+          onMouseDownLeftResize
+        );
     };
   }, [upperLimitHeight, lowerLimitHeight, upperLimitWidth, lowerLimitWidth]);
 
   //! Render
   return (
-    <CommonStyles.Box
-      sx={{
+    <div
+      style={{
         position: "relative",
-        div: {
-          position: "absolute",
-        },
       }}
       ref={resizeableElmRef}
     >
       {!disabledTop && (
         <div
+          onMouseOver={callbackMouseOver}
+          onMouseLeave={callbackMouseLeave}
           ref={resizeTopRef}
           style={{
+            position: "absolute",
             height: "5px",
             width: "100%",
             top: 0,
@@ -161,7 +189,10 @@ const ResizeableElement = ({
       {!disabledRight && (
         <div
           ref={resizeRightRef}
+          onMouseOver={callbackMouseOver}
+          onMouseLeave={callbackMouseLeave}
           style={{
+            position: "absolute",
             height: "100%",
             width: "5px",
             top: 0,
@@ -174,7 +205,10 @@ const ResizeableElement = ({
       {!disabledBottom && (
         <div
           ref={resizeBottomRef}
+          onMouseOver={callbackMouseOver}
+          onMouseLeave={callbackMouseLeave}
           style={{
+            position: "absolute",
             height: "5px",
             width: "100%",
             bottom: 0,
@@ -187,7 +221,10 @@ const ResizeableElement = ({
       {!disabledLeft && (
         <div
           ref={resizeLeftRef}
+          onMouseOver={callbackMouseOver}
+          onMouseLeave={callbackMouseLeave}
           style={{
+            position: "absolute",
             height: "100%",
             width: "5px",
             top: 0,
@@ -197,7 +234,7 @@ const ResizeableElement = ({
         />
       )}
       {children}
-    </CommonStyles.Box>
+    </div>
   );
 };
 

@@ -10,6 +10,8 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
 import {
   Timestamp,
   addDoc,
@@ -28,7 +30,16 @@ import {
   where,
 } from "firebase/firestore";
 import useToast from "../hooks/useToast";
+import { toast } from "react-toastify";
 
+const ToastNotification = ({ title, body }) => {
+  return (
+    <div>
+      <h3>{title}</h3>
+      <p>{body}</p>
+    </div>
+  );
+};
 class firebaseService {
   constructor() {
     this.firebaseConfig = {
@@ -49,6 +60,43 @@ class firebaseService {
     // this.facebookProvider = new FacebookAuthProvider();
     this.db = getFirestore(this.app);
     this.realtimeDB = getDatabase(this.app);
+    this.messaging = getMessaging(this.app);
+    getToken(this.messaging, {
+      vapidKey: this.messaging.vapidKey,
+    })
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("currentToken", currentToken);
+        } else {
+          console.log(
+            "No registration token available. Request permission to generate one."
+          );
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+
+    onMessage(this.messaging, (payload) => {
+      console.log("Message received. ", payload);
+      if (payload.notification) {
+        const { title, body } = payload.notification;
+        toast.info(<ToastNotification title={title} body={body} />);
+      }
+      // ...
+    });
+  }
+
+  async onMessage() {}
+
+  requestPermission() {
+    console.log("Requesting permission...");
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Notification permission granted.");
+      }
+      console.log("permission", permission);
+    });
   }
 
   updateStatus(appointmentId, status) {

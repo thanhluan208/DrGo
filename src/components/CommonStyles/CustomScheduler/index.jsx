@@ -10,6 +10,7 @@ const CustomerScheduler = ({
   endDate = dayjs().startOf("day").add(20, "hour"),
   step = 30,
   stepUnit = "minute",
+  rowHeight = 80,
   appointments = [
     {
       id: Math.random(),
@@ -66,7 +67,17 @@ const CustomerScheduler = ({
             }}
           >
             {appointments.map((elm, index) => {
-              return <Appointment data={elm} index={index} />;
+              return (
+                <Appointment
+                  data={elm}
+                  index={index}
+                  startDate={startDate}
+                  endDate={endDate}
+                  rowHeight={rowHeight}
+                  step={step}
+                  stepUnit={stepUnit}
+                />
+              );
             })}
             {listTimeRow.map((time, index) => {
               return (
@@ -79,15 +90,13 @@ const CustomerScheduler = ({
                     return (
                       <div
                         style={{
-                          height: "80px",
+                          height: rowHeight,
                           border: "solid 1px #ccc",
                           width: "100%",
                         }}
                         ref={dropProvided.innerRef}
                         {...dropProvided.droppableProps}
-                      >
-                        {`drop_destination_${time}`}
-                      </div>
+                      ></div>
                     );
                   }}
                 </Droppable>

@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   RouterProvider,
   createBrowserRouter,
@@ -13,6 +13,7 @@ import Home from "./screen/Home";
 import Login from "./screen/Login";
 import Appointments from "./screen/Appointments";
 import DefaultLayout from "./components/DefaultLayout";
+import FirebaseServices from "./services/firebaseServices";
 
 const HomeWithErrorBoundary = withErrorBoundary(Home);
 const LoginWithErrorBoundary = withErrorBoundary(Login);
@@ -53,6 +54,20 @@ const App = () => {
   ]);
 
   //! Function
+  useEffect(() => {
+    FirebaseServices.onMessage()
+      .then((payload) => {
+        console.log("payload", payload);
+        if (payload) {
+          alert(
+            "Message recieved hehe:" + JSON.stringify(payload) || "No payload"
+          );
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  });
 
   //! Render
   return <RouterProvider router={router} />;

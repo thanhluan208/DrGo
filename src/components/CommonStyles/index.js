@@ -13,6 +13,7 @@ import Typography from "./Typography";
 import Select from "./Select";
 import ConfirmDialog from "./ConfirmDialog";
 import CustomerScheduler from "./CustomScheduler";
+import ResizeableElement from "./ResizeableElement";
 
 const CommonStyles = {
   Box: Box,
@@ -30,6 +31,7 @@ const CommonStyles = {
   Select: Select,
   ConfirmDialog: ConfirmDialog,
   CustomScheduler: CustomerScheduler,
+  ResizeWrapper: ResizeableElement,
 };
 
 export default CommonStyles;

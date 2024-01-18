@@ -1,15 +1,37 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import CommonStyles from "../..";
 
-const Appointment = ({ data, index }) => {
+const Appointment = ({
+  data,
+  index,
+  startDate,
+  endDate,
+  rowHeight,
+  step,
+  stepUnit,
+}) => {
   //! State
   const { time, id } = data;
+  const [isDisabledDrage, setIsDisabledDrage] = React.useState(false);
+
+  const position = useMemo(() => {
+    const timeDiff = time.diff(startDate, stepUnit);
+    const pxPerMinute = rowHeight / step;
+
+    return timeDiff * pxPerMinute;
+  }, [rowHeight, startDate, time, stepUnit, stepUnit]);
 
   //! Function
-  console.log("hehe", time);
+  console.log("time", {
+    position,
+  });
 
   //! Render
+
+  if (time.isBefore(startDate) || time.isAfter(endDate)) {
+    return null;
+  }
 
   return (
     <Droppable
@@ -21,11 +43,12 @@ const Appointment = ({ data, index }) => {
         return (
           <div
             style={{
-              height: "80px",
-              border: "solid 1px #ccc",
               position: "absolute",
-              top: "0",
+              top: `${position}px`,
               left: "0",
+              width: "200px",
+              borderRadius: "10px",
+              border: "solid 1px #ccc",
             }}
             ref={dropProvided.innerRef}
             {...dropProvided.droppableProps}
@@ -34,6 +57,7 @@ const Appointment = ({ data, index }) => {
               key={`drag_elm_${id}`}
               draggableId={`drag_elm_${id}`}
               index={index}
+              isDragDisabled={isDisabledDrage}
             >
               {(dragProvided, dragSnapShot) => {
                 return (
@@ -42,17 +66,17 @@ const Appointment = ({ data, index }) => {
                     {...dragProvided.draggableProps}
                     {...dragProvided.dragHandleProps}
                   >
-                    <CommonStyles.Box
-                      centered
-                      sx={{
-                        height: "80px",
-                        width: "200px",
-                        borderRadius: "10px",
-                        border: "solid 1px #ccc",
-                      }}
+                    <CommonStyles.ResizeWrapper
+                      disabledLeft
+                      disabledRight
+                      disabledTop
+                      callbackMouseLeave={() => setIsDisabledDrage(false)}
+                      callbackMouseOver={() => setIsDisabledDrage(true)}
                     >
-                      drag element 1: {time.format("HH:mm")}
-                    </CommonStyles.Box>
+                      <CommonStyles.Box centered>
+                        drag element 1: {time.format("HH:mm")}
+                      </CommonStyles.Box>
+                    </CommonStyles.ResizeWrapper>
                   </div>
                 );
               }}
