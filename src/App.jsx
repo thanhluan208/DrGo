@@ -36,13 +36,13 @@ const App = () => {
     {
       element: <DefaultLayout />,
       children: [
-        // {
-        //   path: "/appointments",
-        //   element: <Appointments />,
-        // },
+        {
+          path: "/appointments",
+          element: <AppointmentsWithErrorBoundary />,
+        },
         {
           path: "*",
-          element: <Home />,
+          element: <HomeWithErrorBoundary />,
         },
       ],
       loader: () => {

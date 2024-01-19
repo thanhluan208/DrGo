@@ -60,10 +60,11 @@ export const createdByOptions = [
 ];
 
 export const statusType = {
-  1: "Visited",
-  2: "Scheduled",
+  1: "Scheduled",
+  2: "Confirmed",
   3: "Waiting",
-  4: "Confirmed    ",
+  4: "Visited",
+  5: "Canceled",
 };
 
 export const statusOptions = [
