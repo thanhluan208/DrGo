@@ -9,14 +9,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const Dialog = ({
-  open,
-  handleClose,
-  content,
-  title,
-  Actions,
-  ...otherProps
-}) => {
+const Dialog = ({ open, handleClose, dialogContent, ...otherProps }) => {
   //! State
 
   //! Function
@@ -30,19 +23,7 @@ const Dialog = ({
       aria-describedby="alert-dialog-slide-description"
       {...otherProps}
     >
-      <DialogTitle>
-        {title ? title : "Use Google's location service?"}
-      </DialogTitle>
-      <DialogContent>
-        {content ? (
-          content
-        ) : (
-          <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
-        )}
-      </DialogContent>
+      {dialogContent || "Placeholder..."}
     </MUIDialog>
   );
 };

@@ -5,6 +5,7 @@ import TableHeader from "./Components/TableHeader";
 import TableContent from "./Components/TableContent";
 import { useTheme } from "@emotion/react";
 import Pagination from "./Components/Pagination";
+import { CircularProgress } from "@mui/material";
 
 const Table = ({
   data,
@@ -23,6 +24,7 @@ const Table = ({
   handleChangePage,
   handleChangePageSize,
   disabledPagination,
+  loading,
 }) => {
   //! State
   const { sortBy, sortDirection, selectedRows, currentPage, pageSize } =
@@ -67,59 +69,72 @@ const Table = ({
           handleSelectAll={handleSelectAll}
         />
 
-        <CommonStyles.Box
-          sx={{
-            minWidth: "100%",
-            width: !!tableWidth ? tableWidth : "100%",
-            borderRadius: "12px",
-          }}
-        >
+        {loading ? (
           <CommonStyles.Box
             sx={{
-              // ".scrollbar-container": {
-              //   overflow: "unset !important",
-              // },
-              // ".ps__thumb-y": {
-              //   display: "none !important",
-              // },
+              width: !!tableWidth ? tableWidth : "100%",
+              height: 640,
+              background: "rgba(0,0,0,0.2)",
+            }}
+            centered
+          >
+            <CircularProgress />
+          </CommonStyles.Box>
+        ) : (
+          <CommonStyles.Box
+            sx={{
+              minWidth: "100%",
+              width: !!tableWidth ? tableWidth : "100%",
               borderRadius: "12px",
-              // boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
-              // border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <PerfectScrollBar
-              style={{
-                maxHeight: `${maxHeight} `,
-                // overflow: "unset !important",
+            <CommonStyles.Box
+              sx={{
+                // ".scrollbar-container": {
+                //   overflow: "unset !important",
+                // },
+                // ".ps__thumb-y": {
+                //   display: "none !important",
+                // },
                 borderRadius: "12px",
+                // boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
+                // border: `1px solid ${theme.palette.divider}`,
               }}
             >
-              <CommonStyles.Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-
+              <PerfectScrollBar
+                style={{
+                  maxHeight: `${maxHeight} `,
+                  // overflow: "unset !important",
                   borderRadius: "12px",
                 }}
               >
-                {data.map((rowData, index) => {
-                  return (
-                    <TableContent
-                      rowData={rowData}
-                      calculateTemplate={calculateTemplate}
-                      key={rowData.id}
-                      columns={columns}
-                      hasCheckbox={hasCheckbox}
-                      isOdd={index % 2 === 1}
-                      selectedRows={selectedRows}
-                      handleSelectRow={handleSelectRow}
-                    />
-                  );
-                })}
-              </CommonStyles.Box>
-            </PerfectScrollBar>
+                <CommonStyles.Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+
+                    borderRadius: "12px",
+                  }}
+                >
+                  {data.map((rowData, index) => {
+                    return (
+                      <TableContent
+                        rowData={rowData}
+                        calculateTemplate={calculateTemplate}
+                        key={rowData.id}
+                        columns={columns}
+                        hasCheckbox={hasCheckbox}
+                        isOdd={index % 2 === 1}
+                        selectedRows={selectedRows}
+                        handleSelectRow={handleSelectRow}
+                      />
+                    );
+                  })}
+                </CommonStyles.Box>
+              </PerfectScrollBar>
+            </CommonStyles.Box>
           </CommonStyles.Box>
-        </CommonStyles.Box>
+        )}
       </PerfectScrollBar>
       {!disabledPagination && (
         <Pagination

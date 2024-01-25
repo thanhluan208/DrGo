@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -26,6 +26,7 @@ const TextField = ({
   disabled = false,
   ...props
 }) => {
+  const [isFocus, setIsFocus] = React.useState(false);
   const { name, value, onBlur, onChange } = field || {};
   const { errors, touched } = form || {};
   const isTouched = getIn(touched, name);
@@ -44,9 +45,16 @@ const TextField = ({
     <CommonStyles.Box
       sx={{
         width: "100%",
-        padding: "10px 0",
         fieldset: {
           borderRadius: "8px",
+        },
+        input: {
+          padding: "12.5px 14px",
+        },
+        label: {
+          transform: `translate(14px, ${
+            isFocus || !!`${value}` ? "-9px" : "12.5px"
+          }) scale(${isFocus || !!`${value}` ? "0.75" : "1"}) `,
         },
       }}
     >
@@ -54,7 +62,13 @@ const TextField = ({
         type={type === "password" ? typePassword : type}
         name={name}
         value={value}
-        onBlur={onBlur}
+        onFocus={() => {
+          setIsFocus(true);
+        }}
+        onBlur={(e) => {
+          onBlur(e);
+          setIsFocus(false);
+        }}
         onChange={(e) => {
           if (onChangeCustomize) {
             onChangeCustomize(e.target.value);
@@ -95,10 +109,6 @@ const TextField = ({
             </InputAdornment>
           ) : undefined,
         }}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        disabled={disabled}
         {...props}
       />
     </CommonStyles.Box>

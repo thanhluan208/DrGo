@@ -1,4 +1,6 @@
 {
+  "required": "{{field}} is required",
+
   "layout": {
     "dashboard": "Dashboard",
     "home": "Home",
@@ -18,5 +20,27 @@
     "visitTime": "Visit Time",
     "doctor": "Doctor",
     "conditions": "Conditions"
+  },
+
+  "appointment": {
+    "appointments": "Appointments",
+    "newAppointment": "New appointment",
+    "addNewAppointment": "Add new appointment",
+    "name": "Name",
+    "doctor": "Doctor",
+    "email": "Email",
+    "date": "Date",
+    "timeFrom": "Time from",
+    "timeTo": "Time to",
+    "number": "Number",
+    "injure": "Injure",
+    "cancel": "Cancel",
+    "save": "Add appointment",
+    "dateNotInPast": "Date can't be in past",
+    "timeFromNotInPast": "Time from can't be in past",
+    "timeToNotInPast": "Time to can't be in past",
+    "timeFromBeforeTimeTo": "Time from must be before time to",
+    "timeToAfterTimeFrom": "Time to must be after time from",
+    "numberIsNumber": "Number must be a number"
   }
 }

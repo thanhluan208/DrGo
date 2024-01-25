@@ -3,7 +3,7 @@ import FirebaseServices from "../../services/firebaseServices";
 import appointmentModel from "../../models/appointmentsModel";
 
 const useGetListAppointment = (filters, isTrigger = true) => {
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 

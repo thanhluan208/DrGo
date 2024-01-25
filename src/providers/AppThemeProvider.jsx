@@ -42,6 +42,7 @@ const lightTheme = createTheme({
     mode: "light",
     primary: {
       main: "#2563EB",
+      error: "#FF6760",
     },
   },
   colors: {

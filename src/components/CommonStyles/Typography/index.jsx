@@ -10,6 +10,13 @@ const Typography = (props) => {
     const styles = new Map();
 
     //! Bold
+    styles.set("bold40", {
+      fontSize: "40px",
+      fontWeight: "700",
+      lineHeight: "46px",
+      color: theme.colors.custom.boldText,
+    });
+
     styles.set("bold24", {
       fontSize: "24px",
       fontWeight: "800",
@@ -46,6 +53,13 @@ const Typography = (props) => {
     });
 
     //! Normal
+    styles.set("normal20", {
+      fontSize: "20px",
+      fontWeight: "400",
+      lineHeight: "26px",
+      color: theme.colors.custom.normalText,
+    });
+
     styles.set("normal18", {
       fontSize: "18px",
       fontWeight: "400",

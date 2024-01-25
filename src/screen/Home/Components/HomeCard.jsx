@@ -11,6 +11,8 @@ const HomeCard = ({ icon, title, content }) => {
     <CommonStyles.Card>
       <CommonStyles.Box
         sx={{
+          padding: "24px",
+
           display: "flex",
           gap: "24px",
           width: "255px",

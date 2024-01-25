@@ -12,7 +12,6 @@ const Card = ({ children, styles }) => {
   return (
     <CommonStyles.Box
       sx={{
-        padding: "24px",
         borderRadius: "8px",
         background: theme.colors.white,
         boxShadow: "0 5px 10px rgba(0,0,0,0.1)",

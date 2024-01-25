@@ -158,18 +158,21 @@ class firebaseService {
   };
 
   getAppointmentByDate = async (date, pageSize) => {
-    const startDate = Timestamp.fromDate(date?.startOf("day")?.toDate());
-    const endDate = Timestamp.fromDate(date?.endOf("day")?.toDate());
+    // const startDate = Timestamp.fromDate(date?.startOf("day")?.toDate());
+    // const endDate = Timestamp.fromDate(date?.endOf("day")?.toDate());
 
-    if (!startDate || !endDate) return;
+    // if (!startDate || !endDate) return;
     const q = query(
       collection(this.db, "appointments"),
-      where("startDate", ">=", startDate),
-      where("startDate", "<=", endDate),
+      // where("startDate", ">=", startDate),
+      // where("startDate", "<=", endDate),
+      orderBy("startDate"),
       limit(pageSize)
     );
 
     const querySnapshot = await getDocs(q);
+
+    console.log("querySnapshot", querySnapshot);
 
     const data = [];
 

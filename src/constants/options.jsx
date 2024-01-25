@@ -1,28 +1,28 @@
 // import Monitor from "../assets/icons/Monitor";
 // import Phone from "../assets/icons/Phone";
 
-// export const schedulerTypes = [
-//   {
-//     value: "checkedOut",
-//     label: "Checked Out",
-//   },
-//   {
-//     value: "checkedIn",
-//     label: "Checked In",
-//   },
-//   {
-//     value: "confirmed",
-//     label: "Confirmed",
-//   },
-//   {
-//     value: "scheduled",
-//     label: "Scheduled",
-//   },
-//   {
-//     value: "none",
-//     label: "None",
-//   },
-// ];
+export const schedulerTypes = [
+  {
+    value: "checkedOut",
+    label: "Checked Out",
+  },
+  {
+    value: "checkedIn",
+    label: "Checked In",
+  },
+  {
+    value: "confirmed",
+    label: "Confirmed",
+  },
+  {
+    value: "scheduled",
+    label: "Scheduled",
+  },
+  {
+    value: "none",
+    label: "None",
+  },
+];
 
 export const pageSizeOptions = [
   {

@@ -282,6 +282,8 @@ const Home = () => {
 
       <CommonStyles.Card
         styles={{
+          padding: "24px",
+
           marginTop: "38px",
           display: "flex",
           flexDirection: "column",

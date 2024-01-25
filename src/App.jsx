@@ -14,10 +14,11 @@ import Login from "./screen/Login";
 // import Appointments from "./screen/Appointments";
 import DefaultLayout from "./components/DefaultLayout";
 import FirebaseServices from "./services/firebaseServices";
+import Appointments from "./screen/Appointments";
 
 const HomeWithErrorBoundary = withErrorBoundary(Home);
 const LoginWithErrorBoundary = withErrorBoundary(Login);
-// const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
+const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
 // const DefaultLayoutWithErrorBoundary = withErrorBoundary(DefaultLayout);
 
 const App = () => {
@@ -36,10 +37,10 @@ const App = () => {
     {
       element: <DefaultLayout />,
       children: [
-        // {
-        //   path: "/appointments",
-        //   element: <AppointmentsWithErrorBoundary />,
-        // },
+        {
+          path: "/appointment",
+          element: <AppointmentsWithErrorBoundary />,
+        },
         {
           path: "*",
           element: <HomeWithErrorBoundary />,
