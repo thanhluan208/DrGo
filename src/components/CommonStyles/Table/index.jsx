@@ -73,7 +73,7 @@ const Table = ({
           <CommonStyles.Box
             sx={{
               width: !!tableWidth ? tableWidth : "100%",
-              height: 640,
+              height: 500,
               background: "rgba(0,0,0,0.2)",
             }}
             centered

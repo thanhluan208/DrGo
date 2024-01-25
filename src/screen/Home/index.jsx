@@ -1,15 +1,13 @@
 import CommonStyles from "../../components/CommonStyles";
-import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import MedicalAid from "../../assets/icons/MedialAid";
 import { useTranslation } from "react-i18next";
 import { homeListCard } from "../../constants/navigation";
-import HomeCard from "./Components/Homecard";
 import i18n from "../../../i18n";
 import dayjs from "dayjs";
 import Edit from "../../assets/icons/Edit";
 import Delete from "../../assets/icons/Delete";
+import HomeCard from "./Components/Homecard";
 
 const data = [
   {
@@ -283,7 +281,6 @@ const Home = () => {
       <CommonStyles.Card
         styles={{
           padding: "24px",
-
           marginTop: "38px",
           display: "flex",
           flexDirection: "column",
