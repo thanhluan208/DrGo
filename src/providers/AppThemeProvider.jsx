@@ -41,24 +41,19 @@ const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#D0165D",
+      main: "#2563EB",
     },
   },
   colors: {
     custom: {
-      borderColor: "rgba(224, 224, 224, 1)",
-      background: "#ffffff",
-      primaryText: "#3B3E45",
-      secondaryText: "#666E7D",
-      checkedout: "#12BDB2",
-      checkedin: "#8239BC",
-      confirmed: "#54A0CA",
-      none: "#666E7D",
-      scheduled: "#FBB500",
-      sidebarBackground: "#F3F4F6",
-      switcherActive: "#DCDFE3",
-      textRedErrors: "#d32f2f",
-      timerColor: "#FD4848",
+      //! Layout
+      layoutBackground: "#F6F8FB",
+      layoutIcon: "#DADEE5",
+      sidebarNotiCount: "#0D9488",
+
+      //! Typography
+      boldText: "#475366",
+      normalText: "#52575C",
     },
     client: {
       cardDark: client["cardDark"],

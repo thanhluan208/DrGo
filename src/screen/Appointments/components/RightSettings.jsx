@@ -7,7 +7,7 @@ import AppointmentActionDialog from "../../../components/CommonStyles/Scheduler/
 import { useTranslation } from "react-i18next";
 import { useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
-import { layoutTypes } from "..";
+import { layoutTypes } from "../../../constants/type";
 
 const options = [
   {

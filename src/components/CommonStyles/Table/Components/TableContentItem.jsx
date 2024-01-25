@@ -95,7 +95,9 @@ const TableContentItem = ({ item, data, isOdd }) => {
         textOverflow: "ellipsis",
       }}
     >
-      {data[item.id]}
+      <CommonStyles.Typography type="normal14">
+        {data[item.id]}
+      </CommonStyles.Typography>
     </CommonStyles.Box>
   );
 };

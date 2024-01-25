@@ -84,7 +84,7 @@ const TableContent = ({
               background: isSelected
                 ? theme.palette.primary.main
                 : "transparent",
-              border: `1px solid ${theme.palette.primary.main}`,
+              // border: `1px solid ${theme.palette.primary.main}`,
               padding: 0,
               "&:hover": {
                 background: isSelected

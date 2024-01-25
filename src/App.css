@@ -8,3 +8,22 @@
 .indicator {
   z-index: 1001 !important;
 }
+
+.ps__rail-x {
+  z-index: 1001 !important;
+}
+
+.appointmentContainer {
+  animation: appointmentAppear 0.5s ease-in-out;
+}
+
+@keyframes appointmentAppear {
+  0% {
+    opacity: 0;
+    width: 0;
+  }
+  100% {
+    opacity: 1;
+    width: 100%;
+  }
+}

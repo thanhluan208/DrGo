@@ -3,9 +3,6 @@ import CommonStyles from "../../../components/CommonStyles";
 import DatePicker from "./DatePicker";
 import CommonIcons from "../../../components/CommonIcons";
 import { useTheme } from "@emotion/react";
-import cachedKeys from "../../../constants/cachedKeys";
-import dayjs from "dayjs";
-import { useGet, useSave } from "../../../stores/useStores";
 
 const DatePickerGroup = ({ currentDate, setFilters }) => {
   //! State

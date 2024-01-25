@@ -1,28 +1,22 @@
 {
-  "authentication": {
-    "loggingIn": "Logging in...",
-    "loginSuccess": "Login successful",
-    "loginError": "Login error",
-    "signingUp": "Signing up...",
-    "signupSuccess": "Signup successful",
-    "signupError": "Signup error"
+  "layout": {
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "settings": "Settings",
+    "appointment": "Appointment",
+    "chat": "Chat",
+    "notifications": "Notifications",
+    "schedule": "Schedule"
   },
-
-  "new_appointment": "New Appointment",
-  "patient_name": "Patient name",
-  "required": "{{field}} is required field",
-  "save": "Save",
-  "cancel": "Cancel",
-  "day": "Day",
-  "week": "Week",
-  "appointments": "Appointments",
-  "patients": "Patients",
-  "finances": "Finances",
-  "messages": "Messages",
-  "edit_appointment": "Edit Appointment",
-  "page": "Page",
-  "showOnPage": "Show on page",
-  "insurance": "Insurance",
-  "symptoms": "Symptoms",
-  "duplicate": "Duplicate"
+  "home": {
+    "appointments": "Appointments",
+    "newPatient": "New Patient",
+    "appointmentActivity": "Appointment Activity",
+    "name": "Name",
+    "contact": "Contact",
+    "date": "Date",
+    "visitTime": "Visit Time",
+    "doctor": "Doctor",
+    "conditions": "Conditions"
+  }
 }

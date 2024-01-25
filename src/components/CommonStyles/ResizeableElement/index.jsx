@@ -1,5 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import CommonStyles from "..";
+import { useTheme } from "@emotion/react";
+import { CircularProgress } from "@mui/material";
 
 const ResizeableElement = ({
   children,
@@ -13,6 +15,9 @@ const ResizeableElement = ({
   lowerLimitWidth,
   callbackMouseOver,
   callbackMouseLeave,
+  loading,
+  heightValue,
+  onChangeSize,
 }) => {
   //! State
   const resizeableElmRef = useRef();
@@ -20,6 +25,7 @@ const ResizeableElement = ({
   const resizeRightRef = useRef();
   const resizeBottomRef = useRef();
   const resizeLeftRef = useRef();
+  const [isResize, setIsResize] = React.useState(false);
 
   //! Function
   useEffect(() => {
@@ -37,15 +43,19 @@ const ResizeableElement = ({
       const dy = event.clientY - yCord;
       height = height - dy;
       yCord = event.clientY;
-      if (height >= lowerLimitHeight && height <= upperLimitHeight) return;
+      if (height <= lowerLimitHeight || height >= upperLimitHeight) return;
       resizeableElement.style.height = `${height}px`;
     };
 
     const onMouseUpTopResize = () => {
+      setIsResize(false);
+      onChangeSize(height, "top");
       document.removeEventListener("mousemove", onMouseMoveTopResize);
+      document.removeEventListener("mouseup", onMouseUpTopResize);
     };
 
     const onMouseDownTopResize = (event) => {
+      setIsResize(true);
       yCord = event.clientY;
       const styles = window.getComputedStyle(resizeableElement);
       resizeableElement.style.bottom = styles.bottom;
@@ -59,15 +69,19 @@ const ResizeableElement = ({
       const dx = event.clientX - xCord;
       width = width + dx;
       xCord = event.clientX;
-      if (width >= lowerLimitWidth && width <= upperLimitWidth) return;
+      if (width <= lowerLimitWidth && width >= upperLimitWidth) return;
       resizeableElement.style.width = `${width}px`;
     };
 
     const onMouseUpRightResize = () => {
+      setIsResize(false);
+      onChangeSize(width, "right");
       document.removeEventListener("mousemove", onMouseMoveRightResize);
+      document.removeEventListener("mouseup", onMouseUpRightResize);
     };
 
     const onMouseDownRightResize = (event) => {
+      setIsResize(true);
       xCord = event.clientX;
       const styles = window.getComputedStyle(resizeableElement);
       resizeableElement.style.right = styles.right;
@@ -81,15 +95,27 @@ const ResizeableElement = ({
       const dy = event.clientY - yCord;
       height = height + dy;
       yCord = event.clientY;
-      if (height >= lowerLimitHeight && height <= upperLimitHeight) return;
+      if (upperLimitHeight && height >= upperLimitHeight) {
+        height = upperLimitHeight;
+        return;
+      }
+      if (lowerLimitHeight && height <= lowerLimitHeight) {
+        height = lowerLimitHeight;
+        return;
+      }
       resizeableElement.style.height = `${height}px`;
     };
 
     const onMouseUpDownResize = () => {
+      setIsResize(false);
+      onChangeSize(height, "bottom");
       document.removeEventListener("mousemove", onMouseMoveBottomResize);
+      document.removeEventListener("mouseup", onMouseUpDownResize);
     };
 
     const onMouseDownBottomResize = (event) => {
+      setIsResize(true);
+
       yCord = event.clientY;
       const styles = window.getComputedStyle(resizeableElement);
       resizeableElement.style.top = styles.top;
@@ -103,15 +129,26 @@ const ResizeableElement = ({
       const dx = event.clientX - xCord;
       width = width - dx;
       xCord = event.clientX;
-      if (width >= lowerLimitWidth && width <= upperLimitWidth) return;
+      if (lowerLimitHeight && width <= lowerLimitWidth) {
+        width = lowerLimitWidth;
+        return;
+      }
+      if (upperLimitHeight && width >= upperLimitWidth) {
+        width = upperLimitWidth;
+        return;
+      }
       resizeableElement.style.width = `${width}px`;
     };
 
     const onMouseUpLeftResize = () => {
+      setIsResize(false);
+      onChangeSize(width, "left");
       document.removeEventListener("mousemove", onMouseMoveLeftResize);
+      document.removeEventListener("mouseup", onMouseUpLeftResize);
     };
 
     const onMouseDownLeftResize = (event) => {
+      setIsResize(true);
       xCord = event.clientX;
       const styles = window.getComputedStyle(resizeableElement);
       resizeableElement.style.left = styles.left;
@@ -160,18 +197,43 @@ const ResizeableElement = ({
           onMouseDownLeftResize
         );
     };
-  }, [upperLimitHeight, lowerLimitHeight, upperLimitWidth, lowerLimitWidth]);
+  }, [
+    upperLimitHeight,
+    lowerLimitHeight,
+    upperLimitWidth,
+    lowerLimitWidth,
+    onChangeSize,
+  ]);
 
   //! Render
   return (
     <div
       style={{
         position: "relative",
+        height: heightValue,
+        background: isResize || loading ? "rgba(0,0,0,0.5)" : "transparent",
+        borderRadius: "6px",
+        transition: "background 0.2s ease",
       }}
       ref={resizeableElmRef}
     >
+      {loading && (
+        <CommonStyles.Box
+          centered
+          sx={{
+            height: "100%",
+            width: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        >
+          {<CircularProgress />}
+        </CommonStyles.Box>
+      )}
       {!disabledTop && (
         <div
+          className="resizeElm"
           onMouseOver={callbackMouseOver}
           onMouseLeave={callbackMouseLeave}
           ref={resizeTopRef}
@@ -188,6 +250,7 @@ const ResizeableElement = ({
 
       {!disabledRight && (
         <div
+          className="resizeElm"
           ref={resizeRightRef}
           onMouseOver={callbackMouseOver}
           onMouseLeave={callbackMouseLeave}
@@ -204,6 +267,7 @@ const ResizeableElement = ({
 
       {!disabledBottom && (
         <div
+          className="resizeElm"
           ref={resizeBottomRef}
           onMouseOver={callbackMouseOver}
           onMouseLeave={callbackMouseLeave}
@@ -220,6 +284,7 @@ const ResizeableElement = ({
 
       {!disabledLeft && (
         <div
+          className="resizeElm"
           ref={resizeLeftRef}
           onMouseOver={callbackMouseOver}
           onMouseLeave={callbackMouseLeave}
@@ -238,4 +303,4 @@ const ResizeableElement = ({
   );
 };
 
-export default ResizeableElement;
+export default memo(ResizeableElement);

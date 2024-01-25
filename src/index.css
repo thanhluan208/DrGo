@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: "Poppins", sans-serif;
 }
 
 .Layout-cell .Label-emptyLabel:last-child {
@@ -23,4 +24,9 @@ body {
 
 .first_indicator {
   height: 10px;
+}
+
+.appointment:hover {
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }

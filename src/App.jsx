@@ -7,18 +7,18 @@ import {
 } from "react-router-dom";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { useAuthentication } from "./providers/AuthenticationProvider";
-import { Suspense } from "react";
+// import { Suspense } from "react";
 import withErrorBoundary from "./HOCs/withErrorBoundary";
 import Home from "./screen/Home";
 import Login from "./screen/Login";
-import Appointments from "./screen/Appointments";
+// import Appointments from "./screen/Appointments";
 import DefaultLayout from "./components/DefaultLayout";
 import FirebaseServices from "./services/firebaseServices";
 
 const HomeWithErrorBoundary = withErrorBoundary(Home);
 const LoginWithErrorBoundary = withErrorBoundary(Login);
-const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
-const DefaultLayoutWithErrorBoundary = withErrorBoundary(DefaultLayout);
+// const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
+// const DefaultLayoutWithErrorBoundary = withErrorBoundary(DefaultLayout);
 
 const App = () => {
   //! State
@@ -36,10 +36,10 @@ const App = () => {
     {
       element: <DefaultLayout />,
       children: [
-        {
-          path: "/appointments",
-          element: <AppointmentsWithErrorBoundary />,
-        },
+        // {
+        //   path: "/appointments",
+        //   element: <AppointmentsWithErrorBoundary />,
+        // },
         {
           path: "*",
           element: <HomeWithErrorBoundary />,

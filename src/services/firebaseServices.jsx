@@ -201,6 +201,16 @@ class firebaseService {
     return data;
   };
 
+  updateAppointmentEndDate = async (id, endDate) => {
+    const appointmentRef = doc(this.db, "appointments", id);
+
+    if (appointmentRef) {
+      await updateDoc(appointmentRef, {
+        endDate: Timestamp.fromDate(endDate.toDate()),
+      });
+    }
+  };
+
   updateAppointment = async (id, payload) => {
     const appointmentRef = doc(this.db, "appointments", id);
     const doctorRef = doc(this.db, "doctor", payload.doctor);
@@ -216,12 +226,15 @@ class firebaseService {
   };
 
   updateAppointmentByDrag = async (id, payload) => {
+    const { doctor, startDate, endDate } = payload;
+
     const appointmentRef = doc(this.db, "appointments", id);
-    const doctorRef = doc(this.db, "doctor", payload.doctor);
+    const doctorRef = doc(this.db, "doctor", doctor);
 
     if (appointmentRef) {
       await updateDoc(appointmentRef, {
-        ...payload,
+        startDate: Timestamp.fromDate(startDate),
+        endDate: Timestamp.fromDate(endDate),
         doctor: doctorRef,
       });
     }

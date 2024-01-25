@@ -1,18 +1,20 @@
 import React from "react";
 
-const Previous = () => {
+const Previous = ({ fill = "#E8E8E8", ...otherProps }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="5"
-      height="8"
-      viewBox="0 0 5 8"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
       fill="none"
     >
-      <path
-        d="M5 7.19867L5 0.801466C5 0.374289 4.49894 0.143835 4.1746 0.421837L0.4429 3.62044C0.210094 3.81999 0.210094 4.18015 0.4429 4.3797L4.1746 7.5783C4.49894 7.8563 5 7.62585 5 7.19867Z"
-        fill="#D0165D"
-      />
+      <g opacity="0.7">
+        <path
+          d="M9.71199 2.93311L4.91199 7.73311L9.71199 12.5331L11.088 11.1731L7.64799 7.73311L11.088 4.29311L9.71199 2.93311Z"
+          fill={fill}
+        />
+      </g>
     </svg>
   );
 };

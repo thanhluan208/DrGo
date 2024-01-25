@@ -9,51 +9,65 @@ const Typography = (props) => {
   const sxCustomize = useMemo(() => {
     const styles = new Map();
 
-    styles.set("bold14", {
-      fontSize: "14px",
-      fontWeight: "600",
-      lineHeight: "20px",
-    });
-
-    styles.set("bold18", {
-      fontSize: "18px",
-      fontWeight: "600",
-      lineHeight: "24px",
-    });
-
+    //! Bold
     styles.set("bold24", {
       fontSize: "24px",
-      fontWeight: "600",
-      lineHeight: "32px",
+      fontWeight: "800",
+      lineHeight: "36px",
+      color: theme.colors.custom.boldText,
+    });
+
+    styles.set("bold20", {
+      fontSize: "20px",
+      fontWeight: "700",
+      lineHeight: "26px",
+      color: theme.colors.custom.boldText,
+    });
+
+    styles.set("bold14", {
+      fontSize: "14px",
+      fontWeight: "700",
+      lineHeight: "20px",
+      color: theme.colors.custom.boldText,
+    });
+
+    styles.set("bold12", {
+      fontSize: "12px",
+      fontWeight: "700",
+      lineHeight: "20px",
+      color: theme.colors.custom.boldText,
+    });
+
+    styles.set("bold10", {
+      fontSize: "10px",
+      fontWeight: "800",
+      lineHeight: "16px",
+      color: theme.colors.custom.boldText,
+    });
+
+    //! Normal
+    styles.set("normal18", {
+      fontSize: "18px",
+      fontWeight: "400",
+      lineHeight: "24px",
     });
 
     styles.set("normal14", {
       fontSize: "14px",
       fontWeight: "400",
       lineHeight: "20px",
-    });
-
-    styles.set("normal12", {
-      fontSize: "12px",
-      fontWeight: "400",
-      lineHeight: "16px",
-    });
-
-    styles.set("normal10", {
-      fontSize: "10px",
-      fontWeight: "400",
-      lineHeight: "12px",
+      color: theme.colors.custom.normalText,
     });
 
     return styles.get(type);
-  }, [type]);
+  }, [type, theme]);
 
   //! Render
   return (
     <TypographyMui
       sx={{
         color: theme.colors.custom[color || "primaryText"],
-        fontFamily: "'Noto Sans', sans-serif",
+        fontFamily: "'Poppins', sans-serif",
         ...sxCustomize,
         ...sx,
       }}

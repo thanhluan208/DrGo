@@ -16,13 +16,13 @@ const useGetListDoctor = (isTrigger = true) => {
       const transformedData = cloneDeep(response).map((item) => {
         return {
           id: item.id,
-          text: JSON.stringify({
-            name: item.name,
-            email: item.email,
-            avg_rating: item.avg_rating,
-            description: item.description,
-            avatar: item.avatar,
-          }),
+          // text: JSON.stringify({
+          name: item.name,
+          email: item.email,
+          avg_rating: item.avg_rating,
+          description: item.description,
+          avatar: item.avatar,
+          // }),
         };
       });
       setData(transformedData);

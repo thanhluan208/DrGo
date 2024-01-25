@@ -6,14 +6,13 @@ import Chip from "./Chip";
 import Dialog from "./Dialog";
 import Editor from "./Editor";
 import IconButton from "./IconButton";
-import Scheduler from "./Scheduler";
 import Table from "./Table";
 import Tooltip from "./Tooltip";
 import Typography from "./Typography";
 import Select from "./Select";
 import ConfirmDialog from "./ConfirmDialog";
-import CustomerScheduler from "./CustomScheduler";
 import ResizeableElement from "./ResizeableElement";
+import Card from "./Card";
 
 const CommonStyles = {
   Box: Box,
@@ -26,12 +25,11 @@ const CommonStyles = {
   Editor: Editor,
   Table: Table,
   Tooltip: Tooltip,
-  Scheduler: Scheduler,
   IconButton: IconButton,
   Select: Select,
   ConfirmDialog: ConfirmDialog,
-  CustomScheduler: CustomerScheduler,
   ResizeWrapper: ResizeableElement,
+  Card: Card,
 };
 
 export default CommonStyles;

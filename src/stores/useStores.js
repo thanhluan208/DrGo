@@ -19,10 +19,18 @@ const useStore = create((set) => ({
       }));
     }
   },
+  remove: (key) => {
+    return set((rootState) => {
+      const state = rootState.state;
+      delete state[key];
+      return {
+        state,
+      };
+    });
+  },
 }));
 
 export const useSave = () => useStore((rootState) => rootState.save);
 export const useGet = (key) => useStore((rootState) => rootState.state?.[key]);
-export const useSaveWithCallback = () =>
-  useStore((rootState) => rootState.saveWithCallback);
+export const useRemove = () => useStore((rootState) => rootState.remove);
 export default useStore;

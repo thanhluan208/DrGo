@@ -24,7 +24,6 @@ const SelectField = (props) => {
     text,
     onChangeCustomize,
     loading,
-    disabled,
     isMultiple = false,
     afterOnChange,
     renderOptions,
@@ -109,6 +108,7 @@ const SelectField = (props) => {
               </CommonStyles.Box>
             ) : undefined
           }
+          {...otherProps}
         >
           {selectOptions?.map((option) => {
             const { value, label } = option || {};

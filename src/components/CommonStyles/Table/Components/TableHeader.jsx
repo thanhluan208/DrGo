@@ -104,9 +104,9 @@ const TableHeader = ({
         top: 0,
         zIndex: 100,
         borderRadius: "8px",
-        marginBottom: "15px",
-        boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
-        border: `1px solid ${theme.palette.divider}`,
+        // marginBottom: "15px",
+        // boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
+        // border: `1px solid ${theme.palette.divider}`,
         background: theme.colors.custom.background,
         minWidth: "100%",
         width: !!tableWidth ? tableWidth : "100%",
@@ -162,7 +162,13 @@ const TableHeader = ({
                     : `${headerLevel * headerHeight}px`,
                 }}
               >
-                {item?.renderTitle ? item.renderTitle(item, data) : item.title}
+                {item?.renderTitle ? (
+                  item.renderTitle(item, data)
+                ) : (
+                  <CommonStyles.Typography type="bold14">
+                    {item.title}
+                  </CommonStyles.Typography>
+                )}
 
                 {sortBy === item.id && renderSort()}
               </CommonStyles.Box>

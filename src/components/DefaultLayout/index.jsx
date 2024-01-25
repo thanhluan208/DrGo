@@ -2,21 +2,23 @@ import CommonStyles from "../CommonStyles";
 import { useTheme } from "@emotion/react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import CommonIcons from "../CommonIcons";
-import { TextField } from "@mui/material";
-import Avatar from "../../assets/Avatar.jpg";
+import { useSave } from "../../stores/useStores";
+import { useTranslation } from "react-i18next";
 import { navigation } from "../../constants/navigation";
 import SidebarItem from "./Components/SidebarItem";
-import Logo from "../../assets/logo";
+import Header from "./Components/Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-const sidebarWidth = "245px";
+const sidebarWidth = "338px";
+const screenWidth = window.innerWidth;
 
 const DefaultLayout = (props) => {
   //! State
   const theme = useTheme();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
+  const save = useSave();
+  const [open, setOpen] = useState(screenWidth > 1200);
 
   //! Function
 
@@ -24,141 +26,65 @@ const DefaultLayout = (props) => {
   return (
     <CommonStyles.Box
       sx={{
+        background: theme.colors.custom.layoutBackground,
         display: "flex",
-        height: "100vh",
-        width: "100vw",
-        background: theme.colors.custom.background,
-        paddingTop: "64px",
       }}
     >
       <CommonStyles.Box
-        centered
         sx={{
-          justifyContent: "space-between",
-          width: "100vw",
-          position: "fixed",
-          padding: "12px 24px 12px 8px",
-          top: 0,
+          width: sidebarWidth,
+          height: "100vh",
+          background: theme.colors.white,
         }}
       >
         <CommonStyles.Box
-          centered
           sx={{
-            gap: "16px",
+            paddingTop: "36px",
+            paddingLeft: "50px",
           }}
         >
-          <CommonStyles.IconButton
-            onClick={() => {
-              setOpen((prev) => !prev);
-            }}
-          >
-            <CommonIcons.ArrowLeft
-              style={{
-                transition: "all 0.3s ease",
-                transform: open ? "rotate(0deg)" : "rotate(180deg)",
-              }}
-            />
-          </CommonStyles.IconButton>
-          <CommonStyles.IconButton onClick={() => navigate("/")}>
-            <Logo />
-          </CommonStyles.IconButton>
+          <CommonStyles.Typography type="bold24">
+            {t("layout.dashboard")}
+          </CommonStyles.Typography>
         </CommonStyles.Box>
-        <CommonStyles.Box>
-          <TextField
-            placeholder="Search"
-            sx={{
-              width: "400px",
-              input: {
-                height: "20px",
-                padding: "8px 12px",
-              },
-            }}
-          />
-        </CommonStyles.Box>
-        <CommonStyles.Box>
-          <CommonStyles.Box centered sx={{ gap: "24px" }}>
-            <CommonStyles.Box centered sx={{ gap: "8px" }}>
-              <CommonStyles.IconButton>
-                <CommonIcons.Setting />
-              </CommonStyles.IconButton>
-              <CommonStyles.IconButton hasNoti>
-                <CommonIcons.Bell />
-              </CommonStyles.IconButton>
-            </CommonStyles.Box>
-            <CommonStyles.Button
-              sx={{ display: "flex", gap: "8px", textTransform: "none" }}
-              variant="text"
-            >
-              <CommonStyles.Avatar src={Avatar} />
-              <CommonStyles.Typography>Admin One</CommonStyles.Typography>
-            </CommonStyles.Button>
-          </CommonStyles.Box>
-        </CommonStyles.Box>
-      </CommonStyles.Box>
-      <CommonStyles.Box
-        sx={{
-          padding: "32px 0 0 0 ",
-          width: open ? sidebarWidth : "0vw",
-          transition: "all 0.3s ease",
-          display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-      >
-        <CommonStyles.Box>
-          {navigation.map((item) => {
+        <CommonStyles.Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            paddingLeft: "26px",
+            marginTop: "56px",
+            paddingRight: "56px",
+          }}
+        >
+          {navigation.map((nav) => {
+            const { name, path, icon } = nav;
             return (
               <SidebarItem
-                name={item.name}
-                path={item.path}
-                key={item.name}
-                notiCount={item.path === "/messages" ? 2 : null}
+                name={name}
+                path={path}
+                key={name}
+                icon={icon}
+                notiCount={name === "Appointment" && 24}
               />
             );
           })}
         </CommonStyles.Box>
-        <CommonStyles.Button
-          centered
-          variant="text"
-          sx={{
-            justifyContent: "start",
-            gap: "8px",
-            textTransform: "none",
-            padding: "12px 12px 12px 24px",
-            borderTop: `1px solid ${theme.colors.custom.borderColor}`,
-          }}
-        >
-          <CommonIcons.QuestionMark
-            style={{
-              color: "#8F95A3",
-            }}
-          />
-          <CommonStyles.Typography type="normal14" color="primaryText">
-            Help
-          </CommonStyles.Typography>
-        </CommonStyles.Button>
       </CommonStyles.Box>
       <PerfectScrollbar
-        style={{ maxHeight: "calc(100vh - 64px)", width: "100%" }}
+        style={{
+          maxHeight: "100vh",
+        }}
       >
         <CommonStyles.Box
           sx={{
-            width: "100%",
-            padding: "32px",
+            width: `calc(100vw - ${sidebarWidth})`,
           }}
         >
+          <Header />
+
           <Outlet />
         </CommonStyles.Box>
       </PerfectScrollbar>
-      {/* <CommonStyles.Scheduler
-        data={data}
-        grouping={grouping}
-        resources={resources}
-        handleChangeScheduler={handleChangeScheduler}
-        addedAppointment={addedAppointment}
-        onCommitButtonClick={onCommitButtonClick}
-      /> */}
     </CommonStyles.Box>
   );
 };

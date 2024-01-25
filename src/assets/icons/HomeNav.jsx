@@ -1,6 +1,6 @@
 import React from "react";
 
-const Check = ({ fill, ...otherProps }) => {
+const HomeNav = ({ fill, ...otherProps }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,4 +19,4 @@ const Check = ({ fill, ...otherProps }) => {
   );
 };
 
-export default Check;
+export default HomeNav;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import { isNull } from "lodash";
 
-const SidebarItem = ({ name, path, notiCount }) => {
+const SidebarItem = ({ name, path, icon, notiCount }) => {
   //! State
   const navigate = useNavigate();
   const theme = useTheme();
@@ -18,35 +18,41 @@ const SidebarItem = ({ name, path, notiCount }) => {
   //! Render
   return (
     <CommonStyles.Button
+      onClick={onClick}
       variant="text"
       sx={{
-        textTransform: "none",
-        width: "100%",
-        padding: "12px 12px 12px 24px",
-        justifyContent: "start",
-        borderRadius: "0px 8px 8px 0",
-        backgroundColor: active
-          ? theme.colors.custom.sidebarBackground
-          : "unset",
-        gap: "8px",
-        "&:hover": {
-          backgroundColor: theme.colors.custom.sidebarBackground,
-        },
+        justifyContent: "space-between",
+        padding: 0,
       }}
-      onClick={onClick}
     >
-      <CommonStyles.Typography>{name}</CommonStyles.Typography>
-      {!!notiCount && (
+      <CommonStyles.Box
+        centered
+        sx={{
+          gap: "24px",
+          padding: "12px 24px",
+        }}
+      >
+        {!!icon &&
+          icon(
+            active ? theme.palette.primary.main : theme.colors.custom.layoutIcon
+          )}
+        <CommonStyles.Typography type="bold12">{name}</CommonStyles.Typography>
+      </CommonStyles.Box>
+      {notiCount && (
         <CommonStyles.Box
           centered
           sx={{
-            height: "20px",
-            width: "20px",
-            backgroundColor: "#C72549",
-            borderRadius: "50%",
+            padding: "5px 8.5px",
+            background: "#e7f8f6",
+            borderRadius: "16px",
           }}
         >
-          <CommonStyles.Typography type="normal12" color="background">
+          <CommonStyles.Typography
+            type="bold10"
+            sx={{
+              color: theme.colors.custom.sidebarNotiCount,
+            }}
+          >
             {notiCount}
           </CommonStyles.Typography>
         </CommonStyles.Box>

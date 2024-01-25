@@ -22,6 +22,7 @@ const Table = ({
   totalPage,
   handleChangePage,
   handleChangePageSize,
+  disabledPagination,
 }) => {
   //! State
   const { sortBy, sortDirection, selectedRows, currentPage, pageSize } =
@@ -82,8 +83,8 @@ const Table = ({
               //   display: "none !important",
               // },
               borderRadius: "12px",
-              boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
-              border: `1px solid ${theme.palette.divider}`,
+              // boxShadow: "0px 2px 6px rgba(100, 116, 139, 0.12)",
+              // border: `1px solid ${theme.palette.divider}`,
             }}
           >
             <PerfectScrollBar
@@ -120,13 +121,15 @@ const Table = ({
           </CommonStyles.Box>
         </CommonStyles.Box>
       </PerfectScrollBar>
-      <Pagination
-        totalPage={totalPage}
-        currentPage={currentPage}
-        handleChangePage={handleChangePage}
-        pageSize={pageSize}
-        handleChangePageSize={handleChangePageSize}
-      />
+      {!disabledPagination && (
+        <Pagination
+          totalPage={totalPage}
+          currentPage={currentPage}
+          handleChangePage={handleChangePage}
+          pageSize={pageSize}
+          handleChangePageSize={handleChangePageSize}
+        />
+      )}
     </CommonStyles.Box>
   );
 };
