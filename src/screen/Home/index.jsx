@@ -7,7 +7,7 @@ import i18n from "../../../i18n";
 import dayjs from "dayjs";
 import Edit from "../../assets/icons/Edit";
 import Delete from "../../assets/icons/Delete";
-import HomeCard from "./Components/Homecard";
+import HomeCard from "./homecomponents/Homecard";
 
 const data = [
   {
