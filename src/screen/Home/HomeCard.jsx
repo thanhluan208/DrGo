@@ -1,5 +1,5 @@
 import React from "react";
-import CommonStyles from "../../../components/CommonStyles";
+import CommonStyles from "../../components/CommonStyles";
 
 const HomeCard = ({ icon, title, content }) => {
   //! State
