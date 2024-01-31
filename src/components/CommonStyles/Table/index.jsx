@@ -7,6 +7,11 @@ import { useTheme } from "@emotion/react";
 import Pagination from "./Components/Pagination";
 import { CircularProgress } from "@mui/material";
 
+export const tableType = {
+  DEFAULT: "default",
+  BORDER: "border",
+};
+
 const Table = ({
   data,
   columns,
@@ -25,6 +30,7 @@ const Table = ({
   handleChangePageSize,
   disabledPagination,
   loading,
+  type = tableType.DEFAULT,
 }) => {
   //! State
   const { sortBy, sortDirection, selectedRows, currentPage, pageSize } =
@@ -52,7 +58,11 @@ const Table = ({
   return (
     <CommonStyles.Box>
       <PerfectScrollBar
-        style={{ maxWidth: maxWidth, overflow: "unset !important" }}
+        style={{
+          maxWidth: maxWidth,
+          overflow: "unset !important",
+          position: "relative",
+        }}
       >
         <TableHeader
           columns={columns}
@@ -67,12 +77,13 @@ const Table = ({
           disabledCheckboxHeader={disabledCheckboxHeader}
           selectedRows={selectedRows}
           handleSelectAll={handleSelectAll}
+          type={type}
         />
 
         {loading ? (
           <CommonStyles.Box
             sx={{
-              width: !!tableWidth ? tableWidth : "100%",
+              width: "100%",
               height: 500,
               background: "rgba(0,0,0,0.2)",
             }}
@@ -127,6 +138,7 @@ const Table = ({
                         isOdd={index % 2 === 1}
                         selectedRows={selectedRows}
                         handleSelectRow={handleSelectRow}
+                        type={type}
                       />
                     );
                   })}

@@ -19,7 +19,9 @@
     "date": "Date",
     "visitTime": "Visit Time",
     "doctor": "Doctor",
-    "conditions": "Conditions"
+    "conditions": "Conditions",
+    "status": "Status",
+    "viewMore": "View more"
   },
 
   "appointment": {
@@ -35,6 +37,7 @@
     "number": "Number",
     "injure": "Injure",
     "cancel": "Cancel",
+    "status": "Status",
     "save": "Add appointment",
     "dateNotInPast": "Date can't be in past",
     "timeFromNotInPast": "Time from can't be in past",
@@ -42,5 +45,28 @@
     "timeFromBeforeTimeTo": "Time from must be before time to",
     "timeToAfterTimeFrom": "Time to must be after time from",
     "numberIsNumber": "Number must be a number"
+  },
+
+  "schedule": {
+    "selectDoctor": "Select a doctor",
+    "newSchedule": "New schedule",
+    "editSchedule": "Edit Schedule",
+    "available": "Available",
+    "unavailable": "Unavailable"
+  },
+
+  "scheduleAction": {
+    "return": "Return",
+    "create": "Create",
+    "date": "Date",
+    "time": "Time",
+    "repeatOn": "Repeat on",
+    "creatingSchedule": "Creating schedule...",
+    "createScheduleSuccessfully": "Your schedule has been created successfully!",
+    "actionScheduleFailed": "Error. Please try again.",
+    "update": "Update",
+    "delete": "Delete",
+    "updatingSchedule": "Updating schedule...",
+    "updateScheduleSuccessfully": "Your schedule has been updated successfully!"
   }
 }

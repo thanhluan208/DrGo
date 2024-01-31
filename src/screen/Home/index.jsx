@@ -8,6 +8,10 @@ import dayjs from "dayjs";
 import Edit from "../../assets/icons/Edit";
 import Delete from "../../assets/icons/Delete";
 import HomeCard from "./HomeCard";
+import useGetListAppointment from "../../hooks/appointments/useGetListAppointment";
+import StatusCard from "./components/StatusCard";
+import { useNavigate } from "react-router-dom";
+import routes from "../../constants/route";
 
 const data = [
   {
@@ -63,39 +67,14 @@ const columns = [
     title: i18n.t("home.name"),
   },
   {
-    id: "contact",
-    title: i18n.t("home.contact"),
-    width: 150,
-    renderContent: (props) => {
-      const { contact } = props;
-      return (
-        <CommonStyles.Tooltip title={contact}>
-          <div>
-            <CommonStyles.Typography
-              type="normal14"
-              sx={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                width: 130,
-              }}
-            >
-              {contact}
-            </CommonStyles.Typography>
-          </div>
-        </CommonStyles.Tooltip>
-      );
-    },
-  },
-  {
     id: "date",
     title: i18n.t("home.date"),
     renderContent: (props) => {
-      const { date } = props;
-      if (!date) return null;
+      const { startDate } = props;
+      if (!startDate) return null;
       return (
         <CommonStyles.Typography type="normal14">
-          {dayjs(date).format("DD/MM/YYYY")}
+          {dayjs(startDate).format("DD/MM/YYYY")}
         </CommonStyles.Typography>
       );
     },
@@ -103,13 +82,12 @@ const columns = [
   {
     id: "visitTime",
     title: i18n.t("home.visitTime"),
-    width: 150,
     renderContent: (props) => {
-      const { visitTime } = props;
-      if (!visitTime) return null;
+      const { startDate, endDate } = props;
+      if (!startDate || !endDate) return null;
       return (
         <CommonStyles.Typography type="normal14">
-          {visitTime}
+          {dayjs(startDate).format("hh:mm")} - {dayjs(endDate).format("hh:mma")}
         </CommonStyles.Typography>
       );
     },
@@ -117,144 +95,48 @@ const columns = [
   {
     id: "doctor",
     title: i18n.t("home.doctor"),
-    width: 150,
-  },
-  {
-    id: "conditions",
-    title: i18n.t("home.conditions"),
-    width: 150,
     renderContent: (props) => {
-      const { conditions } = props;
+      const { doctor } = props;
+      if (!doctor) return null;
+
+      const { name } = doctor;
+
       return (
-        <CommonStyles.Tooltip title={conditions}>
-          <div>
-            <CommonStyles.Typography
-              type="normal14"
-              sx={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                width: 130,
-              }}
-            >
-              {conditions}
-            </CommonStyles.Typography>
-          </div>
-        </CommonStyles.Tooltip>
+        <CommonStyles.Typography type="normal14">
+          {name}
+        </CommonStyles.Typography>
       );
     },
   },
   {
-    id: "action",
-    title: "",
+    id: "status",
+    title: i18n.t("home.status"),
     renderContent: (props) => {
-      return (
-        <CommonStyles.Box
-          centered
-          sx={{
-            display: "flex",
-            gap: "12px",
-            width: "100%",
-          }}
-        >
-          <CommonStyles.IconButton>
-            <Edit />
-          </CommonStyles.IconButton>
-          <CommonStyles.IconButton>
-            <Delete />
-          </CommonStyles.IconButton>
-        </CommonStyles.Box>
-      );
+      const { status } = props;
+      return <StatusCard status={status} />;
     },
   },
 ];
 
+const filters = {
+  page: 1,
+  pageSize: 5,
+};
+
 const Home = () => {
   //! State
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   //! Function
-  const handleSendNotification = async () => {
-    const toastId = toast.loading("Sending notification...", {
-      autoClose: false,
-    });
+  const {
+    data: listAppointment,
+    isLoading: loadingListAppointment,
+    error,
+    refetch: refetchListAppointment,
+  } = useGetListAppointment(filters);
 
-    try {
-      const listFcmIds = text.split(",");
-
-      listFcmIds.map((elm) => elm.trim());
-
-      const sendNoti = axios.post(
-        "https://fcm.googleapis.com/fcm/send",
-        {
-          registration_ids: listFcmIds,
-          notification: {
-            title: "Your Position and Estimated Wait Time Information",
-            body: "Currently, your queue number is 28. There are 10 individuals ahead of you in the queue, and your estimated waiting time is 30 minutes.",
-            mutable_content: true,
-            sound: "Tri-tone",
-          },
-        },
-        {
-          headers: {
-            Authorization:
-              "key=AAAAchhm6xE:APA91bGPZZ8II_22wr5KHsRQCaJiraV7gx3Pg1WMIRzb7GLKrMQbERHBGnnxuQO2wWzev7sOohHCrCARaf8iJ8iY-PJa2BwPnRaYLrYXjx24Va-C1fCnEjtYaUmRn-GrDwyfxQIUTz1J",
-          },
-        }
-      );
-
-      const sendEmail = axios.post(
-        "https://api.emailjs.com/api/v1.0/email/send",
-        {
-          service_id: "service_rj5v25q",
-          template_id: "template_azvhnbd",
-          user_id: "p848yyVNrCz4R28tY",
-          template_params: {
-            patientName: "patient",
-            toEmail: "skthunte33@gmail.com",
-            fromName: "DrGo",
-            to_name: "Luan 2",
-            doctorName: "Dr. Maria Watson",
-            hospital: "DrGo Hospital",
-            queueNumber: "28",
-            personAhead: "10",
-            estTime: "30 minutes",
-          },
-        }
-      );
-
-      const reqList = [sendNoti, sendEmail];
-
-      const response = await axios.all(reqList);
-
-      // const data = response.data;
-
-      // if (data?.success === listFcmIds.length) {
-      //   toast.update(toastId, {
-      //     render: "Send notification successfully",
-      //     type: toast.TYPE.SUCCESS,
-      //     autoClose: 3000,
-      //     isLoading: false,
-      //   });
-      // }
-
-      console.log("response", response);
-      toast.update(toastId, {
-        render: "Send notification successfully",
-        type: toast.TYPE.SUCCESS,
-        autoClose: 3000,
-        isLoading: false,
-      });
-    } catch (error) {
-      console.log("error", error);
-      toast.update(toastId, {
-        render: "Send notification failed",
-        type: toast.TYPE.ERROR,
-        autoClose: 3000,
-        isLoading: false,
-      });
-    }
-  };
+  console.log("list", listAppointment);
 
   //! Render
 
@@ -293,12 +175,39 @@ const Home = () => {
 
         <CommonStyles.Table
           columns={columns}
-          data={data}
+          data={listAppointment}
           disabledPagination
           totalPage={10}
+          loading={loadingListAppointment}
           // tableWidth={1500}
         />
       </CommonStyles.Card>
+      <CommonStyles.Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <CommonStyles.Button
+          sx={{
+            marginTop: "32px",
+            padding: "5px 20px 5px 15px",
+            borderRadius: "50px",
+          }}
+          onClick={() => {
+            navigate(`${routes.appointment}?tab=1`);
+          }}
+        >
+          <CommonStyles.Typography
+            type="normal14"
+            sx={{
+              color: "#fff",
+            }}
+          >
+            {t("home.viewMore")}
+          </CommonStyles.Typography>
+        </CommonStyles.Button>
+      </CommonStyles.Box>
     </CommonStyles.Box>
   );
 };

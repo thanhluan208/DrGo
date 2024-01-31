@@ -15,6 +15,7 @@ const TableContent = ({
   isOdd,
   selectedRows,
   handleSelectRow,
+  type,
 }) => {
   //! State
   const theme = useTheme();
@@ -64,6 +65,9 @@ const TableContent = ({
           background: theme.colors.custom.background,
         },
         overflow: "hidden",
+        borderBottom: `1px solid ${
+          theme.colors.custom[`table_${type}`].borderBottom
+        }`,
       }}
     >
       {hasCheckbox && (

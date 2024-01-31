@@ -15,19 +15,29 @@ import Login from "./screen/Login";
 import DefaultLayout from "./components/DefaultLayout";
 import FirebaseServices from "./services/firebaseServices";
 import Appointments from "./screen/Appointments";
+import Schedule from "./screen/Scheduler";
+import DoctorSchedule from "./screen/DoctorSchedule";
+import routes from "./constants/route";
+import DoctorScheduleAction from "./screen/DoctorScheduleAction";
+import DoctorScheduleEdit from "./screen/DoctorScheduleEdit";
+import Incomming from "./screen/Incomming";
 
 const HomeWithErrorBoundary = withErrorBoundary(Home);
 const LoginWithErrorBoundary = withErrorBoundary(Login);
 const AppointmentsWithErrorBoundary = withErrorBoundary(Appointments);
-// const DefaultLayoutWithErrorBoundary = withErrorBoundary(DefaultLayout);
-
+const ScheduleWithErrorBoundary = withErrorBoundary(Schedule);
+const DoctorScheduleWithErrorBoundary = withErrorBoundary(DoctorSchedule);
+const DoctorScheduleActionWithErrorBoundary =
+  withErrorBoundary(DoctorScheduleAction);
+const DoctorScheduleEditWithErrorBoundary =
+  withErrorBoundary(DoctorScheduleEdit);
 const App = () => {
   //! State
   const { islogged } = useAuthentication();
 
   const router = createBrowserRouter([
     {
-      path: "/login",
+      path: routes.login,
       element: <LoginWithErrorBoundary />,
       loader: () => {
         if (islogged) return redirect("/");
@@ -38,18 +48,41 @@ const App = () => {
       element: <DefaultLayout />,
       children: [
         {
-          path: "/appointment",
+          path: routes.appointment,
           element: <AppointmentsWithErrorBoundary />,
         },
         {
           path: "*",
+          element: <Incomming />,
+        },
+        {
+          path: "/",
           element: <HomeWithErrorBoundary />,
+        },
+        {
+          path: routes.schedule,
+          element: <ScheduleWithErrorBoundary />,
+        },
+        {
+          path: `${routes.doctorSchedule}/:id`,
+          element: <DoctorScheduleWithErrorBoundary />,
+        },
+        {
+          path: `${routes.doctorSchedule}/:id/addNew`,
+          element: <DoctorScheduleActionWithErrorBoundary />,
+        },
+        {
+          path: `${routes.doctorSchedule}/:id/edit`,
+          element: <DoctorScheduleEditWithErrorBoundary />,
         },
       ],
       loader: () => {
         if (!islogged) return redirect("/login");
 
         return null;
+      },
+      ErrorBoundary: (err) => {
+        return <div>error: {JSON.stringify(err)}</div>;
       },
     },
   ]);

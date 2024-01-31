@@ -9,7 +9,7 @@ import SidebarItem from "./Components/SidebarItem";
 import Header from "./Components/Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-const sidebarWidth = "338px";
+export const sidebarWidth = "338px";
 const screenWidth = window.innerWidth;
 
 const DefaultLayout = (props) => {

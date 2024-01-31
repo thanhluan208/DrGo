@@ -8,7 +8,8 @@ const SidebarItem = ({ name, path, icon, notiCount }) => {
   //! State
   const navigate = useNavigate();
   const theme = useTheme();
-  const active = window.location.pathname === path;
+  const active =
+    window.location.pathname.split("/")[1] === path.replace("/", "");
 
   //! Function
   const onClick = () => {

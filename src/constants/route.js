@@ -1,10 +1,11 @@
 import Home from "../screen/Home";
 
-const route = [
-  {
-    path: "/",
-    element: <Home />,
-  },
-];
+const routes = {
+  home: "/",
+  login: "/login",
+  appointment: "/appointment",
+  schedule: "/schedule",
+  doctorSchedule: "/schedule/doctor",
+};
 
-export default route;
+export default routes;

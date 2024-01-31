@@ -30,6 +30,7 @@ const SelectField = (props) => {
     ...otherProps
   } = props;
   const { name, value, onBlur, onChange } = field || {};
+  const [isFocus, setIsFocus] = React.useState(false);
 
   const optionGetByKey = useGet(optionsKey) || [];
 
@@ -41,6 +42,8 @@ const SelectField = (props) => {
 
     return options;
   }, [optionsKey, optionGetByKey, options, convertOptionCallback]);
+
+  console.log("selectOptions", selectOptions);
 
   const { errors, touched, setFieldValue } = form || {};
   const theme = useTheme();
@@ -66,16 +69,21 @@ const SelectField = (props) => {
     [name, setFieldValue, onChangeCustomize]
   );
 
+  console.log("value", !!value);
+
   //! Render
   return (
     <CommonStyles.Box
       centered
       className="select-field"
       sx={{
-        padding: "10px 0",
         minWidth: 120,
+        height: "48px",
         ...sxContainer,
         width: otherProps?.fullWidth ? "100%" : "auto",
+        fieldset: {
+          borderRadius: "8px",
+        },
       }}
     >
       <FormControl
@@ -91,6 +99,13 @@ const SelectField = (props) => {
           id={name}
           value={value}
           label={label}
+          onFocus={() => {
+            setIsFocus(true);
+          }}
+          onBlur={(e) => {
+            onBlur(e);
+            setIsFocus(false);
+          }}
           name={name}
           onChange={handleChange}
           sx={{ borderRadius: "0.5rem", ...sxSelect }}

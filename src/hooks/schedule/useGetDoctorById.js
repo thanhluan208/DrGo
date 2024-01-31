@@ -1,42 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 import FirebaseServices from "../../services/firebaseServices";
-import { cloneDeep } from "lodash";
 
-const useGetListDoctor = (isTrigger = true) => {
-  const [data, setData] = useState([]);
+const useGetDoctorById = (id, isTrigger = true) => {
+  const [data, setData] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   const callApi = useCallback(() => {
-    return FirebaseServices.getListDoctors();
-  }, []);
-
-  const transformResponse = useCallback((response) => {
-    if (response) {
-      const transformedData = cloneDeep(response).map((item) => {
-        return {
-          id: item.id,
-          // text: JSON.stringify({
-          name: item.name,
-          email: item.email,
-          avg_rating: item.avg_rating,
-          description: item.description,
-          avatar: item.avatar,
-          // }),
-        };
-      });
-      setData(transformedData);
-    }
-  }, []);
+    return FirebaseServices.getDoctorById(id);
+  }, [id]);
 
   const refetch = useCallback(async () => {
     try {
       const response = await callApi();
-      transformResponse(response);
+
+      setData(response);
     } catch (error) {
       setError(error);
     }
-  }, []);
+  }, [callApi]);
 
   useEffect(() => {
     let shouldSetData = true;
@@ -48,7 +30,7 @@ const useGetListDoctor = (isTrigger = true) => {
           const response = await callApi();
 
           if (shouldSetData) {
-            transformResponse(response);
+            setData(response);
           }
         } catch (error) {
           setError(error);
@@ -61,7 +43,7 @@ const useGetListDoctor = (isTrigger = true) => {
         shouldSetData = false;
       };
     }
-  }, [isTrigger]);
+  }, [isTrigger, callApi]);
 
   return {
     data,
@@ -71,4 +53,4 @@ const useGetListDoctor = (isTrigger = true) => {
   };
 };
 
-export default useGetListDoctor;
+export default useGetDoctorById;

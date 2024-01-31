@@ -18,6 +18,7 @@ const DateTimePicker = (props) => {
     afterOnChange,
     onChangeCustomize,
     textFieldProps,
+    sxContainer,
     ...otherProps
   } = props;
   const { errors, touched, setFieldValue } = form || {};
@@ -42,13 +43,14 @@ const DateTimePicker = (props) => {
   return (
     <CommonStyles.Box
       sx={{
-        padding: "10px 0",
         fieldset: {
           borderRadius: "8px",
         },
         label: {
           color: !isTouched ? "rgba(0, 0, 0, 0.38) !important" : "",
         },
+
+        ...sxContainer,
       }}
     >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -73,6 +75,7 @@ const DateTimePicker = (props) => {
               : undefined,
           }}
           format={formatCustom ? formatCustom : DEFAULT_FORMAT_DATE}
+          view="hours"
           {...otherProps}
         />
       </LocalizationProvider>

@@ -14,6 +14,8 @@ const TimePicker = ({
   textFieldProps,
   onChangeCustomize,
   afterOnChange,
+  sxContainer,
+  ...otherProps
 }) => {
   //! State
   const { errors, touched, setFieldValue } = form || {};
@@ -47,6 +49,7 @@ const TimePicker = ({
         input: {
           padding: "12.5px 14px",
         },
+        ...sxContainer,
       }}
     >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -70,6 +73,7 @@ const TimePicker = ({
                 }
               : undefined,
           }}
+          {...otherProps}
         />
       </LocalizationProvider>
     </CommonStyles.Box>

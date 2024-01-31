@@ -1,31 +1,32 @@
 import { useCallback, useEffect, useState } from "react";
 import FirebaseServices from "../../services/firebaseServices";
-import { cloneDeep } from "lodash";
 
-const useGetListDoctor = (isTrigger = true) => {
+const useGetSchedules = (filters, isTrigger = true) => {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   const callApi = useCallback(() => {
-    return FirebaseServices.getListDoctors();
-  }, []);
+    const { doctor, date } = filters;
+    const startDate = date.startOf("week").toDate();
+    const endDate = date.endOf("week").toDate();
+
+    console.log("filters", {
+      doctor,
+      startDate,
+      endDate,
+    });
+
+    return FirebaseServices.getSchedules({
+      doctor,
+      startDate,
+      endDate,
+    });
+  }, [filters]);
 
   const transformResponse = useCallback((response) => {
     if (response) {
-      const transformedData = cloneDeep(response).map((item) => {
-        return {
-          id: item.id,
-          // text: JSON.stringify({
-          name: item.name,
-          email: item.email,
-          avg_rating: item.avg_rating,
-          description: item.description,
-          avatar: item.avatar,
-          // }),
-        };
-      });
-      setData(transformedData);
+      setData(response);
     }
   }, []);
 
@@ -36,7 +37,7 @@ const useGetListDoctor = (isTrigger = true) => {
     } catch (error) {
       setError(error);
     }
-  }, []);
+  }, [callApi]);
 
   useEffect(() => {
     let shouldSetData = true;
@@ -61,7 +62,7 @@ const useGetListDoctor = (isTrigger = true) => {
         shouldSetData = false;
       };
     }
-  }, [isTrigger]);
+  }, [isTrigger, callApi]);
 
   return {
     data,
@@ -71,4 +72,4 @@ const useGetListDoctor = (isTrigger = true) => {
   };
 };
 
-export default useGetListDoctor;
+export default useGetSchedules;

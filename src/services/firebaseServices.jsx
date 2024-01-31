@@ -28,6 +28,7 @@ import {
   startAfter,
   updateDoc,
   where,
+  FieldPath,
 } from "firebase/firestore";
 import useToast from "../hooks/useToast";
 import { toast } from "react-toastify";
@@ -166,13 +167,11 @@ class firebaseService {
       collection(this.db, "appointments"),
       // where("startDate", ">=", startDate),
       // where("startDate", "<=", endDate),
-      orderBy("startDate"),
-      limit(pageSize)
+      orderBy("startDate")
+      // limit(pageSize)
     );
 
     const querySnapshot = await getDocs(q);
-
-    console.log("querySnapshot", querySnapshot);
 
     const data = [];
 
@@ -201,7 +200,12 @@ class firebaseService {
       });
     }
 
-    return data;
+    const responseData = [];
+    for (let i = 0; i < pageSize; i++) {
+      responseData.push(data[i]);
+    }
+
+    return responseData;
   };
 
   updateAppointmentEndDate = async (id, endDate) => {
@@ -224,6 +228,16 @@ class firebaseService {
         ...payload,
         doctor: doctorRef,
         patient: patientRef,
+      });
+    }
+  };
+
+  updateAppointmentStatus = async (id, status) => {
+    const appointmentRef = doc(this.db, "appointments", id);
+
+    if (appointmentRef) {
+      await updateDoc(appointmentRef, {
+        status,
       });
     }
   };
@@ -252,6 +266,15 @@ class firebaseService {
       }
     } catch (error) {
       console.log("err", error);
+    }
+  };
+
+  getDoctorById = async (id) => {
+    try {
+      const doctorRef = await getDoc(doc(this.db, "doctor", id));
+      return doctorRef.data();
+    } catch (err) {
+      console.log("err", err);
     }
   };
 
@@ -325,6 +348,84 @@ class firebaseService {
     } catch (error) {
       console.log("err", error);
       useToast(error?.message || "Something went wrong", "error");
+    }
+  };
+
+  createSchedule = async (payload) => {
+    const startDate = Timestamp.fromDate(payload.startDate);
+    const endDate = Timestamp.fromDate(payload.endDate);
+    const startTime = Timestamp.fromDate(payload.startTime);
+    const endTime = Timestamp.fromDate(payload.endTime);
+
+    await addDoc(collection(this.db, "schedule"), {
+      repeatOn: payload?.repeatOn,
+      doctor: payload?.doctor,
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+    });
+  };
+
+  getSchedules = async (payload) => {
+    const { doctor, startDate, endDate } = payload;
+
+    // const doctorRef = doc(this.db, "doctor", doctor);
+
+    const q = query(
+      collection(this.db, "schedule"),
+      orderBy("startDate"),
+      where("startDate", "<=", Timestamp.fromDate(endDate))
+      // where("endDate", ">=", Timestamp.fromDate(startDate))
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const data = querySnapshot.docs.map((doc) => {
+      const schedule = doc.data();
+
+      return {
+        ...schedule,
+        startTime: schedule.startTime.toDate(),
+        endTime: schedule.endTime.toDate(),
+        startDate: schedule.startDate.toDate(),
+        endDate: schedule.endDate.toDate(),
+        id: doc.id,
+      };
+    });
+
+    const filteredData = data.filter((item) => {
+      return item.doctor === doctor;
+    });
+
+    return filteredData;
+  };
+
+  updateSchedule = async (payload) => {
+    const { startDate, endDate, startTime, endTime, id, repeatOn } =
+      payload || {};
+    const scheduleRef = doc(this.db, "schedule", id);
+
+    if (scheduleRef) {
+      await updateDoc(scheduleRef, {
+        repeatOn,
+        startDate: Timestamp.fromDate(startDate),
+        endDate: Timestamp.fromDate(endDate),
+        startTime: Timestamp.fromDate(startTime),
+        endTime: Timestamp.fromDate(endTime),
+      });
+    }
+  };
+
+  deleteSchedule = async (id) => {
+    try {
+      const scheduleRef = doc(this.db, "schedule", id);
+
+      if (scheduleRef) {
+        await deleteDoc(scheduleRef);
+      }
+    } catch (error) {
+      console.log("err", error);
     }
   };
 }

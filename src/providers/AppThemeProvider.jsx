@@ -55,6 +55,38 @@ const lightTheme = createTheme({
       //! Typography
       boldText: "#475366",
       normalText: "#52575C",
+
+      //! Schedule
+      scheduleBackground: "#E9EFFF",
+      scheduleBorder: "#5272E9",
+
+      //! Table
+      table_border: {
+        headerBackground: "#fafafa",
+        borderBottom: "#E8E8E8",
+      },
+      table_default: {
+        headerBackground: "transparent",
+        borderBottom: "transparent",
+      },
+
+      //! Home
+      status_pending: {
+        background: "#fcf4e5",
+        text: "#E59500",
+      },
+      status_confirmed: {
+        background: "#E2F6EB",
+        text: "#18B23C",
+      },
+      status_completed: {
+        background: "#EDF1FA",
+        text: "#4B7FFB",
+      },
+      status_declined: {
+        background: "#F9EDEB",
+        text: "#F57E71",
+      },
     },
     client: {
       cardDark: client["cardDark"],

@@ -3,17 +3,25 @@ import { schedulerTypes } from "../constants/options";
 
 class appointmentModel {
   static parseRequestCreateAppointment(payload) {
+    const { doctor, patient, email, number, status, injure } = payload;
+    const startDate = dayjs(payload?.date)
+      .set("hour", dayjs(payload?.timeFrom).format("HH"))
+      .set("minute", dayjs(payload?.timeFrom).format("mm"))
+      .toDate();
+
+    const endDate = dayjs(payload?.data)
+      .set("hour", dayjs(payload?.timeTo).format("HH"))
+      .set("minute", dayjs(payload?.timeTo).format("mm"))
+      .toDate();
     return {
-      startDate: payload.startDate.toDate(),
-      endDate: payload.endDate.toDate(),
-      patient: payload.patient.id,
-      insurance: payload?.insurance || null,
-      visitedBefore: payload.visitedBefore,
-      type: payload.type || schedulerTypes[0].value,
-      doctor: payload.doctor,
-      symptoms: payload.symptoms,
-      createdBy: payload.createdBy,
-      status: payload.status,
+      startDate,
+      endDate,
+      doctor,
+      patient: patient?.id,
+      email,
+      number,
+      status,
+      symptoms: injure,
     };
   }
 
@@ -34,7 +42,9 @@ class appointmentModel {
         status: item?.status,
         symptoms: item?.symptoms,
         visitedBefore: item?.visitedBefore,
-        contact: item?.contact,
+        contact: `${item?.email ? item?.email : ""} ${
+          item?.number ? ` - ${item?.number}` : ""
+        }`,
         visitTime,
         date: dayjs(item?.startDate.toDate()).format("DD/MM/YYYY"),
       };

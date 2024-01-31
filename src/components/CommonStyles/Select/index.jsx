@@ -1,10 +1,17 @@
 import React, { memo, useState } from "react";
 import MUISelect from "@mui/material/Select";
-import { MenuItem } from "@mui/material";
+import { CircularProgress, MenuItem } from "@mui/material";
 import CommonStyles from "..";
 import CommonIcons from "../../CommonIcons";
 
-const Select = ({ options, renderValue, sx, ...otherProps }) => {
+const Select = ({
+  options,
+  renderValue,
+  sx,
+  sxContent,
+  loading,
+  ...otherProps
+}) => {
   //! State
   const [selectOpen, setSelectOpen] = useState(false);
 
@@ -32,6 +39,8 @@ const Select = ({ options, renderValue, sx, ...otherProps }) => {
             centered
             sx={{
               gap: "8px",
+
+              ...sxContent,
             }}
           >
             {renderValue ? (
@@ -51,7 +60,9 @@ const Select = ({ options, renderValue, sx, ...otherProps }) => {
         );
       }}
       IconComponent={(props) => {
-        return null;
+        if (loading) {
+          return <CircularProgress size={"1rem"} />;
+        }
       }}
       {...otherProps}
     >

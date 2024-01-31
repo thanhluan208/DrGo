@@ -14,6 +14,8 @@ const DatePicker = ({
   textFieldProps,
   onChangeCustomize,
   afterOnChange,
+  sxContainer,
+  ...otherProps
 }) => {
   //! State
   const { errors, touched, setFieldValue } = form || {};
@@ -43,13 +45,15 @@ const DatePicker = ({
   return (
     <CommonStyles.Box
       sx={{
-        width: "100%",
+        width: fullWidth && "100%",
+
         fieldset: {
           borderRadius: "8px",
         },
         input: {
           padding: "12.5px 14px",
         },
+        ...sxContainer,
       }}
     >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -73,6 +77,7 @@ const DatePicker = ({
                 }
               : undefined,
           }}
+          {...otherProps}
         />
       </LocalizationProvider>
     </CommonStyles.Box>

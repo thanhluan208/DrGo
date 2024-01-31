@@ -13,6 +13,8 @@ import Select from "./Select";
 import ConfirmDialog from "./ConfirmDialog";
 import ResizeableElement from "./ResizeableElement";
 import Card from "./Card";
+import CustomScheduler from "./CustomScheduler";
+import NotificationDialog from "./NotificationDialog";
 
 const CommonStyles = {
   Box: Box,
@@ -30,6 +32,8 @@ const CommonStyles = {
   ConfirmDialog: ConfirmDialog,
   ResizeWrapper: ResizeableElement,
   Card: Card,
+  CustomScheduler: CustomScheduler,
+  NotificationDialog: NotificationDialog,
 };
 
 export default CommonStyles;

@@ -30,6 +30,12 @@ const Typography = (props) => {
       lineHeight: "26px",
       color: theme.colors.custom.boldText,
     });
+    styles.set("bold16", {
+      fontSize: "16px",
+      fontWeight: "600",
+      lineHeight: "16px",
+      color: theme.colors.custom.boldText,
+    });
 
     styles.set("bold14", {
       fontSize: "14px",
@@ -53,10 +59,17 @@ const Typography = (props) => {
     });
 
     //! Normal
+    styles.set("normal40", {
+      fontSize: "40px",
+      fontWeight: "400",
+      lineHeight: "50px",
+      color: theme.colors.custom.normalText,
+    });
+
     styles.set("normal20", {
       fontSize: "20px",
       fontWeight: "400",
-      lineHeight: "26px",
+      lineHeight: "20px",
       color: theme.colors.custom.normalText,
     });
 
@@ -66,10 +79,38 @@ const Typography = (props) => {
       lineHeight: "24px",
     });
 
+    styles.set("normal16", {
+      fontSize: "16px",
+      fontWeight: "400",
+      lineHeight: "16px",
+      color: theme.colors.custom.normalText,
+    });
+
+    styles.set("normal15", {
+      fontSize: "15px",
+      fontWeight: "500",
+      lineHeight: "20px",
+      color: theme.colors.custom.normalText,
+    });
+
     styles.set("normal14", {
       fontSize: "14px",
       fontWeight: "400",
       lineHeight: "20px",
+      color: theme.colors.custom.normalText,
+    });
+
+    styles.set("normal12", {
+      fontSize: "12px",
+      fontWeight: "500",
+      lineHeight: "16px",
+      color: theme.colors.custom.normalText,
+    });
+
+    styles.set("normal10", {
+      fontSize: "10px",
+      fontWeight: "400",
+      lineHeight: "16px",
       color: theme.colors.custom.normalText,
     });
 

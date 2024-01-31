@@ -67,25 +67,29 @@ export const pageSizeOptions = [
 //   5: "Canceled",
 // };
 
-// export const statusOptions = [
-//   {
-//     value: 1,
-//     label: "Visited",
-//   },
-//   {
-//     value: 2,
-//     label: "Scheduled",
-//   },
-//   {
-//     value: 3,
-//     label: "Waiting",
-//   },
-//   {
-//     value: 4,
-//     label: "Confirmed",
-//   },
-//   {
-//     value: 5,
-//     label: "Canceled",
-//   },
-// ];
+export const statusOptions = [
+  {
+    value: 1,
+    label: "Scheduled",
+  },
+  {
+    value: 2,
+    label: "Confirm",
+  },
+  {
+    value: 3,
+    label: "Waiting",
+  },
+  {
+    value: 4,
+    label: "Visited",
+  },
+  {
+    value: 5,
+    label: "Canceled",
+  },
+  {
+    value: 6,
+    label: "Delayed",
+  },
+];

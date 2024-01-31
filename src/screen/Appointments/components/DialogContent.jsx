@@ -7,14 +7,32 @@ import dayjs from "dayjs";
 import CustomFields from "../../../components/CustomFields";
 import { useTheme } from "@mui/material";
 import * as Yup from "yup";
+import { statusOptions } from "../../../constants/options";
+import SelectPatient from "./SelectPatient";
+import SelectDoctor from "./SelectDoctor";
+import appointmentModel from "../../../models/appointmentsModel";
+import { toast } from "react-toastify";
+import FirebaseServices from "../../../services/firebaseServices";
+import { useGet } from "../../../stores/useStores";
+import cachedKeys from "../../../constants/cachedKeys";
 
 const DialogContent = ({ toggle, data }) => {
   //! State
   const theme = useTheme();
+  const refetchListAppointment = useGet(
+    cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
+  );
+
   const { t } = useTranslation();
   const initialValues = useMemo(() => {
     return {
-      name: data?.name || "",
+      patient: data
+        ? {
+            ...data?.patient,
+            value: data?.patient?.id,
+            label: data?.patient?.name || `Patient ${data?.patient?.id}`,
+          }
+        : undefined,
       doctor: data?.doctor || "",
       email: data?.email || "",
       date: data?.date || new Date(),
@@ -22,13 +40,18 @@ const DialogContent = ({ toggle, data }) => {
       timeTo: data?.timeTo || new Date(),
       number: data?.number || 0,
       injure: data?.injure || "",
+      status: data?.status || "",
     };
   }, [data]);
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
-      name: Yup.string().required(
-        t("required", { field: t("appointment.name") })
+      patient: Yup.object().test(
+        "required",
+        t("required", { field: t("patients") }),
+        function (patient) {
+          return !!patient?.value;
+        }
       ),
       doctor: Yup.string().required(
         t("required", { field: t("appointment.doctor") })
@@ -77,9 +100,47 @@ const DialogContent = ({ toggle, data }) => {
   }, []);
 
   //! Function
-  const onSubmit = useCallback((value) => {
-    console.log("value", value);
+  const onSubmit = useCallback(async (value) => {
+    if (data) {
+      await handleEdit(value);
+      return;
+    }
+
+    await handleCreate(value);
   }, []);
+
+  const handleCreate = useCallback(
+    async (value) => {
+      const toastId = toast.loading("Creating appointment...", {
+        isLoading: true,
+        autoClose: false,
+      });
+      try {
+        const resquestCreate =
+          appointmentModel.parseRequestCreateAppointment(value);
+
+        await FirebaseServices.createAppointment(resquestCreate);
+
+        await refetchListAppointment();
+
+        toast.update(toastId, {
+          render: "Create appointment successfully",
+          type: toast.TYPE.SUCCESS,
+          autoClose: 3000,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.log("err", error);
+        toast.update(toastId, {
+          render: "Create appointment failed",
+          type: toast.TYPE.ERROR,
+          autoClose: 3000,
+          isLoading: false,
+        });
+      }
+    },
+    [refetchListAppointment]
+  );
 
   //! Render
 
@@ -127,8 +188,7 @@ const DialogContent = ({ toggle, data }) => {
         validateOnBlur
         validateOnMount
       >
-        {({ errors }) => {
-          console.log("err", errors);
+        {({ isSubmitting }) => {
           return (
             <Form>
               <CommonStyles.Box
@@ -138,18 +198,18 @@ const DialogContent = ({ toggle, data }) => {
                   gap: "24px",
                 }}
               >
+                <SelectPatient />
+
                 <FastField
-                  name="name"
-                  component={CustomFields.TextField}
-                  label={t("appointment.name")}
+                  name="status"
+                  component={CustomFields.SelectField}
+                  options={statusOptions}
+                  label={t("appointment.status")}
                   fullWidth
                 />
-                <FastField
-                  name="doctor"
-                  component={CustomFields.TextField}
-                  label={t("appointment.doctor")}
-                  fullWidth
-                />
+
+                <SelectDoctor />
+
                 <FastField
                   name="email"
                   component={CustomFields.TextField}
@@ -210,6 +270,7 @@ const DialogContent = ({ toggle, data }) => {
                 }}
               >
                 <CommonStyles.Button
+                  loading={isSubmitting}
                   variant="outlined"
                   color="error"
                   sx={{
@@ -227,6 +288,7 @@ const DialogContent = ({ toggle, data }) => {
                   </CommonStyles.Typography>
                 </CommonStyles.Button>
                 <CommonStyles.Button
+                  loading={isSubmitting}
                   sx={{
                     padding: "15px 24px",
                     borderRadius: "8px",
