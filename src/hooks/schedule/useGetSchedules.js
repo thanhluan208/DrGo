@@ -7,20 +7,12 @@ const useGetSchedules = (filters, isTrigger = true) => {
   const [error, setError] = useState();
 
   const callApi = useCallback(() => {
-    const { doctor, date } = filters;
-    const startDate = date.startOf("week").toDate();
-    const endDate = date.endOf("week").toDate();
-
-    console.log("filters", {
-      doctor,
-      startDate,
-      endDate,
-    });
+    const { doctor, startDate, endDate } = filters;
 
     return FirebaseServices.getSchedules({
       doctor,
-      startDate,
-      endDate,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate(),
     });
   }, [filters]);
 

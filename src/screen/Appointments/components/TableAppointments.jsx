@@ -9,14 +9,21 @@ import { tableType } from "../../../components/CommonStyles/Table";
 import SelectStatus from "./SelectStatus";
 import { useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import queryString from "query-string";
+import routes from "../../../constants/route";
+import ButtonCreateAppointment from "./ButtonCreateAppointment";
+import StatusCard from "../../Home/components/StatusCard";
+import ActionStatus from "./ActionStatus";
+import { isEmpty } from "lodash";
+import { CircularProgress } from "@mui/material";
 
 const columns = [
   {
     id: "name",
     title: "Name",
-    width: 200,
     renderContent: (props) => {
-      const { name } = props;
+      const { id } = props;
       return (
         <CommonStyles.Tooltip title={name}>
           <div>
@@ -29,7 +36,7 @@ const columns = [
                 textOverflow: "ellipsis",
               }}
             >
-              {name}
+              {id}
             </CommonStyles.Typography>
           </div>
         </CommonStyles.Tooltip>
@@ -37,28 +44,23 @@ const columns = [
     },
   },
   {
-    id: "status",
-    title: "Status",
-    width: 200,
-    renderContent: (props) => {
-      const { status } = props;
-      return <SelectStatus data={props} />;
-    },
-  },
-  {
-    id: "contact",
-    title: "Contact",
-    width: 241,
-  },
-  {
     id: "date",
     title: "Date",
-    width: 96,
   },
   {
     id: "visitTime",
     title: "Visit Time",
-    width: 118,
+    renderContent: (props) => {
+      const { visitTime } = props;
+      if (!visitTime)
+        return <StatusCard status={"declined"} content={"Unassigned"} />;
+
+      return (
+        <CommonStyles.Typography type="normal14">
+          {visitTime}
+        </CommonStyles.Typography>
+      );
+    },
   },
   {
     id: "doctor",
@@ -66,6 +68,8 @@ const columns = [
     width: 200,
     renderContent: (props) => {
       const { doctor } = props;
+      if (!doctor)
+        return <StatusCard status={"declined"} content={"Unassigned"} />;
       return (
         <CommonStyles.Typography type="normal14">
           {doctor?.name}
@@ -73,9 +77,27 @@ const columns = [
       );
     },
   },
+
   {
     id: "symptoms",
     title: "Symptoms",
+  },
+  {
+    id: "action/status",
+    title: "Actions/Status",
+    renderContent: (props) => {
+      return (
+        <CommonStyles.Box
+          sx={{
+            display: "flex",
+            justifyContent: "start",
+            width: "260px",
+          }}
+        >
+          <ActionStatus data={props} />
+        </CommonStyles.Box>
+      );
+    },
   },
   {
     id: "action",
@@ -102,22 +124,34 @@ const columns = [
   },
 ];
 
+const tabOption = {
+  1: "All",
+  2: "Pending",
+  3: "Confirmed",
+};
+
 const TableAppointments = () => {
   //! State
   const save = useSave();
-  const { filters } = useFilter({
-    currentPage: 1,
-    pageSize: 100,
+  const navigate = useNavigate();
+  const params = queryString.parse(useLocation()?.search);
+
+  const { tab } = params || {};
+
+  const { filters, handleChangePage, setFilters } = useFilter({
+    currentPage: 0,
+    pageSize: 10,
+    status: tabOption[tab]?.toLowerCase() || "all",
   });
 
   const {
-    data: listAppointment,
+    data,
     isLoading: loadingListAppointment,
     error,
     refetch: refetchListAppointment,
   } = useGetListAppointment(filters);
 
-  console.log("listApp", listAppointment);
+  const { listAppointment, totalPage } = data || {};
 
   //! Function
 
@@ -130,19 +164,77 @@ const TableAppointments = () => {
 
   //! Render
   return (
-    <CommonStyles.Card>
-      <CommonStyles.Table
-        columns={columns}
-        data={listAppointment}
-        disabledCheckboxHeader
-        maxHeight="500px"
-        totalPage={3}
-        filters={filters}
-        loading={loadingListAppointment}
-        type={tableType.BORDER}
-        tableWidth={1500}
-      />
-    </CommonStyles.Card>
+    <CommonStyles.Box
+      sx={{
+        marginTop: "40px",
+      }}
+    >
+      <CommonStyles.Box
+        sx={{
+          padding: "0 15px",
+          display: "flex",
+          gap: "18px",
+          marginBottom: "31px",
+        }}
+      >
+        {Object.entries(tabOption).map(([key, value]) => {
+          const isActive = +tab === +key || (!tab && key === "1");
+          return (
+            <CommonStyles.Button
+              key={`${key}-${value}`}
+              variant="text"
+              onClick={() => {
+                navigate(`${routes.appointment}?tab=${key}`);
+                setFilters((prev) => {
+                  return {
+                    ...prev,
+                    status: value.toLowerCase(),
+                  };
+                });
+              }}
+            >
+              <CommonStyles.Typography
+                type="normal16"
+                sx={{
+                  color: isActive ? "#25282B" : "#A3A3A3",
+                }}
+              >
+                {value}
+              </CommonStyles.Typography>
+            </CommonStyles.Button>
+          );
+        })}
+      </CommonStyles.Box>
+      <CommonStyles.Card>
+        {isEmpty(listAppointment) ? (
+          <CommonStyles.Box
+            sx={{
+              padding: "20px",
+              display: "flex",
+              gap: "20px",
+            }}
+          >
+            <CommonStyles.Typography type="normal16">
+              No appointment found
+            </CommonStyles.Typography>
+            {loadingListAppointment && <CircularProgress size="16px" />}
+          </CommonStyles.Box>
+        ) : (
+          <CommonStyles.Table
+            columns={columns}
+            data={listAppointment || []}
+            disabledCheckboxHeader={isEmpty(listAppointment)}
+            maxHeight="500px"
+            totalPage={totalPage}
+            filters={filters}
+            loading={loadingListAppointment}
+            type={tableType.BORDER}
+            tableWidth={1500}
+            handleChangePage={handleChangePage}
+          />
+        )}
+      </CommonStyles.Card>
+    </CommonStyles.Box>
   );
 };
 

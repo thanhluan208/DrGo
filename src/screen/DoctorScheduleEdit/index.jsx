@@ -24,7 +24,8 @@ const DoctorScheduleEdit = () => {
   const { id } = params;
   const { filters, setFilters } = useFilter({
     doctor: id,
-    date: dayjs(),
+    startDate: dayjs().startOf("month"),
+    endDate: dayjs().endOf("month"),
   });
 
   const { data: doctorDetail, isLoading } = useGetDoctorById(id);
@@ -34,6 +35,8 @@ const DoctorScheduleEdit = () => {
     refetch: refecthListSchedules,
   } = useGetSchedules(filters, !!id);
 
+  console.log("list", listSchedules);
+
   const { name, description } = doctorDetail || {};
 
   //! Function
@@ -41,11 +44,26 @@ const DoctorScheduleEdit = () => {
     navigate(`${routes.doctorSchedule}/${id}`);
   };
 
-  const handleChangeDate = (date) => {
+  const handleChangeDate = (type, date) => {
+    if (type === "year") {
+      setFilters((prev) => {
+        return {
+          ...prev,
+          startDate: date.startOf("year").startOf("month"),
+          endDate: date.startOf("year").endOf("month"),
+        };
+      });
+      return;
+    }
     setFilters((prev) => {
       return {
         ...prev,
-        date,
+        startDate: date
+          .startOf("month")
+          .set("year", filters.startDate.format("YYYY")),
+        endDate: date
+          .endOf("month")
+          .set("year", filters.endDate.format("YYYY")),
       };
     });
   };
@@ -117,13 +135,17 @@ const DoctorScheduleEdit = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               views={["month"]}
-              value={filters.date}
-              onChange={handleChangeDate}
+              value={filters.startDate}
+              onChange={(value) => {
+                handleChangeDate("month", value);
+              }}
             />
             <DatePicker
               views={["year"]}
-              value={filters.date}
-              onChange={handleChangeDate}
+              value={filters.startDate}
+              onChange={(value) => {
+                handleChangeDate("year", value);
+              }}
             />
           </LocalizationProvider>
         </CommonStyles.Box>

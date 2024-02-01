@@ -5,6 +5,7 @@ import { useSave } from "../../stores/useStores";
 import { convertResponseToOptions } from "../../helpers/common";
 
 const useGetListPatient = (filter, key, isTrigger = true) => {
+  const [data, setData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -12,25 +13,28 @@ const useGetListPatient = (filter, key, isTrigger = true) => {
 
   const callApi = useCallback(() => {
     if (!hasMore) return;
-    const { page, pageSize, patientName } = filter;
+    const { page, pageSize, patientName } = filter || {};
     return FirebaseServices.getListPatient(page, pageSize, patientName);
   }, [filter, hasMore]);
 
   const transformResponse = useCallback(
     (response) => {
-      if (isArray(response) && !!key) {
+      if (isArray(response)) {
         const nextResponse = convertResponseToOptions(response, "id", "name");
-        save(
-          key,
-          (prev) => {
-            if (filter.page === 1) {
-              return nextResponse;
-            } else {
-              return [...prev, ...nextResponse];
-            }
-          },
-          true
-        );
+        if (key) {
+          save(
+            key,
+            (prev) => {
+              if (filter.page === 1) {
+                return nextResponse;
+              } else {
+                return [...prev, ...nextResponse];
+              }
+            },
+            true
+          );
+        }
+        setData(response);
         if (response.length < filter.pageSize) {
           setHasMore(false);
         }
@@ -78,6 +82,7 @@ const useGetListPatient = (filter, key, isTrigger = true) => {
     error,
     refetch,
     hasMore,
+    data,
   };
 };
 

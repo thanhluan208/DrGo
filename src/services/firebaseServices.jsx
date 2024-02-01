@@ -32,6 +32,7 @@ import {
 } from "firebase/firestore";
 import useToast from "../hooks/useToast";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const ToastNotification = ({ title, body }) => {
   return (
@@ -158,18 +159,21 @@ class firebaseService {
     });
   };
 
-  getAppointmentByDate = async (date, pageSize) => {
-    // const startDate = Timestamp.fromDate(date?.startOf("day")?.toDate());
-    // const endDate = Timestamp.fromDate(date?.endOf("day")?.toDate());
+  assignAppointment = async (appointmentId, payload) => {
+    const appointmentRef = doc(this.db, "appointments", appointmentId);
+    const doctorRef = doc(this.db, "doctor", payload?.doctor);
 
-    // if (!startDate || !endDate) return;
-    const q = query(
-      collection(this.db, "appointments"),
-      // where("startDate", ">=", startDate),
-      // where("startDate", "<=", endDate),
-      orderBy("startDate")
-      // limit(pageSize)
-    );
+    if (appointmentRef) {
+      updateDoc(appointmentRef, {
+        visit_time: payload?.visit_time,
+        doctor: doctorRef,
+      });
+    }
+  };
+
+  getAppointmentByDate = async (page = 0, pageSize, status) => {
+    let q;
+    q = query(collection(this.db, "appointments"), orderBy("startDate"));
 
     const querySnapshot = await getDocs(q);
 
@@ -177,17 +181,21 @@ class firebaseService {
 
     for (const doc of querySnapshot.docs) {
       const docData = doc.data();
-
-      const doctor = await getDoc(docData.doctor);
+      let doctor;
+      if (docData.doctor) {
+        doctor = await getDoc(docData.doctor);
+      }
       // const insurance = await getDoc(docData.insurance);
       const patient = await getDoc(docData.patient);
 
       data.push({
         ...docData,
-        doctor: {
-          ...doctor.data(),
-          id: doctor.id,
-        },
+        doctor: doctor
+          ? {
+              ...doctor.data(),
+              id: doctor.id,
+            }
+          : undefined,
         // insurance: {
         //   ...insurance.data(),
         //   id: insurance.id,
@@ -201,11 +209,20 @@ class firebaseService {
     }
 
     const responseData = [];
-    for (let i = 0; i < pageSize; i++) {
+    for (let i = 0 + pageSize * page; i < pageSize * (page + 1); i++) {
+      if (!data[i]) break;
       responseData.push(data[i]);
     }
 
-    return responseData;
+    return {
+      responseData: responseData.filter((elm) => {
+        if (status && status !== "all") {
+          return elm.status === status;
+        }
+        return true;
+      }),
+      totalPage: Math.ceil(data.length / pageSize),
+    };
   };
 
   updateAppointmentEndDate = async (id, endDate) => {
@@ -216,6 +233,47 @@ class firebaseService {
         endDate: Timestamp.fromDate(endDate.toDate()),
       });
     }
+  };
+
+  sendNoti = async (listRegist, title, body) => {
+    console.log("sending noti", listRegist);
+    return axios.post(
+      "https://fcm.googleapis.com/fcm/send",
+      {
+        registration_ids: listRegist,
+        notification: {
+          title,
+          body,
+          type: "appointment_update",
+          mutable_content: true,
+          sound: "Tri-tone",
+        },
+      },
+      {
+        headers: {
+          Authorization:
+            "key=AAAAchhm6xE:APA91bGPZZ8II_22wr5KHsRQCaJiraV7gx3Pg1WMIRzb7GLKrMQbERHBGnnxuQO2wWzev7sOohHCrCARaf8iJ8iY-PJa2BwPnRaYLrYXjx24Va-C1fCnEjtYaUmRn-GrDwyfxQIUTz1J",
+        },
+      }
+    );
+  };
+
+  sendEmailChangeStatus = async (email, patientName, doctorName, newStatus) => {
+    return axios.post("https://api.emailjs.com/api/v1.0/email/send", {
+      service_id: "service_rj5v25q",
+      template_id: "template_lkekyp9",
+      user_id: "p848yyVNrCz4R28tY",
+      template_params: {
+        patientName,
+        toEmail: email,
+        fromName: "DrGo",
+        doctorName: doctorName,
+        hospital: "DrGo Hospital",
+        newStatus,
+        reply_to: "",
+        fromEmail: "thanhluan20880@gmail.com",
+      },
+    });
   };
 
   updateAppointment = async (id, payload) => {
@@ -295,7 +353,7 @@ class firebaseService {
     }
   };
 
-  getListPatient = async (page, pageSize, patientName) => {
+  getListPatient = async (page = 1, pageSize = 1000, patientName) => {
     try {
       let q;
       if (page === 1) {
@@ -369,13 +427,14 @@ class firebaseService {
 
   getSchedules = async (payload) => {
     const { doctor, startDate, endDate } = payload;
+    const startDateFilter = dayjs(startDate);
+    const endDateFilter = dayjs(endDate);
 
     // const doctorRef = doc(this.db, "doctor", doctor);
 
     const q = query(
       collection(this.db, "schedule"),
-      orderBy("startDate"),
-      where("startDate", "<=", Timestamp.fromDate(endDate))
+      orderBy("startDate")
       // where("endDate", ">=", Timestamp.fromDate(startDate))
     );
 
@@ -394,8 +453,35 @@ class firebaseService {
       };
     });
 
+    console.log("filter", {
+      startDate,
+      endDate,
+      data,
+    });
+
     const filteredData = data.filter((item) => {
-      return item.doctor === doctor;
+      const startDateItem = dayjs(item.startDate);
+      const endDateItem = dayjs(item.endDate);
+
+      if (item.doctor !== doctor) return false;
+
+      if (
+        startDateItem.isBefore(startDateFilter) &&
+        endDateItem.isBefore(startDateFilter)
+      ) {
+        console.log("1", item);
+        return false;
+      }
+
+      if (
+        startDateItem.isAfter(endDateFilter) &&
+        endDateItem.isAfter(endDateFilter)
+      ) {
+        console.log("2", item);
+        return false;
+      }
+
+      return true;
     });
 
     return filteredData;

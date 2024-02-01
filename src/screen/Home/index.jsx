@@ -12,6 +12,12 @@ import useGetListAppointment from "../../hooks/appointments/useGetListAppointmen
 import StatusCard from "./components/StatusCard";
 import { useNavigate } from "react-router-dom";
 import routes from "../../constants/route";
+import { CircularProgress } from "@mui/material";
+import { useMemo } from "react";
+import { isArray, isEmpty } from "lodash";
+import useGetListPatient from "../../hooks/appointments/useGetListPatient";
+import MedicalAid from "../../assets/icons/MedialAid";
+import MedicalHuman from "../../assets/icons/MedicalHuman";
 
 const data = [
   {
@@ -74,7 +80,7 @@ const columns = [
       if (!startDate) return null;
       return (
         <CommonStyles.Typography type="normal14">
-          {dayjs(startDate).format("DD/MM/YYYY")}
+          {dayjs(startDate).format("MM/DD/YYYY")}
         </CommonStyles.Typography>
       );
     },
@@ -83,11 +89,12 @@ const columns = [
     id: "visitTime",
     title: i18n.t("home.visitTime"),
     renderContent: (props) => {
-      const { startDate, endDate } = props;
-      if (!startDate || !endDate) return null;
+      const { visitTime } = props;
+      if (!visitTime)
+        return <StatusCard status={"declined"} content={"Unassigned"} />;
       return (
         <CommonStyles.Typography type="normal14">
-          {dayjs(startDate).format("hh:mm")} - {dayjs(endDate).format("hh:mma")}
+          {visitTime}
         </CommonStyles.Typography>
       );
     },
@@ -97,7 +104,8 @@ const columns = [
     title: i18n.t("home.doctor"),
     renderContent: (props) => {
       const { doctor } = props;
-      if (!doctor) return null;
+      if (!doctor)
+        return <StatusCard status={"declined"} content={"Unassigned"} />;
 
       const { name } = doctor;
 
@@ -119,8 +127,8 @@ const columns = [
 ];
 
 const filters = {
-  page: 1,
-  pageSize: 5,
+  currentPage: 0,
+  pageSize: 10000,
 };
 
 const Home = () => {
@@ -129,14 +137,48 @@ const Home = () => {
   const navigate = useNavigate();
 
   //! Function
-  const {
-    data: listAppointment,
-    isLoading: loadingListAppointment,
-    error,
-    refetch: refetchListAppointment,
-  } = useGetListAppointment(filters);
+  const { data, isLoading: loadingListAppointment } =
+    useGetListAppointment(filters);
 
-  console.log("list", listAppointment);
+  const { data: listPatient, isLoading: loadingListPatient } =
+    useGetListPatient();
+
+  const { listAppointment, totalPage } = data;
+
+  const mainAppointment = useMemo(() => {
+    const list = [];
+
+    if (!isEmpty(listAppointment)) {
+      for (let i = 0; i < 5; i++) {
+        if (!listAppointment[i]) break;
+        list.push(listAppointment[i]);
+      }
+    }
+
+    return list;
+  }, [listAppointment]);
+
+  const homeListCard = useMemo(() => {
+    return [
+      {
+        icon: <MedicalAid />,
+        title: i18n.t("home.appointments"),
+        content: isArray(listAppointment) ? listAppointment?.length : 0,
+        loading: loadingListAppointment,
+      },
+      {
+        icon: <MedicalHuman />,
+        title: i18n.t("home.newPatient"),
+        content: isArray(listPatient) ? listPatient?.length : 0,
+        loading: loadingListPatient,
+      },
+    ];
+  }, [
+    listAppointment,
+    loadingListAppointment,
+    loadingListPatient,
+    listPatient,
+  ]);
 
   //! Render
 
@@ -153,9 +195,25 @@ const Home = () => {
         }}
       >
         {homeListCard.map((elm) => {
-          const { icon, title, content } = elm;
+          const { icon, title, content, loading } = elm;
           return (
-            <HomeCard icon={icon} title={title} content={content} key={title} />
+            <HomeCard
+              icon={icon}
+              title={title}
+              content={
+                loading ? (
+                  <CircularProgress
+                    size={"1rem"}
+                    sx={{
+                      mt: "10px",
+                    }}
+                  />
+                ) : (
+                  content
+                )
+              }
+              key={title}
+            />
           );
         })}
       </CommonStyles.Box>
@@ -175,9 +233,8 @@ const Home = () => {
 
         <CommonStyles.Table
           columns={columns}
-          data={listAppointment}
-          disabledPagination
-          totalPage={10}
+          data={mainAppointment || []}
+          disabledPagination={isEmpty(mainAppointment)}
           loading={loadingListAppointment}
           // tableWidth={1500}
         />

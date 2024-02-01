@@ -1,7 +1,6 @@
 import React from "react";
 import CommonStyles from "../../components/CommonStyles";
 import { useTranslation } from "react-i18next";
-import ButtonCreateAppointment from "./components/ButtonCreateAppointment";
 import TableAppointments from "./components/TableAppointments";
 
 const Appointments = () => {
@@ -33,17 +32,9 @@ const Appointments = () => {
         >
           {t("appointment.appointments")}
         </CommonStyles.Typography>
-
-        <ButtonCreateAppointment />
       </CommonStyles.Box>
 
-      <CommonStyles.Box
-        sx={{
-          marginTop: "32px",
-        }}
-      >
-        <TableAppointments />
-      </CommonStyles.Box>
+      <TableAppointments />
     </CommonStyles.Box>
   );
 };

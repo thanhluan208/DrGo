@@ -3,14 +3,13 @@ import React from "react";
 import CommonStyles from "../../../components/CommonStyles";
 
 export const statusType = {
-  1: "Pending",
-  2: "Confirmed",
-  3: "Completed",
-  4: "Declined",
-  5: "Declined",
+  pending: "Pending",
+  confirmed: "Confirmed",
+  complete: "Complete",
+  declined: "Declined",
 };
 
-const StatusCard = ({ status }) => {
+const StatusCard = ({ status, content }) => {
   //! State
   const theme = useTheme();
   const statusText = status ? statusType[status] : "";
@@ -37,7 +36,7 @@ const StatusCard = ({ status }) => {
           fontWeight: "600",
         }}
       >
-        {statusText}
+        {content || statusText}
       </CommonStyles.Typography>
     </CommonStyles.Box>
   );

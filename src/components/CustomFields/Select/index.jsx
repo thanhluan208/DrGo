@@ -43,8 +43,6 @@ const SelectField = (props) => {
     return options;
   }, [optionsKey, optionGetByKey, options, convertOptionCallback]);
 
-  console.log("selectOptions", selectOptions);
-
   const { errors, touched, setFieldValue } = form || {};
   const theme = useTheme();
 
@@ -69,8 +67,6 @@ const SelectField = (props) => {
     [name, setFieldValue, onChangeCustomize]
   );
 
-  console.log("value", !!value);
-
   //! Render
   return (
     <CommonStyles.Box
@@ -84,6 +80,7 @@ const SelectField = (props) => {
         fieldset: {
           borderRadius: "8px",
         },
+        marginTop: "16px",
       }}
     >
       <FormControl
@@ -143,7 +140,7 @@ const SelectField = (props) => {
               lineHeight: 1.66,
               textAlign: "left",
               margin: "0.25rem 0.875rem 0 0.875rem",
-              color: theme.colors?.custom?.textRedErrors,
+              color: theme.palette.primary.error,
             }}
           >
             {errorMessage}

@@ -9,17 +9,22 @@ const useGetListAppointment = (filters, isTrigger = true) => {
 
   const callApi = useCallback(() => {
     return FirebaseServices.getAppointmentByDate(
-      filters?.currentDate,
-      filters?.pageSize
+      filters?.currentPage,
+      filters?.pageSize,
+      filters?.status
     );
-  }, [filters?.currentDate, filters?.pageSize]);
+  }, [filters?.currentPage, filters?.pageSize, filters?.status]);
 
   const transformResponse = useCallback((response) => {
     if (response) {
+      const { responseData, totalPage } = response;
       const transformedData =
-        appointmentModel.parseResponseAppointment(response);
+        appointmentModel.parseResponseAppointment(responseData);
 
-      setData(transformedData);
+      setData({
+        listAppointment: transformedData,
+        totalPage,
+      });
     }
   }, []);
 
@@ -41,6 +46,7 @@ const useGetListAppointment = (filters, isTrigger = true) => {
           setLoading(true);
           const response = await callApi();
 
+          console.log("res", response);
           if (shouldSetData) {
             transformResponse(response);
           }

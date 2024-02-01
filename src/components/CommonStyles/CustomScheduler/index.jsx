@@ -17,35 +17,30 @@ const CustomerScheduler = ({
   stepUnit = "minute",
   rowHeight = 48,
   schedules,
-  currentDate,
   loading,
 }) => {
   //! State
-  const save = useSave();
-  const theme = useTheme();
 
   const headerList = useMemo(() => {
     const list = [];
-    const cloneCurrentDate = cloneDeep(currentDate);
-    const start = cloneCurrentDate.startOf("week");
 
-    for (
-      let i = start;
-      i.isBefore(cloneCurrentDate.endOf("week"));
-      i = i.add(1, "day")
-    ) {
+    for (let i = startDate; i.isBefore(endDate); i = i.add(1, "day")) {
       list.push(i);
     }
 
     return list;
-  }, [currentDate]);
+  }, [startDate, endDate]);
 
   const listTimeRow = useMemo(() => {
     const list = [];
-    const start = cloneDeep(startDate);
-    const end = cloneDeep(endDate);
+    const start = cloneDeep(startDate).startOf("day").add(9, "hour");
+    const end = cloneDeep(startDate).startOf("day").add(18, "hour");
 
-    for (let i = start; i.isBefore(end); i = i.add(step, stepUnit)) {
+    for (
+      let i = start;
+      i.isBefore(end) || i.isSame(end);
+      i = i.add(step, stepUnit)
+    ) {
       list.push(i.format("HH:mm"));
     }
 
@@ -100,7 +95,7 @@ const CustomerScheduler = ({
           sx={{
             display: "grid",
             width: "100%",
-            gridTemplateColumns: "repeat(7, 1fr)",
+            gridTemplateColumns: "repeat(7, minmax(200px, calc(100% / 7)))",
           }}
         >
           {headerList.map((item) => {
@@ -123,7 +118,6 @@ const CustomerScheduler = ({
               return acc;
             }, []);
 
-            console.log("listSchedulessssss", listSchedules);
             return (
               <SchedulerContentColumn
                 date={item}

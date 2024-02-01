@@ -18,6 +18,7 @@ import Delete from "../assets/icons/Delete";
 import Fail from "../assets/icons/Fail";
 import Success from "../assets/icons/Success";
 import Warning from "../assets/icons/Warning";
+import * as Yup from "yup";
 
 const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
   //! State
@@ -51,6 +52,75 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
     shouldRender: shouldRenderFail,
   } = useToggleDialog();
   const { t } = useTranslation();
+
+  const validationSchema = Yup.object().shape({
+    startDate: Yup.date()
+      .required(t("required", { field: "Start date" }))
+      .test(
+        "startDate",
+        "Start date must be same or after today",
+        function (value) {
+          return (
+            dayjs(value).isAfter(dayjs(), "day") ||
+            dayjs(value).isSame(dayjs(), "day")
+          );
+        }
+      )
+      .test(
+        "startDateBeforeEndDate",
+        "Start date must be before end date",
+        function (value) {
+          return dayjs(value).isBefore(dayjs(this.parent.endDate));
+        }
+      ),
+    endDate: Yup.date()
+      .required(t("required", { field: "End date" }))
+      .test(
+        "endDate",
+        "End date must be same or after today",
+        function (value) {
+          return (
+            dayjs(value).isAfter(dayjs(), "day") ||
+            dayjs(value).isSame(dayjs(), "day")
+          );
+        }
+      )
+      .test(
+        "endDateAfterStartDate",
+        "End date must be after start date",
+        function (value) {
+          return dayjs(value).isAfter(dayjs(this.parent.startDate));
+        }
+      ),
+    // startTime: Yup.date()
+    //   .required(t("required", { field: "Start time" }))
+    //   .test("startTime", "Start time must be after now", function (value) {
+    //     if (dayjs(this.parent.startDate).isSame(dayjs(), "day"))
+    //       return dayjs(value).isAfter(dayjs());
+    //     return true;
+    //   })
+    //   .test(
+    //     "startTimeBeforeEndTime",
+    //     "Start time must be before end time",
+    //     function (value) {
+    //       return dayjs(value).isBefore(dayjs(this.parent.endTime));
+    //     }
+    //   ),
+    // endTime: Yup.date()
+    //   .required(t("required", { field: "End time" }))
+    //   .test("endTime", "End time must be after now", function (value) {
+    //     if (dayjs(this.parent.endDate).isSame(dayjs(), "day"))
+    //       return dayjs(value).isAfter(dayjs());
+    //     return true;
+    //   })
+    //   .test(
+    //     "endTimeAfterStartTime",
+    //     "End time must be after start time",
+    //     function (value) {
+    //       return dayjs(value).isAfter(dayjs(this.parent.startTime));
+    //     }
+    //   ),
+  });
 
   //! Function
   const handleCreate = async (values) => {
@@ -215,7 +285,13 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
           padding: "32px 65px",
         }}
       >
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={validationSchema}
+          validateOnBlur
+          validateOnChange
+        >
           {({ values, setFieldValue, isSubmitting }) => {
             const repeatOn = values.repeatOn;
             return (
@@ -248,9 +324,6 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
                     <FastField
                       name="startDate"
                       component={CustomFields.DatePicker}
-                      sx={{
-                        background: "#fff",
-                      }}
                       sxContainer={{
                         marginRight: "18px",
                         width: 178,
@@ -271,9 +344,6 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
                     <FastField
                       name="endDate"
                       component={CustomFields.DatePicker}
-                      sx={{
-                        background: "#fff",
-                      }}
                       sxContainer={{
                         width: 178,
                         input: {
@@ -305,9 +375,6 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
                     <FastField
                       name="startTime"
                       component={CustomFields.TimePicker}
-                      sx={{
-                        background: "#fff",
-                      }}
                       sxContainer={{
                         marginRight: "18px",
                         width: 178,
@@ -328,9 +395,6 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
                     <FastField
                       name="endTime"
                       component={CustomFields.TimePicker}
-                      sx={{
-                        background: "#fff",
-                      }}
                       sxContainer={{
                         width: 178,
                         input: {

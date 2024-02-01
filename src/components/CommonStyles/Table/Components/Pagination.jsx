@@ -19,6 +19,7 @@ const Pagination = ({
   //! Function
 
   //! Render
+
   const renderPage = useCallback(() => {
     let pages = [];
     if (totalPage <= 3) {
@@ -45,9 +46,12 @@ const Pagination = ({
     }
 
     return pages.map((page, index) => {
-      if (+page === currentPage)
+      if (+page === currentPage + 1) {
         return (
-          <CommonStyles.IconButton key={`${page}-${index}`}>
+          <CommonStyles.IconButton
+            key={`${page}-${index}`}
+            onClick={() => handleChangePage("currentPage", +page)}
+          >
             <CommonStyles.Box
               centered
               sx={{
@@ -61,11 +65,12 @@ const Pagination = ({
                 type="normal14"
                 sx={{ color: theme.colors.white }}
               >
-                {page}
+                {+page}
               </CommonStyles.Typography>
             </CommonStyles.Box>
           </CommonStyles.IconButton>
         );
+      }
 
       return (
         <CommonStyles.IconButton
@@ -108,6 +113,8 @@ const Pagination = ({
     });
   }, [totalPage, currentPage, handleChangePage]);
 
+  if (!totalPage) return null;
+
   return (
     <CommonStyles.Box
       sx={{
@@ -128,7 +135,7 @@ const Pagination = ({
           onClick={() => {
             handleChangePage("currentPage", currentPage - 1);
           }}
-          disabled={currentPage === 1}
+          disabled={currentPage + 1 === 1}
         >
           <CommonStyles.Box
             centered
@@ -139,7 +146,7 @@ const Pagination = ({
               border: "solid 1px #E8E8E8",
             }}
           >
-            <Previous fill={currentPage !== 1 ? "#52575C" : "#E8E8E8"} />
+            <Previous fill={currentPage + 1 !== 1 ? "#52575C" : "#E8E8E8"} />
           </CommonStyles.Box>
         </CommonStyles.IconButton>
         {renderPage()}
@@ -152,7 +159,7 @@ const Pagination = ({
           onClick={() => {
             handleChangePage("currentPage", currentPage + 1);
           }}
-          disabled={currentPage === totalPage}
+          disabled={currentPage + 1 === totalPage}
         >
           <CommonStyles.Box
             centered
@@ -164,7 +171,7 @@ const Pagination = ({
             }}
           >
             <Previous
-              fill={currentPage !== totalPage ? "#52575C" : "#E8E8E8"}
+              fill={currentPage + 1 !== totalPage ? "#52575C" : "#E8E8E8"}
             />
           </CommonStyles.Box>
         </CommonStyles.IconButton>

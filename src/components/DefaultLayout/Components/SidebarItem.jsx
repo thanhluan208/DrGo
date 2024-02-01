@@ -1,6 +1,6 @@
 import React from "react";
 import CommonStyles from "../../CommonStyles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import { isNull } from "lodash";
 
@@ -8,8 +8,8 @@ const SidebarItem = ({ name, path, icon, notiCount }) => {
   //! State
   const navigate = useNavigate();
   const theme = useTheme();
-  const active =
-    window.location.pathname.split("/")[1] === path.replace("/", "");
+
+  const active = useLocation().pathname.split("/")[1] === path.replace("/", "");
 
   //! Function
   const onClick = () => {

@@ -11,18 +11,14 @@ const SchedulerContentColumn = ({ date, listTimeRow, listSchedules = [] }) => {
   const { pxPerStep, startDate } = useScheduler();
   const theme = useTheme();
 
-  console.log("listSchedules", {
-    listSchedules,
-    formatedDate,
-  });
-
+  const isToday = date.isSame(dayjs(), "day");
   //! Function
 
   //! Render
   const renderSchedules = useCallback(() => {
     return listSchedules.map((schedule) => {
       const startTimeOfColumn = dayjs(
-        `${date.format("YYYY-MM-DD")}/${startDate.format("HH:mm")}`,
+        `${date.format("YYYY-MM-DD")}/09:00`,
         "YYYY-MM-DD/HH:mm"
       );
 
@@ -98,7 +94,7 @@ const SchedulerContentColumn = ({ date, listTimeRow, listSchedules = [] }) => {
           sx={{
             whiteSpace: "pre-line",
             textAlign: "center",
-            color: "#B1B1B1",
+            color: isToday ? theme.palette.primary.main : "#B1B1B1",
           }}
         >
           {formatedDate}

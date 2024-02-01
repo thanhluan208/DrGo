@@ -8,7 +8,7 @@ import useGetListDoctor from "../../../hooks/appointments/useGetListDoctor";
 
 const SelectDoctor = ({ readOnly }) => {
   //! State
-  const { data } = useGetListDoctor();
+  const { data, isLoading } = useGetListDoctor();
 
   const options = useMemo(() => {
     if (isEmpty(data)) return [];
@@ -23,8 +23,6 @@ const SelectDoctor = ({ readOnly }) => {
     return nextData;
   }, [data]);
   //! Function
-
-  console.log("options", options);
 
   const convertDoctorToOptions = useCallback((doctorList) => {
     const nextDoctorList =
@@ -58,10 +56,11 @@ const SelectDoctor = ({ readOnly }) => {
       component={CustomFields.SelectField}
       options={options}
       fullWidth
-      disabled={readOnly}
+      disabled={readOnly || isLoading}
       label="Doctor"
       required
       renderOptions={renderOptions}
+      loading={isLoading}
     />
   );
 };

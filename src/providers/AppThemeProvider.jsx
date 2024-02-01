@@ -79,7 +79,7 @@ const lightTheme = createTheme({
         background: "#E2F6EB",
         text: "#18B23C",
       },
-      status_completed: {
+      status_complete: {
         background: "#EDF1FA",
         text: "#4B7FFB",
       },

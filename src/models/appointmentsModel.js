@@ -25,28 +25,33 @@ class appointmentModel {
     };
   }
 
+  static parseRequestAssignAppointment = (body) => {
+    const { timeFrom, timeTo, doctor } = body;
+    const visitTime = `${dayjs(timeFrom).format("hh:mm")} - ${dayjs(
+      timeTo
+    ).format("hh:mma")}`;
+
+    return {
+      doctor: doctor,
+      status: "confirmed",
+      visit_time: visitTime,
+    };
+  };
+
   static parseResponseAppointment(response) {
     const parseResponse = response.map((item) => {
-      const visitTime = `${dayjs(item?.startDate.toDate()).format(
-        "HH:mm"
-      )}-${dayjs(item?.endDate.toDate()).format("HH:mm")}`;
       return {
         name: item?.patient?.name || `Patient ${item?.patient?.id}`,
         doctor: item?.doctor,
         endDate: item?.endDate.toDate(),
         id: item?.id,
-        insurance: item?.insurance,
+        // insurance: item?.insurance,
         patient: item?.patient,
         startDate: item?.startDate.toDate(),
-        type: item?.type || schedulerTypes[0].value,
         status: item?.status,
         symptoms: item?.symptoms,
-        visitedBefore: item?.visitedBefore,
-        contact: `${item?.email ? item?.email : ""} ${
-          item?.number ? ` - ${item?.number}` : ""
-        }`,
-        visitTime,
-        date: dayjs(item?.startDate.toDate()).format("DD/MM/YYYY"),
+        visitTime: item?.visit_time,
+        date: dayjs(item?.startDate.toDate()).format("MM/DD/YYYY"),
       };
     });
 

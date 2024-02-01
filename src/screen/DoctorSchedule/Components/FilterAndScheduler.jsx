@@ -7,41 +7,104 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import useFilter from "../../../hooks/useFilter";
 import useGetSchedules from "../../../hooks/schedule/useGetSchedules";
-
-const startDate = dayjs().startOf("day").add(9, "hour");
-const endDate = dayjs().startOf("day").add(19, "hour");
+import { cloneDeep } from "lodash";
 
 const FilterAndScheduler = ({ doctor }) => {
   //! State
   const { filters, setFilters } = useFilter({
     doctor,
-    date: dayjs(),
+    startDate: dayjs().startOf("week"),
+    endDate: dayjs().endOf("week"),
   });
 
   const { data, isLoading } = useGetSchedules(filters);
 
-  console.log("data", data);
-
   //! Function
+  const handleChangeDate = (type, value) => {
+    setFilters((prev) => {
+      if (type === "year") {
+        const isSameYear = prev.startDate.isSame(value, "year");
+        if (isSameYear) return;
+
+        const startDateIsSameYear = cloneDeep(value)
+          .startOf("year")
+          .startOf("week")
+          .isSame(cloneDeep(value).startOf("year"), "year");
+
+        return {
+          ...prev,
+          startDate: startDateIsSameYear
+            ? cloneDeep(value).startOf("year").startOf("week")
+            : cloneDeep(value).startOf("year").startOf("week").add(1, "week"),
+          endDate: startDateIsSameYear
+            ? cloneDeep(value).startOf("year").startOf("week").add(1, "week")
+            : cloneDeep(value).startOf("year").startOf("week").add(2, "week"),
+        };
+      }
+
+      const isSameMonth = prev.startDate.isSame(value, "month");
+      if (isSameMonth) {
+        return;
+      }
+
+      const startDateIsSameMonth = cloneDeep(value)
+        .startOf("month")
+        .startOf("week")
+        .isSame(cloneDeep(value).startOf("month"), "month");
+
+      return {
+        ...prev,
+        startDate: startDateIsSameMonth
+          ? cloneDeep(value).startOf("month").startOf("week")
+          : cloneDeep(value).startOf("month").startOf("week").add(1, "week"),
+        endDate: startDateIsSameMonth
+          ? cloneDeep(value).startOf("month").startOf("week").add(1, "week")
+          : cloneDeep(value).startOf("month").startOf("week").add(2, "week"),
+      };
+    });
+  };
+
   const handleChangeWeek = (type) => {
     if (type === "previous") {
       setFilters((prev) => {
         return {
           ...prev,
-          date: prev.date.subtract(1, "week"),
+          startDate: prev.startDate.subtract(1, "week"),
+          endDate: prev.endDate.subtract(1, "week"),
         };
       });
     } else {
       setFilters((prev) => {
         return {
           ...prev,
-          date: prev.date.add(1, "week"),
+          startDate: prev.startDate.add(1, "week"),
+          endDate: prev.endDate.add(1, "week"),
         };
       });
     }
   };
 
   //! Render
+  const renderDate = () => {
+    const { startDate, endDate } = filters;
+    const isSameMonth = startDate.isSame(endDate, "month");
+    const isSameYear = startDate.isSame(endDate, "year");
+
+    if (isSameMonth && isSameYear) {
+      return `${startDate.format("MMMM")}, ${startDate.format(
+        "DD"
+      )}-${endDate.format("DD")}`;
+    }
+
+    if (isSameYear) {
+      return `${startDate.format("MMMM DD")} - ${endDate.format("MMMM DD")}`;
+    }
+
+    return `${startDate.format("MMMM DD, YYYY")} - ${endDate.format(
+      "MMMM DD, YYYY"
+    )}`;
+  };
+
   return (
     <CommonStyles.Box
       sx={{
@@ -72,13 +135,11 @@ const FilterAndScheduler = ({ doctor }) => {
             type="bold16"
             sx={{
               color: "#000000",
-              width: 150,
+              width: "fit-content",
               textAlign: "center",
             }}
           >
-            {`${filters.date.format("MMMM")}, ${filters.date
-              .startOf("week")
-              .format("DD")}-${filters.date.endOf("week").format("DD")}`}
+            {renderDate()}
           </CommonStyles.Typography>
           <CommonStyles.IconButton
             onClick={() => handleChangeWeek("next")}
@@ -105,16 +166,23 @@ const FilterAndScheduler = ({ doctor }) => {
           }}
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker views={["month"]} value={filters.date} />
-            <DatePicker views={["year"]} value={filters.date} />
+            <DatePicker
+              views={["month"]}
+              value={filters.startDate}
+              onChange={(value) => handleChangeDate("month", value)}
+            />
+            <DatePicker
+              views={["year"]}
+              value={filters.endDate}
+              onChange={(value) => handleChangeDate("year", value)}
+            />
           </LocalizationProvider>
         </CommonStyles.Box>
       </CommonStyles.Box>
 
       <CommonStyles.CustomScheduler
-        startDate={startDate}
-        endDate={endDate}
-        currentDate={filters.date}
+        startDate={filters.startDate}
+        endDate={filters.endDate}
         step={60}
         loading={isLoading}
         schedules={data}

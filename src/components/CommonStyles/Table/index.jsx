@@ -128,6 +128,7 @@ const Table = ({
                   }}
                 >
                   {data.map((rowData, index) => {
+                    console.log("rowData", rowData);
                     return (
                       <TableContent
                         rowData={rowData}

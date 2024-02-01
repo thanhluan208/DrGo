@@ -1,8 +1,10 @@
 import React from "react";
 import CommonStyles from "../..";
+import { useTheme } from "@mui/material";
 
 const TimeCell = ({ listTimeRow, rowHeight, startDate }) => {
   //! State
+  const theme = useTheme();
 
   //! Function
 
@@ -12,6 +14,7 @@ const TimeCell = ({ listTimeRow, rowHeight, startDate }) => {
     <CommonStyles.Box
       sx={{
         display: "flex",
+        background: theme.colors.custom.layoutBackground,
         flexDirection: "column",
         position: "sticky",
         height: "100%",
