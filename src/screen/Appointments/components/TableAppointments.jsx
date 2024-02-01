@@ -112,7 +112,7 @@ const columns = [
             width: "100%",
           }}
         >
-          <ButtonEditAppointment data={props} />
+          {/* <ButtonEditAppointment data={props} /> */}
           <CommonStyles.IconButton>
             <CommonStyles.Box sx={{ padding: "8px" }}>
               <Delete />
@@ -206,7 +206,7 @@ const TableAppointments = () => {
         })}
       </CommonStyles.Box>
       <CommonStyles.Card>
-        {isEmpty(listAppointment) ? (
+        {isEmpty(listAppointment) && !loadingListAppointment ? (
           <CommonStyles.Box
             sx={{
               padding: "20px",
@@ -217,7 +217,6 @@ const TableAppointments = () => {
             <CommonStyles.Typography type="normal16">
               No appointment found
             </CommonStyles.Typography>
-            {loadingListAppointment && <CircularProgress size="16px" />}
           </CommonStyles.Box>
         ) : (
           <CommonStyles.Table

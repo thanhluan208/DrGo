@@ -167,6 +167,7 @@ class firebaseService {
       updateDoc(appointmentRef, {
         visit_time: payload?.visit_time,
         doctor: doctorRef,
+        status: "confirmed",
       });
     }
   };

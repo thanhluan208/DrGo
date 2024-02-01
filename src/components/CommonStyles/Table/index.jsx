@@ -86,6 +86,9 @@ const Table = ({
               width: "100%",
               height: 500,
               background: "rgba(0,0,0,0.2)",
+              position: "sticky",
+              top: "0",
+              left: "0",
             }}
             centered
           >

@@ -8,6 +8,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import useFilter from "../../../hooks/useFilter";
 import useGetSchedules from "../../../hooks/schedule/useGetSchedules";
 import { cloneDeep } from "lodash";
+import { CircularProgress } from "@mui/material";
 
 const FilterAndScheduler = ({ doctor }) => {
   //! State
@@ -137,6 +138,8 @@ const FilterAndScheduler = ({ doctor }) => {
               color: "#000000",
               width: "fit-content",
               textAlign: "center",
+              display: "flex",
+              gap: "20px",
             }}
           >
             {renderDate()}
@@ -153,6 +156,7 @@ const FilterAndScheduler = ({ doctor }) => {
           >
             <Previous fill="#000" />
           </CommonStyles.IconButton>
+          {isLoading && <CircularProgress size="16px" />}
         </CommonStyles.Box>
 
         <CommonStyles.Box

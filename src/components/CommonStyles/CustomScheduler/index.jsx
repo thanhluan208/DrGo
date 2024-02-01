@@ -69,22 +69,6 @@ const CustomerScheduler = ({
           overflow: loading ? "hidden" : "auto",
         }}
       >
-        {loading && (
-          <CommonStyles.Box
-            centered
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              background: "rgba(0,0,0,0.1)",
-              zIndex: 1000,
-            }}
-          >
-            <CircularProgress />
-          </CommonStyles.Box>
-        )}
         <TimeCell
           listTimeRow={listTimeRow}
           rowHeight={rowHeight}
