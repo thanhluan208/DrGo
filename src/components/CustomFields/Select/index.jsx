@@ -22,6 +22,7 @@ const SelectField = (props) => {
     placeholder,
     sxSelect,
     text,
+    isOptionEqualToValue,
     onChangeCustomize,
     loading,
     isMultiple = false,
@@ -31,6 +32,13 @@ const SelectField = (props) => {
   } = props;
   const { name, value, onBlur, onChange } = field || {};
   const [isFocus, setIsFocus] = React.useState(false);
+
+  const selectValue = useMemo(() => {
+    if (isOptionEqualToValue) {
+      return isOptionEqualToValue(options, value);
+    }
+    return value;
+  }, [isOptionEqualToValue, value, options]);
 
   const optionGetByKey = useGet(optionsKey) || [];
 
@@ -54,7 +62,7 @@ const SelectField = (props) => {
     (e) => {
       const value = e.target.value;
       if (onChangeCustomize) {
-        onChangeCustomize();
+        onChangeCustomize(value);
         return;
       }
 
@@ -94,7 +102,7 @@ const SelectField = (props) => {
         <Select
           labelId={name}
           id={name}
-          value={value}
+          value={selectValue}
           label={label}
           onFocus={() => {
             setIsFocus(true);

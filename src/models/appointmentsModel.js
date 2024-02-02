@@ -32,7 +32,7 @@ class appointmentModel {
     ).format("hh:mma")}`;
 
     return {
-      doctor: doctor,
+      doctor: doctor?.id,
       status: "confirmed",
       visit_time: visitTime,
     };

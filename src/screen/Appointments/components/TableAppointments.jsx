@@ -17,6 +17,12 @@ import StatusCard from "../../Home/components/StatusCard";
 import ActionStatus from "./ActionStatus";
 import { isEmpty } from "lodash";
 import { CircularProgress } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import SelectDoctor from "./SelectDoctor";
+import SelectDoctorWithoutFormik from "./SelectDoctorWithoutFormik";
+import Option from "../../../assets/icons/Option";
 
 const columns = [
   {
@@ -108,11 +114,15 @@ const columns = [
           centered
           sx={{
             display: "flex",
-            gap: "12px",
             width: "100%",
           }}
         >
           {/* <ButtonEditAppointment data={props} /> */}
+          <CommonStyles.IconButton>
+            <CommonStyles.Box sx={{ padding: "8px" }}>
+              <Option />
+            </CommonStyles.Box>
+          </CommonStyles.IconButton>
           <CommonStyles.IconButton>
             <CommonStyles.Box sx={{ padding: "8px" }}>
               <Delete />
@@ -142,6 +152,8 @@ const TableAppointments = () => {
     currentPage: 0,
     pageSize: 10,
     status: tabOption[tab]?.toLowerCase() || "all",
+    date: new Date(),
+    doctor: "",
   });
 
   const {
@@ -154,6 +166,16 @@ const TableAppointments = () => {
   const { listAppointment, totalPage } = data || {};
 
   //! Function
+  const handleChangeDoctor = (event) => {
+    const value = event.target.value;
+
+    setFilters((prev) => {
+      return {
+        ...prev,
+        doctor: value,
+      };
+    });
+  };
 
   useEffect(() => {
     save(
@@ -204,6 +226,41 @@ const TableAppointments = () => {
             </CommonStyles.Button>
           );
         })}
+      </CommonStyles.Box>
+      <CommonStyles.Box
+        sx={{
+          marginBottom: "20px",
+          display: "flex",
+          gap: "20px",
+        }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            value={dayjs(filters?.date)}
+            format="MM/DD/YYYY"
+            onChange={(newValue) =>
+              setFilters((prev) => ({ ...prev, date: newValue }))
+            }
+            slotProps={{
+              textField: {
+                placeholder: "Select date",
+                sx: {
+                  background: "#fff",
+                  borderRadius: "8px",
+                  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.15)",
+                  width: 307,
+                  fieldset: {
+                    border: "none",
+                  },
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+        <SelectDoctorWithoutFormik
+          value={filters?.doctor}
+          onChange={handleChangeDoctor}
+        />
       </CommonStyles.Box>
       <CommonStyles.Card>
         {isEmpty(listAppointment) && !loadingListAppointment ? (

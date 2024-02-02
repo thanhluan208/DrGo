@@ -206,7 +206,16 @@ const ActionStatus = ({ data }) => {
         <CommonStyles.Dialog
           open={openDelayDialog}
           handleClose={toggleDelayDialog}
-          dialogContent={<DelayDialogContent toggle={toggleDelayDialog} />}
+          dialogContent={
+            <DelayDialogContent
+              toggle={toggleDelayDialog}
+              appointmentId={id}
+              device_tokens={device_tokens}
+              email={email}
+              patientName={name}
+              doctorName={doctor.name}
+            />
+          }
         />
       )}
     </Fragment>

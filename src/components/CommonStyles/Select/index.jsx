@@ -1,80 +1,76 @@
 import React, { memo, useState } from "react";
 import MUISelect from "@mui/material/Select";
-import { CircularProgress, MenuItem } from "@mui/material";
+import {
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+} from "@mui/material";
 import CommonStyles from "..";
 import CommonIcons from "../../CommonIcons";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 
 const Select = ({
-  options,
+  options = [],
   renderValue,
-  sx,
+  value,
   sxContent,
   loading,
+  label,
+  fullWidth,
+  defaultValue,
   ...otherProps
 }) => {
   //! State
-  const [selectOpen, setSelectOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const uuid = Math.random().toString(36).substring(7);
 
   //! Function
 
+  console.log("open", isOpen);
   //! Render
   return (
-    <MUISelect
-      onOpen={() => setSelectOpen(true)}
-      onClose={() => setSelectOpen(false)}
-      sx={{
-        div: {
-          paddingRight: "0 !important",
-        },
-        ...sx,
-      }}
-      renderValue={(value) => {
-        const selectedOption = options.find((option) => option.value === value);
-        let label = "";
-        if (selectedOption) {
-          label = selectedOption.label;
-        }
-        return (
-          <CommonStyles.Box
-            centered
-            sx={{
-              gap: "8px",
+    <FormControl fullWidth={fullWidth}>
+      {label && <InputLabel id={uuid}>{label}</InputLabel>}
 
-              ...sxContent,
-            }}
-          >
-            {renderValue ? (
-              renderValue(label)
-            ) : (
-              <CommonStyles.Typography type="normal14" color="primaryText">
-                {label}
-              </CommonStyles.Typography>
-            )}
-            <CommonIcons.SingleArrowLeft
-              style={{
-                transition: "all 0.3s ease",
-                transform: !selectOpen ? "rotate(270deg)" : "rotate(90deg)",
-              }}
-            />
-          </CommonStyles.Box>
-        );
-      }}
-      IconComponent={(props) => {
-        if (loading) {
-          return <CircularProgress size={"1rem"} />;
-        }
-      }}
-      {...otherProps}
-    >
-      {options.map((option) => {
-        const { value, label } = option;
-        return (
-          <MenuItem value={value} key={value}>
-            {label}
+      <MUISelect
+        labelId={uuid}
+        id={uuid}
+        label={label}
+        onClose={() => setIsOpen(false)}
+        onOpen={() => {
+          setIsOpen(true);
+        }}
+        displayEmpty
+        value={value}
+        IconComponent={() => {
+          if (loading) {
+            return <CircularProgress size={20} />;
+          }
+          if (isOpen) {
+            return <ArrowDropUp />;
+          }
+          return <ArrowDropDown />;
+        }}
+        {...otherProps}
+      >
+        {defaultValue && (
+          <MenuItem value="" disabled>
+            <CommonStyles.Typography type="normal14" color="primaryText">
+              {defaultValue}
+            </CommonStyles.Typography>
           </MenuItem>
-        );
-      })}
-    </MUISelect>
+        )}
+        {options.map((option) => {
+          const { value, label } = option;
+          return (
+            <MenuItem value={value} key={value}>
+              {label}
+            </MenuItem>
+          );
+        })}
+      </MUISelect>
+    </FormControl>
   );
 };
 

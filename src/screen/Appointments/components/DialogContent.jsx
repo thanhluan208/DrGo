@@ -53,9 +53,9 @@ const DialogContent = ({ toggle, data }) => {
           return !!patient?.value;
         }
       ),
-      doctor: Yup.string().required(
-        t("required", { field: t("appointment.doctor") })
-      ),
+      // doctor: Yup.string().required(
+      //   t("required", { field: t("appointment.doctor") })
+      // ),
       email: Yup.string().required(
         t("required", { field: t("appointment.email") })
       ),

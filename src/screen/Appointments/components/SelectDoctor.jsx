@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo } from "react";
-import { FastField, Field } from "formik";
+import { FastField, Field, useFormikContext } from "formik";
 import { MenuItem } from "@mui/material";
 import { cloneDeep, isEmpty } from "lodash";
 import cachedKeys from "../../../constants/cachedKeys";
@@ -9,6 +9,7 @@ import useGetListDoctor from "../../../hooks/appointments/useGetListDoctor";
 const SelectDoctor = ({ readOnly }) => {
   //! State
   const { data, isLoading } = useGetListDoctor();
+  const { setFieldValue } = useFormikContext();
 
   const options = useMemo(() => {
     if (isEmpty(data)) return [];
@@ -23,20 +24,14 @@ const SelectDoctor = ({ readOnly }) => {
     return nextData;
   }, [data]);
   //! Function
-
-  const convertDoctorToOptions = useCallback((doctorList) => {
-    const nextDoctorList =
-      cloneDeep(doctorList).map((elm) => {
-        const parsedInfo = JSON.parse(elm.text);
-        return {
-          ...elm,
-          label: parsedInfo.name,
-          value: elm.id,
-        };
-      }) || [];
-
-    return nextDoctorList;
+  const isOptionEqualToValue = useCallback((option, value) => {
+    return value?.id || "";
   }, []);
+
+  const onChangeCustomize = (value) => {
+    const doctorSelected = data.find((elm) => elm.id === value);
+    setFieldValue("doctor", doctorSelected);
+  };
 
   //! Render
   const renderOptions = useCallback((options) => {
@@ -61,6 +56,8 @@ const SelectDoctor = ({ readOnly }) => {
       required
       renderOptions={renderOptions}
       loading={isLoading}
+      isOptionEqualToValue={isOptionEqualToValue}
+      onChangeCustomize={onChangeCustomize}
     />
   );
 };

@@ -85,9 +85,15 @@ const AssignDialogContent = ({ toggle, data }) => {
           return dayjs(value).isAfter(dayjs(this.parent.timeFrom));
         }
       ),
-    doctor: Yup.string().required(
-      t("required", { field: t("appointment.doctor") })
+    doctor: Yup.object().test(
+      "doctor",
+      "Doctor is required field",
+      function (value) {
+        if (!value || !value?.id) return false;
+        return true;
+      }
     ),
+
     date: Yup.date()
       .required(t("required", { field: t("appointment.date") }))
       .test("date", t("appointment.dateNotInPast"), function (value) {
@@ -121,7 +127,10 @@ const AssignDialogContent = ({ toggle, data }) => {
           email,
           name,
           values?.doctor?.name,
-          "confirmed"
+          "confirmed",
+          `${dayjs(values?.timeFrom).format("HH:mm")}-${dayjs(
+            values?.timeTo
+          ).format("HH:mm")}`
         );
       }
 
@@ -194,10 +203,6 @@ const AssignDialogContent = ({ toggle, data }) => {
           validateOnBlur
         >
           {({ errors, values }) => {
-            console.log("err", {
-              errors,
-              values,
-            });
             return (
               <Form
                 style={{

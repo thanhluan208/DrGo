@@ -11,9 +11,17 @@ const useGetListAppointment = (filters, isTrigger = true) => {
     return FirebaseServices.getAppointmentByDate(
       filters?.currentPage,
       filters?.pageSize,
-      filters?.status
+      filters?.status,
+      filters?.date,
+      filters?.doctor
     );
-  }, [filters?.currentPage, filters?.pageSize, filters?.status]);
+  }, [
+    filters?.currentPage,
+    filters?.pageSize,
+    filters?.status,
+    filters?.date,
+    filters?.doctor,
+  ]);
 
   const transformResponse = useCallback((response) => {
     if (response) {

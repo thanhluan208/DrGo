@@ -144,7 +144,7 @@ class firebaseService {
   };
 
   createAppointment = async (payload) => {
-    const doctorRef = doc(this.db, "doctor", payload.doctor);
+    const doctorRef = doc(this.db, "doctor", payload.doctor?.id);
     // const insuranceRef = doc(this.db, "insurance", payload.insurance);
     const patientRef = doc(this.db, "patient", payload.patient);
 
@@ -172,9 +172,8 @@ class firebaseService {
     }
   };
 
-  getAppointmentByDate = async (page = 0, pageSize, status) => {
-    let q;
-    q = query(collection(this.db, "appointments"), orderBy("startDate"));
+  getAppointmentByDate = async (page = 0, pageSize, status, date, doctor) => {
+    let q = query(collection(this.db, "appointments"), orderBy("startDate"));
 
     const querySnapshot = await getDocs(q);
 
@@ -217,10 +216,30 @@ class firebaseService {
 
     return {
       responseData: responseData.filter((elm) => {
-        if (status && status !== "all") {
-          return elm.status === status;
+        let isValid = true;
+
+        if (date) {
+          isValid = dayjs(elm.startDate.toDate()).isSame(date, "day");
+          console.log("date", {
+            elm,
+            isValid,
+          });
         }
-        return true;
+        if (status && status !== "all") {
+          isValid = elm.status === status;
+          console.log("status", {
+            elm,
+            isValid,
+          });
+        }
+        if (doctor) {
+          isValid = elm?.doctor?.id === doctor;
+          console.log("Doctor", {
+            elm,
+            isValid,
+          });
+        }
+        return isValid;
       }),
       totalPage: Math.ceil(data.length / pageSize),
     };
@@ -259,7 +278,23 @@ class firebaseService {
     );
   };
 
-  sendEmailChangeStatus = async (email, patientName, doctorName, newStatus) => {
+  updateAppointmentDelay = async (id, delayTime) => {
+    const appointmentRef = doc(this.db, "appointments", id);
+
+    if (appointmentRef) {
+      await updateDoc(appointmentRef, {
+        delayTime,
+      });
+    }
+  };
+
+  sendEmailChangeStatus = async (
+    email,
+    patientName,
+    doctorName,
+    newStatus,
+    timeOrHospital
+  ) => {
     return axios.post("https://api.emailjs.com/api/v1.0/email/send", {
       service_id: "service_rj5v25q",
       template_id: "template_lkekyp9",
@@ -269,10 +304,25 @@ class firebaseService {
         toEmail: email,
         fromName: "DrGo",
         doctorName: doctorName,
-        hospital: "DrGo Hospital",
+        hospital: timeOrHospital || "DrGo Hospital",
         newStatus,
         reply_to: "",
         fromEmail: "thanhluan20880@gmail.com",
+      },
+    });
+  };
+
+  sendEmailDelayed = async (email, patientName, doctorName, delayTime) => {
+    return axios.post("https://api.emailjs.com/api/v1.0/email/send", {
+      service_id: "service_rj5v25q",
+      template_id: "template_tib9kwe",
+      user_id: "p848yyVNrCz4R28tY",
+      template_params: {
+        patientName,
+        toEmail: email,
+        fromName: "DrGo",
+        doctorName: doctorName,
+        delayTime,
       },
     });
   };
@@ -454,17 +504,14 @@ class firebaseService {
       };
     });
 
-    console.log("filter", {
-      startDate,
-      endDate,
-      data,
-    });
-
     const filteredData = data.filter((item) => {
       const startDateItem = dayjs(item.startDate);
       const endDateItem = dayjs(item.endDate);
 
-      if (item.doctor !== doctor) return false;
+      if (item.doctor !== doctor) {
+        console.log("0", item);
+        return false;
+      }
 
       if (
         startDateItem.isBefore(startDateFilter) &&
@@ -483,6 +530,14 @@ class firebaseService {
       }
 
       return true;
+    });
+
+    console.log("filter", {
+      doctor,
+      startDate,
+      endDate,
+      data,
+      filteredData,
     });
 
     return filteredData;
