@@ -208,40 +208,62 @@ class firebaseService {
       });
     }
 
+    console.log("data", data);
+
+    const filteredData = data.filter((elm) => {
+      let isValid = true;
+
+      if (date) {
+        const [startDate, endDate] = date;
+        if (startDate && !endDate) {
+          isValid = dayjs(elm.startDate.toDate()).isSame(startDate, "day");
+          console.log("date 1", {
+            elm,
+            isValid,
+          });
+        }
+
+        if (startDate && endDate) {
+          isValid =
+            (dayjs(elm.startDate.toDate()).isAfter(startDate, "day") ||
+              dayjs(elm.startDate.toDate()).isSame(startDate, "day")) &&
+            (dayjs(elm.startDate.toDate()).isBefore(endDate, "day") ||
+              dayjs(elm.startDate.toDate()).isSame(endDate, "day"));
+          console.log("date 2", {
+            elm,
+            isValid,
+          });
+        }
+      }
+
+      if (status && status !== "all") {
+        isValid = elm.status === status;
+        console.log("status", {
+          elm,
+          isValid,
+        });
+      }
+      if (doctor) {
+        isValid = elm?.doctor?.id === doctor;
+        console.log("Doctor", {
+          elm,
+          isValid,
+        });
+      }
+      return isValid;
+    });
+
     const responseData = [];
     for (let i = 0 + pageSize * page; i < pageSize * (page + 1); i++) {
-      if (!data[i]) break;
-      responseData.push(data[i]);
+      if (!filteredData[i]) {
+        break;
+      }
+      responseData.push(filteredData[i]);
     }
 
     return {
-      responseData: responseData.filter((elm) => {
-        let isValid = true;
-
-        if (date) {
-          isValid = dayjs(elm.startDate.toDate()).isSame(date, "day");
-          console.log("date", {
-            elm,
-            isValid,
-          });
-        }
-        if (status && status !== "all") {
-          isValid = elm.status === status;
-          console.log("status", {
-            elm,
-            isValid,
-          });
-        }
-        if (doctor) {
-          isValid = elm?.doctor?.id === doctor;
-          console.log("Doctor", {
-            elm,
-            isValid,
-          });
-        }
-        return isValid;
-      }),
-      totalPage: Math.ceil(data.length / pageSize),
+      responseData,
+      totalPage: Math.ceil(filteredData.length / pageSize),
     };
   };
 
@@ -267,6 +289,9 @@ class firebaseService {
           type: "appointment_update",
           mutable_content: true,
           sound: "Tri-tone",
+        },
+        data: {
+          action_type: "update_status",
         },
       },
       {

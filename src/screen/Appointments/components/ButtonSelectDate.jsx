@@ -9,8 +9,6 @@ import CommonStyles from "../../../components/CommonStyles";
 import { useTheme } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 
-import "./time.css";
-
 const ButtonField = (props) => {
   //! State
   const {

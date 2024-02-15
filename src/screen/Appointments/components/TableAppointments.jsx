@@ -1,37 +1,29 @@
 import React, { useEffect } from "react";
 import CommonStyles from "../../../components/CommonStyles";
-import Edit from "../../../assets/icons/Edit";
 import Delete from "../../../assets/icons/Delete";
 import useFilter from "../../../hooks/useFilter";
 import useGetListAppointment from "../../../hooks/appointments/useGetListAppointment";
-import ButtonEditAppointment from "./ButtonEditAppointment";
 import { tableType } from "../../../components/CommonStyles/Table";
-import SelectStatus from "./SelectStatus";
 import { useSave } from "../../../stores/useStores";
 import cachedKeys from "../../../constants/cachedKeys";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import routes from "../../../constants/route";
-import ButtonCreateAppointment from "./ButtonCreateAppointment";
 import StatusCard from "../../Home/components/StatusCard";
 import ActionStatus from "./ActionStatus";
 import { isEmpty } from "lodash";
-import { CircularProgress } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import SelectDoctor from "./SelectDoctor";
-import SelectDoctorWithoutFormik from "./SelectDoctorWithoutFormik";
 import Option from "../../../assets/icons/Option";
+import SelectDoctorFilters from "./SelectDoctorFilters";
+import dayjs from "dayjs";
 
 const columns = [
   {
     id: "name",
     title: "Name",
     renderContent: (props) => {
-      const { id } = props;
+      const { id, name } = props;
       return (
-        <CommonStyles.Tooltip title={name}>
+        <CommonStyles.Tooltip title={name} placement="bottom-start">
           <div>
             <CommonStyles.Typography
               type="normal14"
@@ -42,7 +34,7 @@ const columns = [
                 textOverflow: "ellipsis",
               }}
             >
-              {id}
+              {name}
             </CommonStyles.Typography>
           </div>
         </CommonStyles.Tooltip>
@@ -87,6 +79,31 @@ const columns = [
   {
     id: "symptoms",
     title: "Symptoms",
+    renderContent: (props) => {
+      const { symptoms } = props;
+      if (!isEmpty(symptoms)) {
+        return (
+          <CommonStyles.Tooltip
+            title={symptoms.join(", ")}
+            placement="bottom-start"
+          >
+            <div>
+              <CommonStyles.Typography
+                type="normal14"
+                sx={{
+                  width: 150,
+                  overflow: "hidden",
+                  textWrap: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {symptoms.join(", ")}
+              </CommonStyles.Typography>
+            </div>
+          </CommonStyles.Tooltip>
+        );
+      }
+    },
   },
   {
     id: "action/status",
@@ -140,6 +157,11 @@ const tabOption = {
   3: "Confirmed",
 };
 
+const optionsSortBy = [
+  { label: "Booking Order", value: "bookingOrder" },
+  { label: "Visit Time", value: "visitTime" },
+];
+
 const TableAppointments = () => {
   //! State
   const save = useSave();
@@ -152,27 +174,50 @@ const TableAppointments = () => {
     currentPage: 0,
     pageSize: 10,
     status: tabOption[tab]?.toLowerCase() || "all",
-    date: new Date(),
+    date: [dayjs()],
     doctor: "",
+    sortBy: "visitTime",
   });
 
   const {
     data,
     isLoading: loadingListAppointment,
-    error,
     refetch: refetchListAppointment,
   } = useGetListAppointment(filters);
 
   const { listAppointment, totalPage } = data || {};
 
   //! Function
-  const handleChangeDoctor = (event) => {
-    const value = event.target.value;
+  const handleChangeDoctor = (selectOptions) => {
+    const value = selectOptions?.value;
 
+    if (value) {
+      setFilters((prev) => {
+        return {
+          ...prev,
+          doctor: value,
+          currentPage: 0,
+        };
+      });
+    }
+  };
+
+  const handleChangeDate = (newDates) => {
     setFilters((prev) => {
       return {
         ...prev,
-        doctor: value,
+        date: newDates,
+        currentPage: 0,
+      };
+    });
+  };
+
+  const handleChangeSortBy = (selectedOption) => {
+    setFilters((prev) => {
+      return {
+        ...prev,
+        sortBy: selectedOption?.value,
+        currentPage: 0,
       };
     });
   };
@@ -229,37 +274,33 @@ const TableAppointments = () => {
       </CommonStyles.Box>
       <CommonStyles.Box
         sx={{
-          marginBottom: "20px",
           display: "flex",
-          gap: "20px",
+          justifyContent: "space-between",
         }}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            value={dayjs(filters?.date)}
-            format="MM/DD/YYYY"
-            onChange={(newValue) =>
-              setFilters((prev) => ({ ...prev, date: newValue }))
-            }
-            slotProps={{
-              textField: {
-                placeholder: "Select date",
-                sx: {
-                  background: "#fff",
-                  borderRadius: "8px",
-                  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.15)",
-                  width: 307,
-                  fieldset: {
-                    border: "none",
-                  },
-                },
-              },
-            }}
+        <CommonStyles.Box
+          sx={{
+            marginBottom: "20px",
+            display: "flex",
+            gap: "20px",
+            height: "48px",
+          }}
+        >
+          <CommonStyles.Box sx={{ width: 308 }}>
+            <CommonStyles.DateRangePicker
+              value={filters?.date}
+              onChange={handleChangeDate}
+            />
+          </CommonStyles.Box>
+          <SelectDoctorFilters
+            value={filters?.doctor}
+            handleChange={handleChangeDoctor}
           />
-        </LocalizationProvider>
-        <SelectDoctorWithoutFormik
-          value={filters?.doctor}
-          onChange={handleChangeDoctor}
+        </CommonStyles.Box>
+        <CommonStyles.SortFilters
+          value={filters?.sortBy}
+          options={optionsSortBy}
+          handleChange={handleChangeSortBy}
         />
       </CommonStyles.Box>
       <CommonStyles.Card>

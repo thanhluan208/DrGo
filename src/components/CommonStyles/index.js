@@ -15,6 +15,8 @@ import ResizeableElement from "./ResizeableElement";
 import Card from "./Card";
 import CustomScheduler from "./CustomScheduler";
 import NotificationDialog from "./NotificationDialog";
+import DateRangePicker from "./DateRangePicker";
+import SortFilters from "../SortFilters/SortFilters";
 
 const CommonStyles = {
   Box: Box,
@@ -34,6 +36,8 @@ const CommonStyles = {
   Card: Card,
   CustomScheduler: CustomScheduler,
   NotificationDialog: NotificationDialog,
+  DateRangePicker: DateRangePicker,
+  SortFilters: SortFilters,
 };
 
 export default CommonStyles;
