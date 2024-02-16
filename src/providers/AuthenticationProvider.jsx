@@ -50,8 +50,6 @@ const AuthenticationProvider = ({ children }) => {
       const user = response?.user;
       const tokenResponse = response?._tokenResponse;
 
-      console.log("tokenResponse", tokenResponse);
-
       const { idToken, refreshToken } = tokenResponse;
       if (idToken && refreshToken) {
         httpService.saveTokenToLocalStorage(idToken);

@@ -1,6 +1,12 @@
 {
   "required": "{{field}} is required",
 
+  "authentication": {
+    "loginSuccess": "Login success",
+    "loggingIn": "Logging in...",
+    "loginError": "Error. Please try again."
+  },
+
   "layout": {
     "dashboard": "Dashboard",
     "home": "Home",

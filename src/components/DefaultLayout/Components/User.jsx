@@ -1,75 +1,11 @@
-import React, { Fragment, useCallback } from "react";
+import React, { useCallback } from "react";
 import CommonStyles from "../../CommonStyles";
-import { Divider, Link, Popover } from "@mui/material";
+import { Popover } from "@mui/material";
 import { useAuthentication } from "../../../providers/AuthenticationProvider";
-import CommonIcons from "../../CommonIcons";
 import { useTheme } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
+import Box from "../../CommonStyles/Box";
 
-const SettingTab = ({ icon, title, subTitle, sxContainer, destination }) => {
-  //! State
-  const navigate = useNavigate();
-
-  //! Function
-  const handleNavigate = useCallback(() => {
-    navigate(destination);
-  }, [destination]);
-
-  //! Render
-  return (
-    <CommonStyles.Button
-      variant="text"
-      sx={{
-        marginTop: "30px",
-        marginBottom: "10px",
-        textTransform: "none",
-        width: "90%",
-        color: "unset",
-        padding: "5px 20px",
-        ...sxContainer,
-      }}
-      onClick={handleNavigate}
-    >
-      <CommonStyles.Box
-        sx={{
-          width: "100%",
-          display: "grid",
-          gridTemplateColumns: "20% 80%",
-          cursor: "pointer",
-        }}
-      >
-        <CommonStyles.Box
-          sx={{
-            paddingTop: "5px",
-            display: "flex",
-            alignItems: "start",
-            justifyContent: "start",
-          }}
-        >
-          {icon}
-        </CommonStyles.Box>
-        <CommonStyles.Box
-          sx={{
-            flexDirection: "column",
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-          }}
-        >
-          <CommonStyles.Typography type="boldText14">
-            {title}
-          </CommonStyles.Typography>
-          <CommonStyles.Typography
-            type="normalText"
-            sx={{ opacity: 0.6, fontSize: ".85rem" }}
-          >
-            {subTitle}
-          </CommonStyles.Typography>
-        </CommonStyles.Box>
-      </CommonStyles.Box>
-    </CommonStyles.Button>
-  );
-};
+const uuid = Math.random().toString(36).substring(7);
 
 const User = () => {
   //! State
@@ -82,159 +18,72 @@ const User = () => {
     setAnchorEl(event.currentTarget);
   }, []);
 
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
   //! Render
   return (
-    <Fragment>
-      <CommonStyles.Button variant="text">
+    <Box>
+      <CommonStyles.IconButton onClick={handleOpen}>
         <CommonStyles.Box
-          variant="text"
+          centered
           sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "10px",
-            padding: "5px 10px",
-            top: "10px",
-            right: "15px",
-            cursor: "pointer",
-            textTransform: "none",
+            width: 50,
+            height: 50,
+            borderRadius: "50%",
+            background: "#E8E8E8",
           }}
-          onClick={handleOpen}
         >
-          <CommonStyles.Avatar src="https://lh3.googleusercontent.com/ogw/AKPQZvyASBUcpQgfbJFtlWST2R3jgHPG-CdGKfsicVCI=s32-c-mo" />
+          <CommonStyles.Avatar
+            src={
+              "https://i.pinimg.com/564x/73/e4/69/73e4692c5447a0ed7b0eac5d3e008469.jpg"
+            }
+          />
         </CommonStyles.Box>
-      </CommonStyles.Button>
+      </CommonStyles.IconButton>
       <Popover
-        open={Boolean(anchorEl)}
+        id={uuid}
+        open={!!anchorEl}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
         }}
         sx={{
-          marginTop: "10px",
-          overflow: "hidden",
+          boxShadow: "none",
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              boxShadow: "0 5px 15px rgba(0, 0, 0, 0.15)",
+              borderRadius: "0 0 10px 10px",
+              // paddingTop: "10px",
+            },
+          },
         }}
       >
         <CommonStyles.Box
-          centered
           sx={{
-            width: "300px",
-            padding: "10px 0",
-            paddingTop: "20px",
-            flexDirection: "column",
-            background: theme.colors.custom.background,
+            width: "158px",
+            padding: "10px 20px",
           }}
         >
-          <CommonStyles.Box
-            centered
-            sx={{ flexDirection: "column", color: theme.colors.white }}
-          >
-            <CommonStyles.Avatar
-              sx={{ borderRadius: "8px" }}
-              src="https://lh3.googleusercontent.com/ogw/AKPQZvyASBUcpQgfbJFtlWST2R3jgHPG-CdGKfsicVCI=s32-c-mo"
-            />
-            <CommonStyles.Box
-              centered
-              sx={{
-                flexDirection: "column",
-              }}
-            >
-              <CommonStyles.Typography type="boldText">
-                Thanh Luan
-              </CommonStyles.Typography>
-              <CommonStyles.Typography
-                type="normalText"
-                sx={{ opacity: 0.6, fontSize: ".85rem" }}
-              >
-                thanhluan20880@gmail.com
-              </CommonStyles.Typography>
-            </CommonStyles.Box>
-          </CommonStyles.Box>
-
-          <SettingTab
-            icon={<CommonIcons.User style={{ fontSize: "1rem" }} />}
-            title="Personal setting"
-            subTitle="Edit account profile"
-            destination={"/user-profile"}
-          />
-
-          <Divider
-            sx={{
-              width: "90%",
-            }}
-          />
-
-          <SettingTab
-            icon={<CommonIcons.Group style={{ fontSize: "1rem" }} />}
-            title="Workspace setting"
-            subTitle="Edit workspace profile"
-            sxContainer={{
-              marginTop: "10px",
-            }}
-          />
-
-          <SettingTab
-            icon={<CommonIcons.MoneyBill style={{ fontSize: "1rem" }} />}
-            title="Manage your plan"
-            subTitle="Plans and billing"
-            sxContainer={{
-              marginTop: "10px",
-            }}
-          />
-          <CommonStyles.Button sx={{ width: "90%", marginBottom: "20px" }}>
-            Update plan
-          </CommonStyles.Button>
-
-          <Divider
-            sx={{
-              width: "90%",
-            }}
-          />
-
           <CommonStyles.Button
+            onClick={handleLogout}
             variant="text"
             sx={{
-              width: "90%",
-              margin: "20px 0",
-              display: "grid",
-              gridTemplateColumns: "20% 80%",
-              padding: "5px 20px",
-              color: "unset",
-              textTransform: "none",
+              width: "100%",
             }}
-            onClick={handleLogout}
           >
-            <CommonIcons.LogoutIcon />
-            <CommonStyles.Box sx={{ display: "flex" }}>
-              <CommonStyles.Typography type="boldText14">
-                Logout
-              </CommonStyles.Typography>
-            </CommonStyles.Box>
+            <CommonStyles.Typography type="normal14" sx={{ fontWeight: 600 }}>
+              Logout
+            </CommonStyles.Typography>
           </CommonStyles.Button>
-
-          <Divider
-            sx={{
-              width: "90%",
-            }}
-          />
-
-          <CommonStyles.Typography
-            sx={{
-              width: "80%",
-              fontSize: ".9rem",
-              opacity: ".7",
-              marginTop: "10px",
-            }}
-          >
-            By using HangerAI, you agree to our <Link>Terms of Use </Link>
-            and <Link> Privacy Policy </Link>.
-          </CommonStyles.Typography>
         </CommonStyles.Box>
       </Popover>
-    </Fragment>
+    </Box>
   );
 };
 

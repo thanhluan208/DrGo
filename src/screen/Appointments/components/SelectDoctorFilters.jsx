@@ -108,6 +108,7 @@ const SelectDoctorFilters = ({ value, handleChange }) => {
             options.map((item, index) => {
               return (
                 <CommonStyles.Box
+                  key={item?.value || index}
                   sx={{
                     display: "flex",
                     alignItems: "center",

@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import { InputAdornment } from "@mui/material";
 import Search from "../../../assets/icons/Search";
 import Bell from "../../../assets/icons/Bell";
+import User from "./User";
 
 const Header = () => {
   //! State
@@ -75,7 +76,7 @@ const Header = () => {
         >
           <Bell />
         </CommonStyles.IconButton>
-        <CommonStyles.IconButton>
+        {/* <CommonStyles.IconButton>
           <CommonStyles.Box
             centered
             sx={{
@@ -91,7 +92,8 @@ const Header = () => {
               }
             />
           </CommonStyles.Box>
-        </CommonStyles.IconButton>
+        </CommonStyles.IconButton> */}
+        <User />
       </CommonStyles.Box>
     </CommonStyles.Box>
   );

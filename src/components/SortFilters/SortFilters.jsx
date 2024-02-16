@@ -77,6 +77,7 @@ const SortFilters = ({ value, options, id, handleChange }) => {
 
               return (
                 <CommonStyles.Box
+                  key={item?.value}
                   centered
                   sx={{
                     display: "flex",

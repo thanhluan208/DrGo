@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import FirebaseServices from "../../services/firebaseServices";
 import appointmentModel from "../../models/appointmentsModel";
+import PromiseHandler from "../../helpers/promiseHandler";
+
+const PromiseGetListAppointment = new PromiseHandler();
 
 const useGetListAppointment = (filters, isTrigger = true) => {
   const [data, setData] = useState([]);
@@ -40,7 +43,7 @@ const useGetListAppointment = (filters, isTrigger = true) => {
 
   const refetch = useCallback(async () => {
     try {
-      const response = await callApi();
+      const response = await PromiseGetListAppointment.takeLatest(callApi());
       transformResponse(response);
     } catch (error) {
       setError(error);
@@ -52,19 +55,22 @@ const useGetListAppointment = (filters, isTrigger = true) => {
 
     if (isTrigger) {
       (async () => {
-        try {
-          setLoading(true);
-          const response = await callApi();
-
-          console.log("res", response);
-          if (shouldSetData) {
-            transformResponse(response);
-          }
-        } catch (error) {
-          setError(error);
-        } finally {
-          setLoading(false);
-        }
+        setLoading(true);
+        PromiseGetListAppointment.takeLatest(callApi())
+          .then((response) => {
+            console.log("res", response);
+            if (shouldSetData) {
+              transformResponse(response);
+              setLoading(false);
+            }
+          })
+          .catch((error) => {
+            console.log("err", error);
+            if (!error.isCanceled) {
+              setError(error);
+              setLoading(false);
+            }
+          });
       })();
 
       return () => {

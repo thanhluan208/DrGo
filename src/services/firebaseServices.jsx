@@ -68,7 +68,6 @@ class firebaseService {
     })
       .then((currentToken) => {
         if (currentToken) {
-          console.log("currentToken", currentToken);
         } else {
           console.log(
             "No registration token available. Request permission to generate one."
@@ -80,7 +79,6 @@ class firebaseService {
       });
 
     onMessage(this.messaging, (payload) => {
-      console.log("Message received. ", payload);
       if (payload.notification) {
         const { title, body } = payload.notification;
         toast.info(<ToastNotification title={title} body={body} />);
@@ -92,7 +90,6 @@ class firebaseService {
   async onMessage() {}
 
   requestPermission() {
-    console.log("Requesting permission...");
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         console.log("Notification permission granted.");
@@ -110,7 +107,6 @@ class firebaseService {
 
   readStatus(appointmentId, setAppointmentStatus) {
     const statusRef = ref(this.realtimeDB, "appointments/" + appointmentId);
-    console.log("appointmentId", appointmentId);
     onValue(statusRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -218,8 +214,6 @@ class firebaseService {
       });
     }
 
-    console.log("data", data);
-
     const filteredData = data.filter((elm) => {
       let isValid = true;
 
@@ -227,10 +221,6 @@ class firebaseService {
         const [startDate, endDate] = date;
         if (startDate && !endDate) {
           isValid = dayjs(elm.startDate.toDate()).isSame(startDate, "day");
-          console.log("date 1", {
-            elm,
-            isValid,
-          });
         }
 
         if (startDate && endDate) {
@@ -239,26 +229,14 @@ class firebaseService {
               dayjs(elm.startDate.toDate()).isSame(startDate, "day")) &&
             (dayjs(elm.startDate.toDate()).isBefore(endDate, "day") ||
               dayjs(elm.startDate.toDate()).isSame(endDate, "day"));
-          console.log("date 2", {
-            elm,
-            isValid,
-          });
         }
       }
 
       if (status && status !== "all") {
         isValid = elm.status === status;
-        console.log("status", {
-          elm,
-          isValid,
-        });
       }
       if (doctor) {
         isValid = elm?.doctor?.id === doctor;
-        console.log("Doctor", {
-          elm,
-          isValid,
-        });
       }
       return isValid;
     });
@@ -288,7 +266,6 @@ class firebaseService {
   };
 
   sendNoti = async (listRegist, title, body) => {
-    console.log("sending noti", listRegist);
     return axios.post(
       "https://fcm.googleapis.com/fcm/send",
       {
@@ -544,7 +521,6 @@ class firebaseService {
       const endDateItem = dayjs(item.endDate);
 
       if (item.doctor !== doctor) {
-        console.log("0", item);
         return false;
       }
 
@@ -552,7 +528,6 @@ class firebaseService {
         startDateItem.isBefore(startDateFilter) &&
         endDateItem.isBefore(startDateFilter)
       ) {
-        console.log("1", item);
         return false;
       }
 
@@ -560,19 +535,10 @@ class firebaseService {
         startDateItem.isAfter(endDateFilter) &&
         endDateItem.isAfter(endDateFilter)
       ) {
-        console.log("2", item);
         return false;
       }
 
       return true;
-    });
-
-    console.log("filter", {
-      doctor,
-      startDate,
-      endDate,
-      data,
-      filteredData,
     });
 
     return filteredData;
