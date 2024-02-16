@@ -40,7 +40,7 @@ const Detail = ({ title, content }) => {
   );
 };
 
-const AssignDialogContent = ({ toggle, data }) => {
+const AssignDialogContent = ({ toggle, data, setLoading }) => {
   //! State
   const theme = useTheme();
   const { t } = useTranslation();
@@ -103,6 +103,7 @@ const AssignDialogContent = ({ toggle, data }) => {
 
   //! Function
   const handleSubmit = async (values) => {
+    setLoading(true);
     const toastId = toast.loading("Updating appointment...", {
       isLoading: true,
       autoClose: false,
@@ -148,8 +149,9 @@ const AssignDialogContent = ({ toggle, data }) => {
         autoClose: 3000,
         isLoading: false,
       });
+    } finally {
+      setLoading(false);
     }
-    console.log("values", values);
   };
 
   //! Render
@@ -202,7 +204,7 @@ const AssignDialogContent = ({ toggle, data }) => {
           validateOnChange
           validateOnBlur
         >
-          {({ errors, values }) => {
+          {({ isSubmitting }) => {
             return (
               <Form
                 style={{
@@ -246,6 +248,7 @@ const AssignDialogContent = ({ toggle, data }) => {
                 >
                   <CommonStyles.Button
                     variant="outlined"
+                    disabled={isSubmitting}
                     color="error"
                     sx={{
                       padding: "15px 24px",
@@ -262,6 +265,7 @@ const AssignDialogContent = ({ toggle, data }) => {
                     </CommonStyles.Typography>
                   </CommonStyles.Button>
                   <CommonStyles.Button
+                    loading={isSubmitting}
                     type="submit"
                     sx={{
                       boxShadow: "0px 6px 12px 0px rgba(51, 108, 251, 0.16)",

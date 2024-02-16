@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import StatusCard, { statusType } from "../../Home/components/StatusCard";
 import ButtonAssign from "./ButtonAssign";
 import CommonStyles from "../../../components/CommonStyles";
@@ -16,11 +16,11 @@ import { isEmpty } from "lodash";
 const ActionStatus = ({ data }) => {
   //! State
   const { visitTime, doctor, status, patient, id } = data;
+  const [loading, setLoading] = useState(false);
   const refetchListAppointment = useGet(
     cachedKeys.APPOINTMENTS.REFETCH_LIST_APPOINTMENT
   );
   const { device_tokens, name, email } = patient;
-  console.log("data", data);
 
   const {
     open: openDelayDialog,
@@ -34,6 +34,7 @@ const ActionStatus = ({ data }) => {
       isLoading: true,
       autoClose: false,
     });
+    setLoading(true);
 
     try {
       await FirebaseServices.updateAppointmentStatus(id, status);
@@ -70,6 +71,8 @@ const ActionStatus = ({ data }) => {
         autoClose: 3000,
         isLoading: false,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,6 +104,7 @@ const ActionStatus = ({ data }) => {
               gap: "5px",
               padding: "5px 20px 5px 15px",
             }}
+            loading={loading}
           >
             <Accept fill={"#fff"} />
             <CommonStyles.Typography
@@ -114,6 +118,7 @@ const ActionStatus = ({ data }) => {
           </CommonStyles.Button>
 
           <CommonStyles.Button
+            loading={loading}
             onClick={() => handleChangeStatus("declined")}
             sx={{
               borderRadius: "50px",
@@ -152,6 +157,7 @@ const ActionStatus = ({ data }) => {
           }}
         >
           <CommonStyles.Button
+            loading={loading}
             onClick={() => handleChangeStatus("complete")}
             sx={{
               borderRadius: "50px",
@@ -170,6 +176,7 @@ const ActionStatus = ({ data }) => {
             </CommonStyles.Typography>
           </CommonStyles.Button>
           <CommonStyles.Button
+            loading={loading}
             sx={{
               borderRadius: "50px",
               gap: "5px",

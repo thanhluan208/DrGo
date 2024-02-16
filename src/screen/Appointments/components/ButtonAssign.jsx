@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import CommonStyles from "../../../components/CommonStyles";
 import Edit from "../../../assets/icons/Edit";
 import Assign from "../../../assets/icons/Assign";
@@ -8,6 +8,7 @@ import AssignDialogContent from "./AssignDialogContent";
 
 const ButtonAssign = ({ data }) => {
   //! State
+  const [loading, setLoading] = useState(false);
   const {
     open: openAssignDialog,
     toggle: toggleAssignDialog,
@@ -20,6 +21,7 @@ const ButtonAssign = ({ data }) => {
   return (
     <Fragment>
       <CommonStyles.Button
+        loading={loading}
         onClick={toggleAssignDialog}
         sx={{
           display: "flex",
@@ -47,7 +49,11 @@ const ButtonAssign = ({ data }) => {
           open={openAssignDialog}
           handleClose={toggleAssignDialog}
           dialogContent={
-            <AssignDialogContent toggle={toggleAssignDialog} data={data} />
+            <AssignDialogContent
+              toggle={toggleAssignDialog}
+              data={data}
+              setLoading={setLoading}
+            />
           }
         />
       )}
