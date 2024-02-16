@@ -13,7 +13,8 @@ const useGetListAppointment = (filters, isTrigger = true) => {
       filters?.pageSize,
       filters?.status,
       filters?.date,
-      filters?.doctor
+      filters?.doctor,
+      filters?.sortBy
     );
   }, [
     filters?.currentPage,
@@ -21,6 +22,7 @@ const useGetListAppointment = (filters, isTrigger = true) => {
     filters?.status,
     filters?.date,
     filters?.doctor,
+    filters?.sortBy,
   ]);
 
   const transformResponse = useCallback((response) => {

@@ -25,7 +25,7 @@ const DateRangePicker = ({ value, onChange }) => {
   const handleSelectDate = useCallback(
     (date) => {
       if (value?.[0] && value?.[1]) {
-        if (date.isBefore(value[0], "day") || date.isAfter(value[1], "day")) {
+        if (date.isSame(value[0], "day") || date.isSame(value[1], "day")) {
           onChange([date, undefined]);
           return;
         }
@@ -40,6 +40,16 @@ const DateRangePicker = ({ value, onChange }) => {
             onChange([date, value[1]]);
             return;
           }
+        }
+
+        if (date.isAfter(value[1], "day")) {
+          onChange([value[0], date]);
+          return;
+        }
+
+        if (date.isBefore(value[0], "day")) {
+          onChange([date, value[1]]);
+          return;
         }
       }
 

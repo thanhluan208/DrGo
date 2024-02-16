@@ -172,8 +172,18 @@ class firebaseService {
     }
   };
 
-  getAppointmentByDate = async (page = 0, pageSize, status, date, doctor) => {
-    let q = query(collection(this.db, "appointments"), orderBy("startDate"));
+  getAppointmentByDate = async (
+    page = 0,
+    pageSize,
+    status,
+    date,
+    doctor,
+    sortBy
+  ) => {
+    let q = query(
+      collection(this.db, "appointments"),
+      orderBy(sortBy || "startDate")
+    );
 
     const querySnapshot = await getDocs(q);
 

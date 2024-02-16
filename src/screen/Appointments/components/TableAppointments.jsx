@@ -158,8 +158,8 @@ const tabOption = {
 };
 
 const optionsSortBy = [
-  { label: "Booking Order", value: "bookingOrder" },
-  { label: "Visit Time", value: "visitTime" },
+  { label: "Booking Order", value: "startDate" },
+  { label: "Visit Time", value: "visit_time" },
 ];
 
 const TableAppointments = () => {
@@ -176,7 +176,7 @@ const TableAppointments = () => {
     status: tabOption[tab]?.toLowerCase() || "all",
     date: [dayjs()],
     doctor: "",
-    sortBy: "visitTime",
+    sortBy: "visit_time",
   });
 
   const {
