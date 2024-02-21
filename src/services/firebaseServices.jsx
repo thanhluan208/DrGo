@@ -179,7 +179,7 @@ class firebaseService {
     console.log("status", status);
     let q = query(
       collection(this.db, "appointments"),
-      orderBy(sortBy || "startDate")
+      orderBy(sortBy || "visit_time")
     );
 
     const querySnapshot = await getDocs(q);

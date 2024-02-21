@@ -158,8 +158,8 @@ const tabOption = {
 };
 
 const optionsSortBy = [
-  { label: "Booking Order", value: "startDate" },
-  { label: "Visit Time", value: "visit_time" },
+  { label: "Booking Order", value: "visit_time" },
+  { label: "Visit Time", value: "startDate" },
 ];
 
 const TableAppointments = () => {
