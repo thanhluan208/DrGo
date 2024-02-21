@@ -82,7 +82,7 @@ const useFilter = (initialFilter) => {
     setFilters((prev) => {
       return {
         ...prev,
-        [field]: newPage,
+        [field]: newPage - 1,
       };
     });
   }, []);
