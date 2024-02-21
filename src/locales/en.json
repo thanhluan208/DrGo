@@ -14,7 +14,9 @@
     "appointment": "Appointment",
     "chat": "Chat",
     "notifications": "Notifications",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "doctor": "Doctor",
+    "patients": "Patients"
   },
   "home": {
     "appointments": "Appointments",
@@ -74,5 +76,30 @@
     "delete": "Delete",
     "updatingSchedule": "Updating schedule...",
     "updateScheduleSuccessfully": "Your schedule has been updated successfully!"
+  },
+
+  "doctor": {
+    "doctors": "Doctors",
+    "newDoctor": "New doctor",
+    "addNewDoctor": "Add new doctor",
+    "editDoctor": "Edit doctor",
+    "name": "Name",
+    "email": "Email",
+    "location": "Location",
+    "about": "About",
+    "description": "Description",
+    "save": "Add doctor",
+    "create": "Create",
+    "inactive": "Inactive",
+    "creating": "Creating doctor...",
+    "createDoctorSuccessfully": "Your doctor has been created successfully!",
+    "actionDoctorFailed": "Error. Please try again.",
+    "update": "Update",
+    "updating": "Updating doctor...",
+    "updateDoctorSuccessfully": "Your doctor has been updated successfully!",
+    "confirmDelete": "Are you sure you want to delete this doctor?",
+    "confirmDeleteTitle": "Confirm delete",
+    "deleteSuccessfully": "Your doctor has been deleted successfully!",
+    "deleting": "Deleting doctor..."
   }
 }

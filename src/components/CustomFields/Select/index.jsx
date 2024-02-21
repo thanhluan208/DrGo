@@ -83,12 +83,12 @@ const SelectField = (props) => {
       sx={{
         minWidth: 120,
         height: "48px",
-        ...sxContainer,
         width: otherProps?.fullWidth ? "100%" : "auto",
         fieldset: {
           borderRadius: "8px",
         },
         marginTop: "16px",
+        ...sxContainer,
       }}
     >
       <FormControl

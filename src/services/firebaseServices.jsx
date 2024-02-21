@@ -416,6 +416,82 @@ class firebaseService {
     }
   };
 
+  updateDoctor = async (id, payload) => {
+    const doctorRef = doc(this.db, "doctor", id);
+
+    if (doctorRef) {
+      await updateDoc(doctorRef, {
+        ...payload,
+      });
+    } else {
+      throw new Error("Doctor not found");
+    }
+  };
+
+  createDoctor = async (payload) => {
+    await addDoc(collection(this.db, "doctor"), {
+      ...payload,
+      insurance: "Group Medical Flexi Insurance",
+    });
+  };
+
+  deleteDoctor = async (id) => {
+    const doctorRef = doc(this.db, "doctor", id);
+
+    if (doctorRef) {
+      await deleteDoc(doctorRef);
+    } else {
+      throw new Error("Doctor not found");
+    }
+  };
+
+  getAllPatient = async () => {
+    try {
+      const q = query(collection(this.db, "patient"));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => {
+        return {
+          ...doc.data(),
+          id: doc.id,
+        };
+      });
+
+      return data;
+    } catch (error) {
+      console.log("err", error);
+      useToast(error?.message || "Something went wrong", "error");
+    }
+  };
+
+  deletePatient = async (id) => {
+    const patientRef = doc(this.db, "patient", id);
+
+    if (patientRef) {
+      await deleteDoc(patientRef);
+    } else {
+      throw new Error("Patient not found");
+    }
+  };
+
+  createPatient = async (payload) => {
+    await addDoc(collection(this.db, "patient"), {
+      ...payload,
+    });
+  };
+
+  updatePatient = async (id, payload) => {
+    const patientRef = doc(this.db, "patient", id);
+
+    console.log("payload", payload);
+    if (patientRef) {
+      await updateDoc(patientRef, {
+        ...payload,
+      });
+    } else {
+      throw new Error("Patient not found");
+    }
+  };
+
   getListPatient = async (page = 1, pageSize = 1000, patientName) => {
     try {
       let q;

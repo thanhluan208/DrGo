@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 
 class schedulesModel {
   static parseRequestActionSchedule(req) {
-    console.log("req", req);
     const { startDate, endDate, startTime, endTime, repeatOn } = req;
 
     return {

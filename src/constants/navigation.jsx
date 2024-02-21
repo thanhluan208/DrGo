@@ -7,6 +7,7 @@ import MedicalHuman from "../assets/icons/MedicalHuman";
 import NotificationsNav from "../assets/icons/NotificationsNav";
 import ScheduleNav from "../assets/icons/ScheduleNav";
 import SettingsNav from "../assets/icons/SettingsNav";
+import { FaUserDoctor, FaUser } from "react-icons/fa6";
 
 export const navigation = [
   {
@@ -38,6 +39,32 @@ export const navigation = [
     path: "/notifications",
     name: i18n.t("layout.notifications"),
     icon: (fill) => <NotificationsNav fill={fill} />,
+  },
+  {
+    path: "/doctor",
+    name: i18n.t("layout.doctor"),
+    icon: (fill) => (
+      <FaUserDoctor
+        style={{
+          fill,
+          width: "20px",
+          height: "20px",
+        }}
+      />
+    ),
+  },
+  {
+    path: "/patient",
+    name: i18n.t("layout.patients"),
+    icon: (fill) => (
+      <FaUser
+        style={{
+          fill,
+          width: "20px",
+          height: "20px",
+        }}
+      />
+    ),
   },
 ];
 

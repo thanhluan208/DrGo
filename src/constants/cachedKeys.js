@@ -20,4 +20,12 @@ export default {
   LAYOUT: {
     SIDE_BAR_WIDTH: "SIDE_BAR_WIDTH",
   },
+
+  DOCTOR: {
+    REFETCH_LIST_DOCTOR: "REFETCH_LIST_DOCTOR",
+  },
+
+  PATIENT: {
+    REFETCH_LIST_PATIENT: "REFETCH_LIST_PATIENT",
+  },
 };

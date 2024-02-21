@@ -1,21 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import FirebaseServices from "../../services/firebaseServices";
-import { cloneDeep } from "lodash";
-import doctorModel from "../../models/doctorModel";
 
-const useGetListDoctor = (isTrigger = true) => {
+const useGetAllPatient = (isTrigger = true) => {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   const callApi = useCallback(() => {
-    return FirebaseServices.getListDoctors();
+    return FirebaseServices.getAllPatient();
   }, []);
 
   const transformResponse = useCallback((response) => {
     if (response) {
-      const transformedData = doctorModel.parseResponseDoctorList(response);
-      setData(transformedData);
+      //   const transformedData = doctorModel.parseResponseDoctorList(response);
+      setData(response);
     }
   }, []);
 
@@ -61,4 +59,4 @@ const useGetListDoctor = (isTrigger = true) => {
   };
 };
 
-export default useGetListDoctor;
+export default useGetAllPatient;

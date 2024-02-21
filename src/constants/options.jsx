@@ -93,3 +93,15 @@ export const statusOptions = [
     label: "Delayed",
   },
 ];
+
+export const locationOptions = [
+  { label: "Aberdeen", value: "Aberdeen" },
+  { label: "Ap Lei Chau", value: "Ap Lei Chau" },
+  { label: "Siu Sai Wan", value: "Siu Sai Wan" },
+  { label: "Shau Kei Wan", value: "Shau Kei Wan" },
+  { label: "North Point", value: "North Point" },
+  { label: "Chai Wan", value: "Chai Wan" },
+  { label: "Tin Hau", value: "Tin Hau" },
+  { label: "Sai Wan Ho", value: "Sai Wan Ho" },
+  { label: "Sai Wan", value: "Sai Wan" },
+];

@@ -21,6 +21,8 @@ import routes from "./constants/route";
 import DoctorScheduleAction from "./screen/DoctorScheduleAction";
 import DoctorScheduleEdit from "./screen/DoctorScheduleEdit";
 import Incomming from "./screen/Incomming";
+import Doctor from "./screen/Doctor";
+import Patient from "./screen/Patients";
 
 const HomeWithErrorBoundary = withErrorBoundary(Home);
 const LoginWithErrorBoundary = withErrorBoundary(Login);
@@ -31,6 +33,9 @@ const DoctorScheduleActionWithErrorBoundary =
   withErrorBoundary(DoctorScheduleAction);
 const DoctorScheduleEditWithErrorBoundary =
   withErrorBoundary(DoctorScheduleEdit);
+const DoctorWithErrorBoundary = withErrorBoundary(Doctor);
+const PatientWithErrorBoundary = withErrorBoundary(Patient);
+
 const App = () => {
   //! State
   const { islogged } = useAuthentication();
@@ -74,6 +79,14 @@ const App = () => {
         {
           path: `${routes.doctorSchedule}/:id/edit`,
           element: <DoctorScheduleEditWithErrorBoundary />,
+        },
+        {
+          path: routes.doctor,
+          element: <DoctorWithErrorBoundary />,
+        },
+        {
+          path: routes.patient,
+          element: <PatientWithErrorBoundary />,
         },
       ],
       loader: () => {
