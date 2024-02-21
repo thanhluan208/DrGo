@@ -48,10 +48,7 @@ const Pagination = ({
     return pages.map((page, index) => {
       if (+page === currentPage + 1) {
         return (
-          <CommonStyles.IconButton
-            key={`${page}-${index}`}
-            onClick={() => handleChangePage("currentPage", +page)}
-          >
+          <CommonStyles.IconButton key={`${page}-${index}`}>
             <CommonStyles.Box
               centered
               sx={{
@@ -87,7 +84,7 @@ const Pagination = ({
           }
           onClick={() => {
             if (page === "...") return;
-            handleChangePage("currentPage", +page);
+            handleChangePage("currentPage", +page - 1);
           }}
         >
           <CommonStyles.Box

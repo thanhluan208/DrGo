@@ -104,7 +104,7 @@ const DialogEditAndCreate = ({ data, toggle }) => {
               color: "#25282B",
             }}
           >
-            {isEdit ? t("editDoctor") : t("doctor.addNewDoctor")}
+            {isEdit ? t("doctor.editDoctor") : t("doctor.addNewDoctor")}
           </CommonStyles.Typography>
         </CommonStyles.Box>
 
@@ -240,7 +240,7 @@ const DialogEditAndCreate = ({ data, toggle }) => {
                       color: theme.colors.white,
                     }}
                   >
-                    {isEdit ? t("doctor.save") : t("doctor.create")}
+                    {isEdit ? t("doctor.update") : t("doctor.create")}
                   </CommonStyles.Typography>
                 </CommonStyles.Button>
               </CommonStyles.Box>

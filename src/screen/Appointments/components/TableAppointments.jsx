@@ -256,6 +256,7 @@ const TableAppointments = () => {
                   return {
                     ...prev,
                     status: value.toLowerCase(),
+                    currentPage: 0,
                   };
                 });
               }}
