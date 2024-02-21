@@ -92,34 +92,25 @@ const DoctorScheduleForm = ({ id, data, refecthListSchedules }) => {
           return dayjs(value).isAfter(dayjs(this.parent.startDate));
         }
       ),
-    // startTime: Yup.date()
-    //   .required(t("required", { field: "Start time" }))
-    //   .test("startTime", "Start time must be after now", function (value) {
-    //     if (dayjs(this.parent.startDate).isSame(dayjs(), "day"))
-    //       return dayjs(value).isAfter(dayjs());
-    //     return true;
-    //   })
-    //   .test(
-    //     "startTimeBeforeEndTime",
-    //     "Start time must be before end time",
-    //     function (value) {
-    //       return dayjs(value).isBefore(dayjs(this.parent.endTime));
-    //     }
-    //   ),
-    // endTime: Yup.date()
-    //   .required(t("required", { field: "End time" }))
-    //   .test("endTime", "End time must be after now", function (value) {
-    //     if (dayjs(this.parent.endDate).isSame(dayjs(), "day"))
-    //       return dayjs(value).isAfter(dayjs());
-    //     return true;
-    //   })
-    //   .test(
-    //     "endTimeAfterStartTime",
-    //     "End time must be after start time",
-    //     function (value) {
-    //       return dayjs(value).isAfter(dayjs(this.parent.startTime));
-    //     }
-    //   ),
+    startTime: Yup.date()
+      .required(t("required", { field: "Start time" }))
+      .test(
+        "startTimeBeforeEndTime",
+        "Start time must be before end time",
+        function (value) {
+          console.log(this.parent);
+          return dayjs(value).isBefore(dayjs(this.parent.endTime));
+        }
+      ),
+    endTime: Yup.date()
+      .required(t("required", { field: "End time" }))
+      .test(
+        "endTimeAfterStartTime",
+        "End time must be after start time",
+        function (value) {
+          return dayjs(value).isAfter(dayjs(this.parent.startTime));
+        }
+      ),
   });
 
   //! Function

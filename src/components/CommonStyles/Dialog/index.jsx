@@ -24,7 +24,7 @@ const Dialog = ({
       open={open}
       TransitionComponent={Transition}
       onClose={(e, reason) => {
-        if (reason !== "backdropClick" || disabledBackdropClose) {
+        if (reason !== "backdropClick" || !disabledBackdropClose) {
           handleClose(e);
         }
       }}

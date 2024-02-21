@@ -35,8 +35,6 @@ const DoctorScheduleEdit = () => {
     refetch: refecthListSchedules,
   } = useGetSchedules(filters, !!id);
 
-  console.log("list", listSchedules);
-
   const { name, description } = doctorDetail || {};
 
   //! Function
