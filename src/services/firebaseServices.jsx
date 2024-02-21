@@ -176,6 +176,7 @@ class firebaseService {
     doctor,
     sortBy
   ) => {
+    console.log("status", status);
     let q = query(
       collection(this.db, "appointments"),
       orderBy(sortBy || "startDate")
@@ -221,6 +222,7 @@ class firebaseService {
         const [startDate, endDate] = date;
         if (startDate && !endDate) {
           isValid = dayjs(elm.startDate.toDate()).isSame(startDate, "day");
+          if (!isValid) return false;
         }
 
         if (startDate && endDate) {
@@ -229,14 +231,17 @@ class firebaseService {
               dayjs(elm.startDate.toDate()).isSame(startDate, "day")) &&
             (dayjs(elm.startDate.toDate()).isBefore(endDate, "day") ||
               dayjs(elm.startDate.toDate()).isSame(endDate, "day"));
+          if (!isValid) return false;
         }
       }
 
       if (status && status !== "all") {
         isValid = elm.status === status;
+        if (!isValid) return false;
       }
       if (doctor) {
         isValid = elm?.doctor?.id === doctor;
+        if (!isValid) return false;
       }
       return isValid;
     });
