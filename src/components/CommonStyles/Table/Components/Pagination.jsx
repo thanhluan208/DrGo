@@ -22,23 +22,27 @@ const Pagination = ({
 
   const renderPage = useCallback(() => {
     let pages = [];
+    const nextCurrentPage = currentPage + 1;
     if (totalPage <= 3) {
       for (let i = 0; i < totalPage; i++) {
         pages.push(`${i + 1}`);
       }
     } else {
       pages.push("1");
-      if (currentPage === 2 || currentPage === 1) {
+      if (nextCurrentPage === 2 || nextCurrentPage === 1) {
         pages = ["1", "2", "...", `${totalPage}`];
-      } else if (currentPage === totalPage - 1 || currentPage === totalPage) {
+      } else if (
+        nextCurrentPage === totalPage - 1 ||
+        nextCurrentPage === totalPage
+      ) {
         pages = ["1", "...", `${totalPage - 1}`, `${totalPage}`];
       } else {
         pages = [
           "1",
           "...",
-          `${currentPage - 1}`,
-          `${currentPage}`,
-          `${currentPage + 1}`,
+          `${nextCurrentPage - 1}`,
+          `${nextCurrentPage}`,
+          `${nextCurrentPage + 1}`,
           "...",
           `${totalPage}`,
         ];
