@@ -13,7 +13,6 @@ import cachedKeys from "../../../constants/cachedKeys";
 
 const DialogEditAndCreate = ({ data, toggle }) => {
   //! State
-  console.log("data", data);
   const theme = useTheme();
   const formikRef = useRef(null);
   const { t } = useTranslation();
@@ -24,8 +23,8 @@ const DialogEditAndCreate = ({ data, toggle }) => {
       name: data?.name || "",
       email: data?.email || "",
       phone_number: data?.phone_number || "",
-      is_employee: data?.is_employee,
-      is_active: data?.is_active,
+      is_employee: !!data?.is_employee,
+      is_active: !!data?.is_active,
     };
   }, [data]);
 
