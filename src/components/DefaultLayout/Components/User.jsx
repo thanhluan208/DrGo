@@ -36,9 +36,9 @@ const User = () => {
           }}
         >
           <CommonStyles.Avatar
-            src={
-              "https://i.pinimg.com/564x/73/e4/69/73e4692c5447a0ed7b0eac5d3e008469.jpg"
-            }
+          // src={
+          //   "https://i.pinimg.com/564x/73/e4/69/73e4692c5447a0ed7b0eac5d3e008469.jpg"
+          // }
           />
         </CommonStyles.Box>
       </CommonStyles.IconButton>

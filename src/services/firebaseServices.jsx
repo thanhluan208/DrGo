@@ -42,18 +42,19 @@ const ToastNotification = ({ title, body }) => {
     </div>
   );
 };
+
+console.log(import.meta.env.VITE_API_KEY, "hehe");
 class firebaseService {
   constructor() {
     this.firebaseConfig = {
-      apiKey: "AIzaSyAEOglmJy2QnccVcwyUf8lZUSts4zfzG-4",
-      authDomain: "drgo-aa24d.firebaseapp.com",
-      projectId: "drgo-aa24d",
-      storageBucket: "drgo-aa24d.appspot.com",
-      messagingSenderId: "490035669777",
-      appId: "1:490035669777:web:3c23f2dc9b473975f23ab0",
-      measurementId: "G-Y5DY0ZXBQK",
-      databaseURL:
-        "https://drgo-aa24d-default-rtdb.asia-southeast1.firebasedatabase.app",
+      apiKey: import.meta.env.VITE_API_KEY,
+      authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_APP_ID,
+      measurementId: import.meta.env.VITE_MEASUREMENT_ID,
+      databaseURL: import.meta.env.VITE_DATABASE_URL,
     };
 
     this.app = initializeApp(this.firebaseConfig);
